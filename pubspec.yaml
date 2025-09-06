@@ -1,0 +1,85 @@
+name: house_service
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  
+  # HTTP and networking
+  http: ^1.1.0
+  
+  # State management
+  provider: ^6.0.0
+  
+  # UI components
+  pinput: ^4.0.0
+  smooth_page_indicator: ^1.1.0
+  flutter_svg: ^2.0.9
+  
+  # Storage and preferences
+  shared_preferences: ^2.2.2
+  
+  # Internationalization
+  intl: ^0.20.2
+  
+  # External services
+  url_launcher: ^6.1.10
+  intl_phone_field: ^3.1.0
+  geolocator: ^11.0.0
+  google_maps_flutter: ^2.2.8
+  image_picker: ^1.0.7
+  geocoding: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/
+    - assets/fonts/
+    - assets/translations/
+
+  # Add fonts to your application
+  fonts:
+    - family: Averta
+      fonts:
+        - asset: assets/fonts/Averta-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Averta-Bold.ttf
+          weight: 700
+
+# Add l10n configuration
+flutter_gen:
+  integrations:
+    flutter_svg: true
+
+# Configure localization
+flutter_intl:
+  enabled: true
+  arb_dir: lib/l10n
+  template_arb_file: app_en.arb
+  output_localization_file: app_localizations.dart
+
+# Launcher Icon Configuration
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/LOGO.png"
+  remove_alpha_ios: true  # Remove alpha channel for iOS App Store compliance
+  # Optional: Add adaptive icon configuration for Android
+  # adaptive_icon_background: "#FFFFFF" # Example: white background
+  # adaptive_icon_foreground: "assets/images/LOGO_foreground.png" # Requires a separate foreground image
