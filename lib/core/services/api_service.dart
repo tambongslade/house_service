@@ -11,7 +11,7 @@ class ApiService {
   // Local development base URL
   static String get baseUrl {
     // Cloudflare tunnel server
-    return 'https://merry-encoding-instructional-marked.trycloudflare.com/api';
+    return 'https://interfaces-preference-jackets-bottle.trycloudflare.com/api';
   }
 
   static const String apiVersion = 'v1';
