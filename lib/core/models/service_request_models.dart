@@ -55,7 +55,8 @@ class CreateServiceRequestModel {
       'duration': duration,
       'location': location.toJson(),
       'province': province,
-      if (specialInstructions != null) 'specialInstructions': specialInstructions,
+      if (specialInstructions != null)
+        'specialInstructions': specialInstructions,
       if (description != null) 'description': description,
     };
   }
@@ -128,35 +129,69 @@ class ServiceRequestModel {
   factory ServiceRequestModel.fromJson(Map<String, dynamic> json) {
     // Debug print to see what data we're getting
     print('ServiceRequestModel.fromJson: $json');
-    
+
+    // Handle providerId which can be either a string or an object
+    String? providerId;
+    String? providerName;
+    if (json['providerId'] != null) {
+      if (json['providerId'] is String) {
+        providerId = json['providerId'];
+      } else if (json['providerId'] is Map<String, dynamic>) {
+        final providerData = json['providerId'] as Map<String, dynamic>;
+        providerId = providerData['_id'] ?? providerData['id'];
+        providerName = providerData['fullName'];
+      }
+    }
+
+    // Calculate duration from baseDuration and overtimeHours
+    final baseDuration = json['baseDuration']?.toDouble() ?? 0.0;
+    final overtimeHours = json['overtimeHours']?.toDouble() ?? 0.0;
+    final totalDuration = baseDuration + overtimeHours;
+
+    // Use totalAmount as estimatedCost
+    final estimatedCost = json['totalAmount']?.toDouble() ?? 0.0;
+
+    // Parse sessionDate to serviceDate format
+    String serviceDate = '';
+    if (json['sessionDate'] != null) {
+      try {
+        final date = DateTime.parse(json['sessionDate']);
+        serviceDate =
+            '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      } catch (e) {
+        serviceDate = json['sessionDate'].toString();
+      }
+    }
+
+    // Create location from serviceAddress
+    final serviceAddress = json['serviceAddress'] ?? '';
+    final serviceLocation = json['serviceLocation'] ?? '';
+    final location = ServiceRequestLocation(
+      latitude: 0.0, // Default values since not provided in API
+      longitude: 0.0,
+      address: serviceAddress.isNotEmpty ? serviceAddress : serviceLocation,
+    );
+
     return ServiceRequestModel(
       id: json['_id'] ?? json['id'] ?? '',
       category: json['category'] ?? '',
-      serviceDate: json['serviceDate'] ?? json['date'] ?? '',
-      startTime: json['startTime'] ?? json['time'] ?? '',
-      duration: _parseDuration(json['duration']),
-      location: ServiceRequestLocation.fromJson(json['location'] ?? {}),
-      province: json['province'] ?? '',
-      specialInstructions: json['specialInstructions'],
-      description: json['description'],
+      serviceDate: serviceDate,
+      startTime: json['startTime'] ?? '',
+      duration: totalDuration,
+      location: location,
+      province: serviceLocation,
+      specialInstructions: json['assignmentNotes'],
+      description: json['notes'],
       status: _parseStatus(json['status']),
-      estimatedCost: json['estimatedCost']?.toDouble() ?? 0.0,
-      providerId: json['providerId'],
-      providerName: json['providerName'],
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      estimatedCost: estimatedCost,
+      providerId: providerId,
+      providerName: providerName,
+      createdAt: DateTime.parse(
+        json['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
-  }
-
-  static double _parseDuration(dynamic duration) {
-    if (duration == null) return 0.0;
-    if (duration is double) return duration;
-    if (duration is int) return duration.toDouble();
-    if (duration is String) {
-      final parsed = double.tryParse(duration);
-      return parsed ?? 0.0;
-    }
-    return 0.0;
   }
 
   static ServiceRequestStatus _parseStatus(String? status) {
@@ -211,15 +246,19 @@ class ServiceRequestsResponse {
 
   factory ServiceRequestsResponse.fromJson(Map<String, dynamic> json) {
     final requestsData = json['requests'] as List<dynamic>? ?? [];
-    final requests = requestsData
-        .map((item) => ServiceRequestModel.fromJson(item as Map<String, dynamic>))
-        .toList();
+    final requests =
+        requestsData
+            .map(
+              (item) =>
+                  ServiceRequestModel.fromJson(item as Map<String, dynamic>),
+            )
+            .toList();
 
     return ServiceRequestsResponse(
       requests: requests,
-      totalCount: json['totalCount'] ?? requests.length,
-      currentPage: json['currentPage'] ?? 1,
-      totalPages: json['totalPages'] ?? 1,
+      totalCount: json['totalCount'] ?? json['total'] ?? requests.length,
+      currentPage: json['currentPage'] ?? json['page'] ?? 1,
+      totalPages: json['totalPages'] ?? json['pages'] ?? 1,
     );
   }
 }

@@ -11,7 +11,7 @@ class ApiService {
   // Local development base URL
   static String get baseUrl {
     // Local development server
-    return 'http://192.168.100.28:3000/api';
+    return 'http://192.168.100.16:3000/api';
   }
 
   static const String apiVersion = 'v1';

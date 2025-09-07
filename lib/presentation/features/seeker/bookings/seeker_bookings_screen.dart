@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:house_service/core/state/app_state.dart';
+import '../tracking/seeker_tracking_screen.dart';
 
 class SeekerBookingsScreen extends StatefulWidget {
   const SeekerBookingsScreen({super.key});
@@ -539,7 +540,23 @@ class _SeekerBookingsScreenState extends State<SeekerBookingsScreen>
                     ),
                   ),
                 ),
-                if (status == 'pending' || status == 'confirmed') ...[
+                if (status == 'in_progress') ...[
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _navigateToTracking(booking),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade600,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      icon: const Icon(Icons.location_on, size: 18),
+                      label: const Text('Track Provider'),
+                    ),
+                  ),
+                ] else if (status == 'pending' || status == 'confirmed') ...[
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
@@ -677,6 +694,52 @@ class _SeekerBookingsScreenState extends State<SeekerBookingsScreen>
       ),
       builder: (context) => BookingDetailsSheet(booking: booking),
     );
+  }
+
+  void _navigateToTracking(Map<String, dynamic> booking) {
+    final sessionId = booking['id'] as String? ?? booking['_id'] as String?;
+    final providerName = _getProviderName(booking);
+    final serviceName = _getServiceName(booking);
+
+    if (sessionId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to track: Invalid session ID'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => SeekerTrackingScreen(
+              sessionId: sessionId,
+              providerName: providerName,
+              serviceName: serviceName,
+            ),
+      ),
+    );
+  }
+
+  String _getProviderName(Map<String, dynamic> booking) {
+    final dynamic providerVal = booking['providerId'];
+    if (providerVal is Map<String, dynamic>) {
+      return (providerVal['fullName'] as String?) ?? 'Provider';
+    }
+    return 'Provider';
+  }
+
+  String _getServiceName(Map<String, dynamic> booking) {
+    final dynamic serviceVal = booking['serviceId'];
+    if (serviceVal is Map<String, dynamic>) {
+      return (serviceVal['title'] as String?) ??
+          (booking['serviceName'] as String?) ??
+          'Service';
+    }
+    return (booking['serviceName'] as String?) ?? 'Service';
   }
 
   void _showCancelDialog(Map<String, dynamic> booking) {

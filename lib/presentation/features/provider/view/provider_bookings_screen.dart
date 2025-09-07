@@ -74,16 +74,22 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
     });
 
     try {
-      print('Sessions: Loading ALL provider sessions (client-side filtering)...');
-      print('Sessions: Current user role: Provider (viewing received bookings)');
+      print(
+        'Sessions: Loading ALL provider sessions (client-side filtering)...',
+      );
+      print(
+        'Sessions: Current user role: Provider (viewing received bookings)',
+      );
       print('Sessions: API endpoint: /api/v1/sessions/provider');
-      
+
       // Debug: Check current user ID
       if (mounted) {
         final appState = Provider.of<AppState>(context, listen: false);
         final currentUser = appState.user;
         print('Sessions: Current logged user ID: ${currentUser?.id}');
-        print('Sessions: Expected to see bookings for provider: ${currentUser?.id}');
+        print(
+          'Sessions: Expected to see bookings for provider: ${currentUser?.id}',
+        );
       }
       final response = await _apiService.getSessionsAsProvider(
         page: 1,
@@ -95,22 +101,35 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
       if (response.isSuccess && response.data != null) {
         // Extract sessions from the response structure
         final sessionsList = response.data!['sessions'] as List<dynamic>? ?? [];
-        final summary = response.data!['summary'] as Map<String, dynamic>? ?? {};
-        final pagination = response.data!['pagination'] as Map<String, dynamic>? ?? {};
-        
+        final summary =
+            response.data!['summary'] as Map<String, dynamic>? ?? {};
+        final pagination =
+            response.data!['pagination'] as Map<String, dynamic>? ?? {};
+
         setState(() {
           _sessions = sessionsList.whereType<Map<String, dynamic>>().toList();
           _summary = summary;
           _isLoading = false;
         });
-        
+
         print('Sessions: Loaded ${_sessions.length} sessions');
         print('Sessions: Summary - $summary');
         print('Sessions: Pagination - $pagination');
-        
+
+        // Debug: Print first session structure
+        if (_sessions.isNotEmpty) {
+          print('Sessions: First session structure: ${_sessions.first}');
+          print('Sessions: First session ID (_id): ${_sessions.first['_id']}');
+          print('Sessions: First session ID (id): ${_sessions.first['id']}');
+        }
+
         // Debug: Log expected provider ID from recent booking
-        print('Sessions: IMPORTANT - From your recent booking logs, you booked with provider ID: 6889f369ccc51961944515f9');
-        print('Sessions: If these IDs don\'t match, that explains why you see no sessions!');
+        print(
+          'Sessions: IMPORTANT - From your recent booking logs, you booked with provider ID: 6889f369ccc51961944515f9',
+        );
+        print(
+          'Sessions: If these IDs don\'t match, that explains why you see no sessions!',
+        );
       } else {
         setState(() {
           _errorMessage = response.error ?? 'Failed to load sessions';
@@ -139,7 +158,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
 
   int _getStatusCount(String status) {
     if (status == 'all') return _sessions.length;
-    
+
     return _sessions.where((session) {
       final sessionStatus = session['status']?.toString().toLowerCase() ?? '';
       return sessionStatus == status;
@@ -213,20 +232,13 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
       if (value is String) return int.tryParse(value) ?? 0;
       return 0;
     }
-    
-    num _parseEarnings(dynamic value) {
-      if (value == null) return 0;
-      if (value is num) return value;
-      if (value is String) return num.tryParse(value) ?? 0;
-      return 0;
-    }
 
     final assignedCount = _parseCount(_summary['assigned']);
     final pendingCount = _parseCount(_summary['pending']);
     final confirmedCount = _parseCount(_summary['confirmed']);
     final completedCount = _parseCount(_summary['completed']);
-    final inProgressCount = _parseCount(_summary['inProgress']);
-    final totalEarnings = _parseEarnings(_summary['totalEarnings']);
+    // final inProgressCount = _parseCount(_summary['inProgress']);
+    // final totalEarnings = _parseEarnings(_summary['totalEarnings']);
 
     return Container(
       margin: const EdgeInsets.all(20),
@@ -373,11 +385,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               Icons.list,
             ),
             const SizedBox(width: 8),
-            _buildFilterChip(
-              'assigned',
-              'Assigned',
-              Icons.assignment,
-            ),
+            _buildFilterChip('assigned', 'Assigned', Icons.assignment),
             const SizedBox(width: 8),
             _buildFilterChip(
               'pending',
@@ -418,12 +426,13 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
     final isSelected = _selectedFilter == value;
     final count = _getStatusCount(value);
 
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         HapticFeedback.lightImpact();
         setState(() => _selectedFilter = value);
         // Client-side filtering - no need to reload data
       },
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
@@ -512,7 +521,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
 
   Widget _buildSessionCard(Map<String, dynamic> session, int index) {
     final status = session['status']?.toString().toLowerCase() ?? 'pending';
-    
+
     // Extract seeker name from seekerId data
     String seekerName = 'Customer';
     final seekerVal = session['seekerId'];
@@ -524,7 +533,10 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
         seekerName = 'Customer';
       } else {
         // Handle malformed format: fullName: 'tambong slade'
-        final match = RegExp(r"fullName:\s*'([^']+)'", multiLine: true).firstMatch(seekerVal);
+        final match = RegExp(
+          r"fullName:\s*'([^']+)'",
+          multiLine: true,
+        ).firstMatch(seekerVal);
         if (match != null) {
           seekerName = match.group(1)!;
         } else {
@@ -533,7 +545,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
             RegExp(r'fullName:\s*"([^"]+)"', multiLine: true),
             RegExp(r"fullName[:\s]*'([^']+)'", multiLine: true),
           ];
-          
+
           for (final pattern in patterns) {
             final match2 = pattern.firstMatch(seekerVal);
             if (match2 != null) {
@@ -544,7 +556,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
         }
       }
     }
-    
+
     // Add service location and address for better context
     final serviceLocation = session['serviceLocation'] ?? '';
     final serviceAddress = session['serviceAddress'] ?? '';
@@ -824,7 +836,9 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
                 ],
               ),
             ),
-            if (serviceLocation.isNotEmpty || notes.isNotEmpty || assignmentNotes.isNotEmpty) ...[
+            if (serviceLocation.isNotEmpty ||
+                notes.isNotEmpty ||
+                assignmentNotes.isNotEmpty) ...[
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -838,7 +852,11 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
                     if (serviceLocation.isNotEmpty) ...[
                       Row(
                         children: [
-                          Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
+                          Icon(
+                            Icons.location_on,
+                            size: 16,
+                            color: Colors.grey[600],
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -886,11 +904,16 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
                       ),
                     ],
                     if (assignmentNotes.isNotEmpty && status == 'assigned') ...[
-                      if (notes.isNotEmpty || serviceLocation.isNotEmpty) const SizedBox(height: 8),
+                      if (notes.isNotEmpty || serviceLocation.isNotEmpty)
+                        const SizedBox(height: 8),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.assignment_outlined, size: 16, color: const Color(0xFF6366F1)),
+                          Icon(
+                            Icons.assignment_outlined,
+                            size: 16,
+                            color: const Color(0xFF6366F1),
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -923,6 +946,10 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
   }
 
   Widget _buildActionButtons(Map<String, dynamic> session, String status) {
+    print('Sessions: _buildActionButtons called with status: $status');
+    print('Sessions: Session data: $session');
+    print('Sessions: Session ID: ${session['id']}');
+
     if (status == 'assigned') {
       return Row(
         children: [
@@ -935,13 +962,13 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               child: TextButton(
                 onPressed: () {
                   HapticFeedback.lightImpact();
-                  _updateSessionStatus(session['_id'], 'cancelled');
+                  _updateSessionStatus(session['id'] as String?, 'cancelled');
                 },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.decline,
+                  _localizations?.decline ?? 'Decline',
                   style: const TextStyle(
                     color: Color(0xFFEF4444),
                     fontWeight: FontWeight.w600,
@@ -964,7 +991,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               child: ElevatedButton(
                 onPressed: () {
                   HapticFeedback.mediumImpact();
-                  _updateSessionStatus(session['_id'], 'confirmed');
+                  _updateSessionStatus(session['id'] as String?, 'confirmed');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
@@ -972,7 +999,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.accept,
+                  _localizations?.accept ?? 'Accept',
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -995,13 +1022,13 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               child: TextButton(
                 onPressed: () {
                   HapticFeedback.lightImpact();
-                  _updateSessionStatus(session['_id'], 'cancelled');
+                  _updateSessionStatus(session['id'] as String?, 'cancelled');
                 },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.decline,
+                  _localizations?.decline ?? 'Decline',
                   style: const TextStyle(
                     color: Color(0xFFEF4444),
                     fontWeight: FontWeight.w600,
@@ -1024,7 +1051,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               child: ElevatedButton(
                 onPressed: () {
                   HapticFeedback.mediumImpact();
-                  _updateSessionStatus(session['_id'], 'confirmed');
+                  _updateSessionStatus(session['id'] as String?, 'confirmed');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
@@ -1032,7 +1059,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.accept,
+                  _localizations?.accept ?? 'Accept',
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -1057,7 +1084,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
         child: ElevatedButton(
           onPressed: () {
             HapticFeedback.mediumImpact();
-            _updateSessionStatus(session['_id'], 'in_progress');
+            _updateSessionStatus(session['id'] as String?, 'in_progress');
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
@@ -1065,7 +1092,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
             padding: const EdgeInsets.symmetric(vertical: 14),
           ),
           child: Text(
-            AppLocalizations.of(context)!.startService,
+            _localizations?.startService ?? 'Start Service',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w600,
@@ -1088,7 +1115,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
         child: ElevatedButton(
           onPressed: () {
             HapticFeedback.mediumImpact();
-            _updateSessionStatus(session['_id'], 'completed');
+            _updateSessionStatus(session['id'] as String?, 'completed');
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
@@ -1096,7 +1123,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
             padding: const EdgeInsets.symmetric(vertical: 14),
           ),
           child: Text(
-            AppLocalizations.of(context)!.markComplete,
+            _localizations?.markComplete ?? 'Mark Complete',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w600,
@@ -1360,7 +1387,17 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
     }
   }
 
-  Future<void> _updateSessionStatus(String sessionId, String newStatus) async {
+  Future<void> _updateSessionStatus(String? sessionId, String newStatus) async {
+    print(
+      'Sessions: _updateSessionStatus called with sessionId: $sessionId, newStatus: $newStatus',
+    );
+
+    if (sessionId == null || sessionId.isEmpty) {
+      print('Sessions: ERROR - Invalid session ID: $sessionId');
+      _showErrorMessage('Invalid session ID: $sessionId');
+      return;
+    }
+
     try {
       print('Sessions: Updating session $sessionId to $newStatus');
 
@@ -1373,10 +1410,12 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
 
         if (response.isSuccess) {
           if (mounted) {
+            final localizations = AppLocalizations.of(context);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  AppLocalizations.of(context)!.sessionDeclinedSuccess,
+                  localizations?.sessionDeclinedSuccess ??
+                      'Session declined successfully',
                 ),
                 backgroundColor: const Color(0xFF10B981),
                 behavior: SnackBarBehavior.floating,
@@ -1385,10 +1424,10 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
             _loadSessions();
           }
         } else {
+          final localizations = AppLocalizations.of(context);
           _showErrorMessage(
-            AppLocalizations.of(
-              context,
-            )!.failedToDeclineSession(response.error ?? ''),
+            localizations?.failedToDeclineSession(response.error ?? '') ??
+                'Failed to decline session: ${response.error ?? 'Unknown error'}',
           );
         }
       } else {
@@ -1399,12 +1438,14 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
 
         if (response.isSuccess) {
           if (mounted) {
+            final localizations = AppLocalizations.of(context);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  AppLocalizations.of(
-                    context,
-                  )!.sessionUpdatedSuccess(newStatus.replaceAll('_', ' ')),
+                  localizations?.sessionUpdatedSuccess(
+                        newStatus.replaceAll('_', ' '),
+                      ) ??
+                      'Session updated to ${newStatus.replaceAll('_', ' ')} successfully',
                 ),
                 backgroundColor: const Color(0xFF10B981),
                 behavior: SnackBarBehavior.floating,
@@ -1416,16 +1457,18 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
             _loadSessions();
           }
         } else {
+          final localizations = AppLocalizations.of(context);
           _showErrorMessage(
-            AppLocalizations.of(
-              context,
-            )!.failedToUpdateSession(response.error ?? ''),
+            localizations?.failedToUpdateSession(response.error ?? '') ??
+                'Failed to update session: ${response.error ?? 'Unknown error'}',
           );
         }
       }
     } catch (e) {
+      final localizations = AppLocalizations.of(context);
       _showErrorMessage(
-        AppLocalizations.of(context)!.errorUpdatingSession(e.toString()),
+        localizations?.errorUpdatingSession(e.toString()) ??
+            'Error updating session: ${e.toString()}',
       );
     }
   }
@@ -1444,4 +1487,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
       );
     }
   }
+
+  // Helper method to safely get localizations
+  AppLocalizations? get _localizations => AppLocalizations.of(context);
 }

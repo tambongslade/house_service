@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/service_request_models.dart';
 import '../../../../core/services/api_service.dart';
+import '../tracking/seeker_tracking_screen.dart';
 
 class MyServiceRequestsScreen extends StatefulWidget {
   const MyServiceRequestsScreen({super.key});
 
   @override
-  State<MyServiceRequestsScreen> createState() => _MyServiceRequestsScreenState();
+  State<MyServiceRequestsScreen> createState() =>
+      _MyServiceRequestsScreenState();
 }
 
 class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
@@ -42,7 +44,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= 
+    if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 100) {
       if (!_isLoading && _hasMoreData) {
         _loadMoreRequests();
@@ -58,9 +60,11 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
     });
 
     try {
-      final statusParam = _selectedStatusFilter?.toLowerCase() == 'all' ? null : 
-                         _selectedStatusFilter?.toLowerCase();
-      
+      final statusParam =
+          _selectedStatusFilter?.toLowerCase() == 'all'
+              ? null
+              : _selectedStatusFilter?.toLowerCase();
+
       final response = await _apiService.getMyServiceRequests(
         status: statusParam,
         page: _currentPage,
@@ -68,8 +72,10 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
       );
 
       if (response.isSuccess && response.data != null) {
-        final requestsResponse = ServiceRequestsResponse.fromJson(response.data!);
-        
+        final requestsResponse = ServiceRequestsResponse.fromJson(
+          response.data!,
+        );
+
         if (mounted) {
           setState(() {
             _requests = requestsResponse.requests;
@@ -106,9 +112,11 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
 
     try {
       _currentPage++;
-      final statusParam = _selectedStatusFilter?.toLowerCase() == 'all' ? null : 
-                         _selectedStatusFilter?.toLowerCase();
-      
+      final statusParam =
+          _selectedStatusFilter?.toLowerCase() == 'all'
+              ? null
+              : _selectedStatusFilter?.toLowerCase();
+
       final response = await _apiService.getMyServiceRequests(
         status: statusParam,
         page: _currentPage,
@@ -116,8 +124,10 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
       );
 
       if (response.isSuccess && response.data != null) {
-        final requestsResponse = ServiceRequestsResponse.fromJson(response.data!);
-        
+        final requestsResponse = ServiceRequestsResponse.fromJson(
+          response.data!,
+        );
+
         if (mounted) {
           setState(() {
             _requests.addAll(requestsResponse.requests);
@@ -145,10 +155,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
@@ -247,7 +254,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
               itemBuilder: (context, index) {
                 final status = _statusFilters[index];
                 final isSelected = _selectedStatusFilter == status;
-                
+
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
@@ -267,72 +274,72 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
               },
             ),
           ),
-          
+
           // Requests list
           Expanded(
-            child: _isLoading && _requests.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : _requests.isEmpty
+            child:
+                _isLoading && _requests.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : _requests.isEmpty
                     ? RefreshIndicator(
-                        onRefresh: _refreshRequests,
-                        child: SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          child: Container(
-                            height: MediaQuery.of(context).size.height - 200,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.request_page,
-                                  size: 64,
-                                  color: Colors.grey.shade400,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No service requests found',
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Your service requests will appear here',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey.shade500,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Pull down to refresh',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey.shade400,
-                                  ),
-                                ),
-                              ],
-                            ),
+                      onRefresh: _refreshRequests,
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height - 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.request_page,
+                                size: 64,
+                                color: Colors.grey.shade400,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No service requests found',
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(color: Colors.grey.shade600),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Your service requests will appear here',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(color: Colors.grey.shade500),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Pull down to refresh',
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: Colors.grey.shade400),
+                              ),
+                            ],
                           ),
                         ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: _refreshRequests,
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.all(16),
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: _requests.length + (_isLoading && _requests.isNotEmpty ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index == _requests.length && _isLoading) {
-                              return const Padding(
-                                padding: EdgeInsets.all(16),
-                                child: Center(child: CircularProgressIndicator()),
-                              );
-                            }
-                            
-                            final request = _requests[index];
-                            return _buildRequestCard(request);
-                          },
-                        ),
                       ),
+                    )
+                    : RefreshIndicator(
+                      onRefresh: _refreshRequests,
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(16),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount:
+                            _requests.length +
+                            (_isLoading && _requests.isNotEmpty ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == _requests.length && _isLoading) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+
+                          final request = _requests[index];
+                          return _buildRequestCard(request);
+                        },
+                      ),
+                    ),
           ),
         ],
       ),
@@ -342,7 +349,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
   Widget _buildRequestCard(ServiceRequestModel request) {
     final theme = Theme.of(context);
     final statusColor = _getStatusColor(request.status);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -355,14 +362,10 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(
-          color: Colors.grey.withValues(alpha: 0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.1), width: 1),
       ),
-      child: InkWell(
+      child: GestureDetector(
         onTap: () => _showRequestDetails(request),
-        borderRadius: BorderRadius.circular(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -373,7 +376,10 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                 children: [
                   // Status badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: statusColor,
                       borderRadius: BorderRadius.circular(12),
@@ -401,7 +407,10 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                   const Spacer(),
                   // Cost
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.green.shade50,
                       borderRadius: BorderRadius.circular(20),
@@ -419,7 +428,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                 ],
               ),
             ),
-            
+
             // Service category with icon
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -433,7 +442,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                     ),
                     child: Icon(
                       _getCategoryIcon(request.category),
-                      size: 20, 
+                      size: 20,
                       color: Colors.blue.shade600,
                     ),
                   ),
@@ -465,9 +474,9 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Date, time, and duration row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -484,7 +493,9 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                       child: _buildInfoItem(
                         Icons.calendar_today,
                         'Date',
-                        request.serviceDate.isNotEmpty ? _formatDisplayDate(request.serviceDate) : 'N/A',
+                        request.serviceDate.isNotEmpty
+                            ? _formatDisplayDate(request.serviceDate)
+                            : 'N/A',
                         Colors.blue.shade600,
                       ),
                     ),
@@ -499,7 +510,9 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                       child: _buildInfoItem(
                         Icons.access_time,
                         'Time',
-                        request.startTime.isNotEmpty ? request.startTime : 'N/A',
+                        request.startTime.isNotEmpty
+                            ? request.startTime
+                            : 'N/A',
                         Colors.orange.shade600,
                       ),
                     ),
@@ -514,7 +527,9 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                       child: _buildInfoItem(
                         Icons.timelapse,
                         'Duration',
-                        request.duration > 0 ? '${request.duration.toStringAsFixed(request.duration == request.duration.roundToDouble() ? 0 : 1)}h' : 'N/A',
+                        request.duration > 0
+                            ? '${request.duration.toStringAsFixed(request.duration == request.duration.roundToDouble() ? 0 : 1)}h'
+                            : 'N/A',
                         Colors.purple.shade600,
                       ),
                     ),
@@ -522,9 +537,9 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Footer with location and created date
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -553,21 +568,64 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                 ],
               ),
             ),
+
+            // Action buttons for In Progress requests
+            if (request.status == ServiceRequestStatus.inProgress) ...[
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => _showRequestDetails(request),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.blue.shade600),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'View Details',
+                          style: TextStyle(color: Colors.blue.shade600),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _navigateToTracking(request),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green.shade600,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        icon: const Icon(Icons.location_on, size: 18),
+                        label: const Text('Track Provider'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoItem(IconData icon, String label, String value, Color color) {
+  Widget _buildInfoItem(
+    IconData icon,
+    String label,
+    String value,
+    Color color,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 18,
-          color: color,
-        ),
+        Icon(icon, size: 18, color: color),
         const SizedBox(height: 4),
         Text(
           label,
@@ -619,7 +677,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
 
   String _formatDisplayDate(String dateString) {
     if (dateString.isEmpty) return 'N/A';
-    
+
     try {
       // Handle different date formats
       DateTime date;
@@ -630,16 +688,22 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
         // Try other formats or return the original string if can't parse
         return dateString;
       }
-      
+
       final now = DateTime.now();
       final tomorrow = now.add(const Duration(days: 1));
       final yesterday = now.subtract(const Duration(days: 1));
-      
-      if (date.year == now.year && date.month == now.month && date.day == now.day) {
+
+      if (date.year == now.year &&
+          date.month == now.month &&
+          date.day == now.day) {
         return 'Today';
-      } else if (date.year == tomorrow.year && date.month == tomorrow.month && date.day == tomorrow.day) {
+      } else if (date.year == tomorrow.year &&
+          date.month == tomorrow.month &&
+          date.day == tomorrow.day) {
         return 'Tomorrow';
-      } else if (date.year == yesterday.year && date.month == yesterday.month && date.day == yesterday.day) {
+      } else if (date.year == yesterday.year &&
+          date.month == yesterday.month &&
+          date.day == yesterday.day) {
         return 'Yesterday';
       } else {
         return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
@@ -653,7 +717,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays == 0) {
       return 'today';
     } else if (difference.inDays == 1) {
@@ -668,46 +732,58 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
   void _showRequestDetails(ServiceRequestModel request) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Request Details - ${_getCategoryDisplayName(request.category)}'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildDetailRow('Status', request.statusDisplayName),
-              _buildDetailRow('Date', request.serviceDate),
-              _buildDetailRow('Time', request.startTime),
-              _buildDetailRow('Duration', '${request.duration} hours'),
-              _buildDetailRow('Province', request.province),
-              _buildDetailRow('Cost', '${request.estimatedCost.round()} FCFA'),
-              if (request.description != null)
-                _buildDetailRow('Description', request.description!),
-              if (request.specialInstructions != null)
-                _buildDetailRow('Special Instructions', request.specialInstructions!),
-              if (request.providerName != null)
-                _buildDetailRow('Provider', request.providerName!),
-              _buildDetailRow('Created', request.createdAt.toString()),
-              if (request.updatedAt != null)
-                _buildDetailRow('Updated', request.updatedAt.toString()),
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              'Request Details - ${_getCategoryDisplayName(request.category)}',
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildDetailRow('Status', request.statusDisplayName),
+                  _buildDetailRow('Date', request.serviceDate),
+                  _buildDetailRow('Time', request.startTime),
+                  _buildDetailRow('Duration', '${request.duration} hours'),
+                  _buildDetailRow('Province', request.province),
+                  _buildDetailRow(
+                    'Cost',
+                    '${request.estimatedCost.round()} FCFA',
+                  ),
+                  if (request.description != null)
+                    _buildDetailRow('Description', request.description!),
+                  if (request.specialInstructions != null)
+                    _buildDetailRow(
+                      'Special Instructions',
+                      request.specialInstructions!,
+                    ),
+                  if (request.providerName != null)
+                    _buildDetailRow('Provider', request.providerName!),
+                  _buildDetailRow('Created', request.createdAt.toString()),
+                  if (request.updatedAt != null)
+                    _buildDetailRow('Updated', request.updatedAt.toString()),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
+              ),
+              if (request.status == ServiceRequestStatus.pending)
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _showCancelDialog(request);
+                  },
+                  child: const Text(
+                    'Cancel Request',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-          if (request.status == ServiceRequestStatus.pending)
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _showCancelDialog(request);
-              },
-              child: const Text('Cancel Request', style: TextStyle(color: Colors.red)),
-            ),
-        ],
-      ),
     );
   }
 
@@ -717,10 +793,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
+          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 2),
           Text(value),
         ],
@@ -730,48 +803,61 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
 
   void _showCancelDialog(ServiceRequestModel request) {
     final reasonController = TextEditingController();
-    
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Cancel Service Request'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Are you sure you want to cancel this service request?'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: reasonController,
-              decoration: const InputDecoration(
-                labelText: 'Reason for cancellation',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Cancel Service Request'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Are you sure you want to cancel this service request?',
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: reasonController,
+                  decoration: const InputDecoration(
+                    labelText: 'Reason for cancellation',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 3,
+                ),
+              ],
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Keep Request'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Keep Request'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _cancelRequest(
+                    request.id,
+                    reasonController.text.trim().isEmpty
+                        ? 'Cancelled by user'
+                        : reasonController.text.trim(),
+                  );
+                },
+                child: const Text(
+                  'Cancel Request',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _cancelRequest(request.id, reasonController.text.trim().isEmpty 
-                  ? 'Cancelled by user' : reasonController.text.trim());
-            },
-            child: const Text('Cancel Request', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
     );
   }
 
   Future<void> _cancelRequest(String requestId, String reason) async {
     try {
-      final response = await _apiService.cancelServiceRequest(requestId, reason);
-      
+      final response = await _apiService.cancelServiceRequest(
+        requestId,
+        reason,
+      );
+
       if (response.isSuccess) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -788,5 +874,35 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
     } catch (e) {
       _showError('Error cancelling request: $e');
     }
+  }
+
+  void _navigateToTracking(ServiceRequestModel request) {
+    // For service requests, we need to get the session ID from the request
+    // Since service requests might not have a direct session ID, we'll use the request ID
+    final sessionId = request.id;
+    final providerName = request.providerName ?? 'Provider';
+    final serviceName = _getCategoryDisplayName(request.category);
+
+    if (sessionId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to track: Invalid session ID'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => SeekerTrackingScreen(
+              sessionId: sessionId,
+              providerName: providerName,
+              serviceName: serviceName,
+            ),
+      ),
+    );
   }
 }
