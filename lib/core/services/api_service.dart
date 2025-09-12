@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/api_response.dart';
@@ -43,31 +44,31 @@ class ApiService {
   // Initialize service with stored tokens
   Future<void> initialize() async {
     await _loadTokens();
-    print('API Service initialized with base URL: $baseUrl');
+    debugPrint('API Service initialized with base URL: $baseUrl');
   }
 
   // Test connectivity to the server
   Future<bool> testConnection() async {
     try {
-      print('Testing connection to: $baseUrl');
+      debugPrint('Testing connection to: $baseUrl');
       final uri = Uri.parse('$baseUrl/health'); // Try a health check endpoint
       final response = await http
           .get(uri)
           .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
-              print('Connection test timed out after 10 seconds');
+              debugPrint('Connection test timed out after 10 seconds');
               throw TimeoutException(
                 'Connection timeout',
                 const Duration(seconds: 10),
               );
             },
           );
-      print('Connection test - Status: ${response.statusCode}');
+      debugPrint('Connection test - Status: ${response.statusCode}');
       return response.statusCode <
           500; // Any response under 500 means server is reachable
     } catch (e) {
-      print('Connection test failed: $e');
+      debugPrint('Connection test failed: $e');
       return false;
     }
   }
@@ -78,7 +79,7 @@ class ApiService {
       final prefs = await SharedPreferences.getInstance();
       _accessToken = prefs.getString('access_token');
     } catch (e) {
-      print('Error loading tokens: $e');
+      debugPrint('Error loading tokens: $e');
     }
   }
 
@@ -87,9 +88,9 @@ class ApiService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('access_token', accessToken);
       _accessToken = accessToken;
-      print('Token saved successfully. Length: ${accessToken.length}');
+      debugPrint('Token saved successfully. Length: ${accessToken.length}');
     } catch (e) {
-      print('Error saving token: $e');
+      debugPrint('Error saving token: $e');
     }
   }
 
@@ -104,7 +105,7 @@ class ApiService {
       await prefs.remove('access_token');
       _accessToken = null;
     } catch (e) {
-      print('Error clearing tokens: $e');
+      debugPrint('Error clearing tokens: $e');
     }
   }
 
@@ -138,16 +139,19 @@ class ApiService {
       final headers = requiresAuth ? _authHeaders : _defaultHeaders;
 
       // Debug logging for authentication
-      print('API Request - Method: $method');
-      print('API Request - URI: $uri');
-      print('API Request - Requires Auth: $requiresAuth');
+      debugPrint('API Request - Method: $method');
+      debugPrint('API Request - URI: $uri');
+      debugPrint('API Request - Requires Auth: $requiresAuth');
       if (requiresAuth) {
-        print(
+        debugPrint(
           'API Request - Auth Header Present: ${headers.containsKey('Authorization')}',
         );
         if (headers.containsKey('Authorization')) {
           final authHeader = headers['Authorization']!;
-          print('API Request - Auth Header: ${authHeader.substring(0, 20)}...');
+          final preview = authHeader.length > 20 
+              ? '${authHeader.substring(0, 20)}...' 
+              : authHeader;
+          debugPrint('API Request - Auth Header: $preview (length: ${authHeader.length})');
         }
       }
 
@@ -184,8 +188,8 @@ class ApiService {
           throw Exception('Unsupported HTTP method: $method');
       }
 
-      print('API Response - Status: ${response.statusCode}');
-      print('API Response - Body: ${response.body}');
+      debugPrint('API Response - Status: ${response.statusCode}');
+      debugPrint('API Response - Body: ${response.body}');
 
       // Handle token expiration
       if (response.statusCode == 401 && requiresAuth && !isRetry) {
@@ -196,12 +200,12 @@ class ApiService {
       dynamic responseData;
       try {
         responseData = jsonDecode(response.body);
-        print('API Response - Parsed Data Type: ${responseData.runtimeType}');
+        debugPrint('API Response - Parsed Data Type: ${responseData.runtimeType}');
         if (responseData is List) {
-          print('API Response - Array Length: ${responseData.length}');
+          debugPrint('API Response - Array Length: ${responseData.length}');
         }
       } catch (e) {
-        print('API Error: Failed to parse response JSON: $e');
+        debugPrint('API Error: Failed to parse response JSON: $e');
         return ApiResponse.error('Invalid server response format');
       }
 
@@ -233,11 +237,11 @@ class ApiService {
           errorMessage = 'Request failed with status ${response.statusCode}';
         }
 
-        print('API Error: $errorMessage');
+        debugPrint('API Error: $errorMessage');
         return ApiResponse.error(errorMessage);
       }
     } on SocketException catch (e) {
-      print('SocketException details: ${e.toString()}');
+      debugPrint('SocketException details: ${e.toString()}');
       if (e.toString().contains('Connection refused') ||
           e.toString().contains('Connection timed out')) {
         return ApiResponse.error(
@@ -251,10 +255,10 @@ class ApiService {
         return ApiResponse.error('Connection failed: ${e.message}');
       }
     } on FormatException catch (e) {
-      print('FormatException details: ${e.toString()}');
+      debugPrint('FormatException details: ${e.toString()}');
       return ApiResponse.error('Invalid response format from server');
     } catch (e) {
-      print('Unexpected error details: ${e.toString()}');
+      debugPrint('Unexpected error details: ${e.toString()}');
       return ApiResponse.error('Network error: ${e.toString()}');
     }
   }
@@ -273,16 +277,19 @@ class ApiService {
       final headers = requiresAuth ? _authHeaders : _defaultHeaders;
 
       // Debug logging for authentication
-      print('API Request - Method: $method');
-      print('API Request - URI: $uri');
-      print('API Request - Requires Auth: $requiresAuth');
+      debugPrint('API Request - Method: $method');
+      debugPrint('API Request - URI: $uri');
+      debugPrint('API Request - Requires Auth: $requiresAuth');
       if (requiresAuth) {
-        print(
+        debugPrint(
           'API Request - Auth Header Present: ${headers.containsKey('Authorization')}',
         );
         if (headers.containsKey('Authorization')) {
           final authHeader = headers['Authorization']!;
-          print('API Request - Auth Header: ${authHeader.substring(0, 20)}...');
+          final preview = authHeader.length > 20 
+              ? '${authHeader.substring(0, 20)}...' 
+              : authHeader;
+          debugPrint('API Request - Auth Header: $preview (length: ${authHeader.length})');
         }
       }
 
@@ -319,8 +326,8 @@ class ApiService {
           throw Exception('Unsupported HTTP method: $method');
       }
 
-      print('API Response - Status: ${response.statusCode}');
-      print('API Response - Body: ${response.body}');
+      debugPrint('API Response - Status: ${response.statusCode}');
+      debugPrint('API Response - Body: ${response.body}');
 
       // Handle token expiration
       if (response.statusCode == 401 && requiresAuth && !isRetry) {
@@ -331,12 +338,12 @@ class ApiService {
       dynamic responseData;
       try {
         responseData = jsonDecode(response.body);
-        print('API Response - Parsed Data Type: ${responseData.runtimeType}');
+        debugPrint('API Response - Parsed Data Type: ${responseData.runtimeType}');
         if (responseData is List) {
-          print('API Response - Array Length: ${responseData.length}');
+          debugPrint('API Response - Array Length: ${responseData.length}');
         }
       } catch (e) {
-        print('API Error: Failed to parse response JSON: $e');
+        debugPrint('API Error: Failed to parse response JSON: $e');
         return ApiResponse.error('Invalid server response format');
       }
 
@@ -384,11 +391,11 @@ class ApiService {
           errorMessage = 'Request failed with status ${response.statusCode}';
         }
 
-        print('API Error: $errorMessage');
+        debugPrint('API Error: $errorMessage');
         return ApiResponse.error(errorMessage);
       }
     } on SocketException catch (e) {
-      print('SocketException details: ${e.toString()}');
+      debugPrint('SocketException details: ${e.toString()}');
       if (e.toString().contains('Connection refused') ||
           e.toString().contains('Connection timed out')) {
         return ApiResponse.error(
@@ -402,10 +409,10 @@ class ApiService {
         return ApiResponse.error('Connection failed: ${e.message}');
       }
     } on FormatException catch (e) {
-      print('FormatException details: ${e.toString()}');
+      debugPrint('FormatException details: ${e.toString()}');
       return ApiResponse.error('Invalid response format from server');
     } catch (e) {
-      print('Unexpected error details: ${e.toString()}');
+      debugPrint('Unexpected error details: ${e.toString()}');
       return ApiResponse.error('Network error: ${e.toString()}');
     }
   }
@@ -425,26 +432,41 @@ class ApiService {
     String fullName,
     String email,
     String password,
-    String phoneNumber,
-  ) async {
-    print('API: Starting registration request');
-    print('API: Base URL: $baseUrl (auto-detected)');
-    print(
+    String phoneNumber, {
+    String? role,
+    Map<String, dynamic>? providerSetupData,
+  }) async {
+    debugPrint('API: Starting registration request');
+    debugPrint('API: Base URL: $baseUrl (auto-detected)');
+    debugPrint(
       'API: Full endpoint: ${Uri.parse('$baseUrl/$apiVersion/auth/register')}',
     );
-    print(
-      'API: Request data: {fullName: $fullName, email: $email, phoneNumber: $phoneNumber}',
+    debugPrint(
+      'API: Request data: {fullName: $fullName, email: $email, phoneNumber: $phoneNumber, role: $role}',
     );
+
+    final requestData = <String, dynamic>{
+      'fullName': fullName,
+      'email': email,
+      'password': password,
+      'phoneNumber': phoneNumber,
+    };
+
+    // Add role if specified
+    if (role != null) {
+      requestData['role'] = role;
+    }
+
+    // Add provider setup data if provided
+    if (providerSetupData != null && role == 'provider') {
+      requestData.addAll(providerSetupData);
+      debugPrint('API: Including provider setup data: ${providerSetupData.keys}');
+    }
 
     return _makeRequest(
       'POST',
       'auth/register',
-      {
-        'fullName': fullName,
-        'email': email,
-        'password': password,
-        'phoneNumber': phoneNumber,
-      },
+      requestData,
       (data) => AuthResponse.fromJson(data),
       requiresAuth: false,
     );
@@ -461,15 +483,18 @@ class ApiService {
   }
 
   Future<ApiResponse<AuthResponse>> setUserRole(String role) async {
-    print('API: Setting user role to: $role');
-    print('API: Current access token exists: ${_accessToken != null}');
-    print('API: Is authenticated: $isAuthenticated');
+    debugPrint('API: Setting user role to: $role');
+    debugPrint('API: Current access token exists: ${_accessToken != null}');
+    debugPrint('API: Is authenticated: $isAuthenticated');
     if (_accessToken != null) {
-      print(
-        'API: Access token starts with: ${_accessToken!.substring(0, 20)}...',
+      final tokenPreview = _accessToken!.length > 20 
+          ? '${_accessToken!.substring(0, 20)}...' 
+          : _accessToken!;
+      debugPrint(
+        'API: Access token: $tokenPreview (length: ${_accessToken!.length})',
       );
     }
-    print('API: Role endpoint: ${Uri.parse('$baseUrl/$apiVersion/auth/role')}');
+    debugPrint('API: Role endpoint: ${Uri.parse('$baseUrl/$apiVersion/auth/role')}');
 
     return _makeRequest(
       'PATCH', // Changed from PUT to PATCH
@@ -482,8 +507,8 @@ class ApiService {
 
   // User endpoints
   Future<ApiResponse<UserModel>> getProfile() async {
-    print('API: Getting user profile');
-    print(
+    debugPrint('API: Getting user profile');
+    debugPrint(
       'API: Profile endpoint: ${Uri.parse('$baseUrl/$apiVersion/auth/profile')}',
     );
     return _makeRequest(
@@ -497,7 +522,7 @@ class ApiService {
 
   // Services endpoints
   Future<ApiResponse<Map<String, dynamic>>> getServiceCategories() async {
-    print('API: Getting service categories');
+    debugPrint('API: Getting service categories');
     return _makeRequest(
       'GET',
       'services/categories',
@@ -510,7 +535,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> createService(
     Map<String, dynamic> serviceData,
   ) async {
-    print('API: Creating service: ${serviceData['title']}');
+    debugPrint('API: Creating service: ${serviceData['title']}');
     return _makeRequest(
       'POST',
       'services',
@@ -521,22 +546,22 @@ class ApiService {
   }
 
   Map<String, dynamic> _parseServiceData(Map<String, dynamic> data) {
-    print('DEBUG: _parseServiceData received data type: ${data.runtimeType}');
-    print('DEBUG: _parseServiceData received data: $data');
+    debugPrint('DEBUG: _parseServiceData received data type: ${data.runtimeType}');
+    debugPrint('DEBUG: _parseServiceData received data: $data');
 
     try {
       // Handle various response formats from the server
       if (data.containsKey('data') && data['data'] is Map) {
         // Response wrapped in a 'data' field
-        print('DEBUG: Using data.data path');
+        debugPrint('DEBUG: Using data.data path');
         return Map<String, dynamic>.from(data['data']);
       } else if (data.containsKey('service') && data['service'] is Map) {
         // Response wrapped in a 'service' field
-        print('DEBUG: Using data.service path');
+        debugPrint('DEBUG: Using data.service path');
         return Map<String, dynamic>.from(data['service']);
       } else if (data.containsKey('data') && data['data'] is List) {
         // Server returned an array wrapped in 'data'
-        print('DEBUG: Server returned array in data field');
+        debugPrint('DEBUG: Server returned array in data field');
         final list = data['data'] as List;
         if (list.isNotEmpty && list.first is Map) {
           return Map<String, dynamic>.from(list.first);
@@ -544,12 +569,12 @@ class ApiService {
         return {'message': 'Service created successfully'};
       } else {
         // Direct response object
-        print('DEBUG: Using direct response path');
+        debugPrint('DEBUG: Using direct response path');
         return Map<String, dynamic>.from(data);
       }
     } catch (e, stackTrace) {
-      print('DEBUG: Error in _parseServiceData: $e');
-      print('DEBUG: Stack trace: $stackTrace');
+      debugPrint('DEBUG: Error in _parseServiceData: $e');
+      debugPrint('DEBUG: Stack trace: $stackTrace');
       // Return a safe default response
       return {
         'message': 'Service created successfully',
@@ -559,7 +584,7 @@ class ApiService {
   }
 
   Future<ApiResponse<List<Map<String, dynamic>>>> getMyServices() async {
-    print('API: Getting my services');
+    debugPrint('API: Getting my services');
     return _makeRequestForList(
       'GET',
       'services/my-services',
@@ -570,31 +595,31 @@ class ApiService {
   }
 
   List<Map<String, dynamic>> _parseServicesData(dynamic data) {
-    print('DEBUG: _parseServicesData received data type: ${data.runtimeType}');
-    print('DEBUG: _parseServicesData received data: $data');
+    debugPrint('DEBUG: _parseServicesData received data type: ${data.runtimeType}');
+    debugPrint('DEBUG: _parseServicesData received data: $data');
 
     if (data is List) {
-      print('DEBUG: Data is a List with ${data.length} items');
+      debugPrint('DEBUG: Data is a List with ${data.length} items');
       final result = data.whereType<Map<String, dynamic>>().toList();
-      print('DEBUG: Parsed ${result.length} services from list');
+      debugPrint('DEBUG: Parsed ${result.length} services from list');
       return result;
     } else if (data is Map) {
-      print('DEBUG: Data is a Map with keys: ${data.keys}');
+      debugPrint('DEBUG: Data is a Map with keys: ${data.keys}');
       if (data['services'] is List) {
         final services = data['services'] as List;
-        print('DEBUG: Found services array with ${services.length} items');
+        debugPrint('DEBUG: Found services array with ${services.length} items');
         final result = services.whereType<Map<String, dynamic>>().toList();
-        print('DEBUG: Parsed ${result.length} services from services array');
+        debugPrint('DEBUG: Parsed ${result.length} services from services array');
         return result;
       } else if (data['data'] is List) {
         final services = data['data'] as List;
-        print('DEBUG: Found data array with ${services.length} items');
+        debugPrint('DEBUG: Found data array with ${services.length} items');
         final result = services.whereType<Map<String, dynamic>>().toList();
-        print('DEBUG: Parsed ${result.length} services from data array');
+        debugPrint('DEBUG: Parsed ${result.length} services from data array');
         return result;
       }
     }
-    print('DEBUG: No valid services found, returning empty list');
+    debugPrint('DEBUG: No valid services found, returning empty list');
     return <Map<String, dynamic>>[];
   }
 
@@ -602,7 +627,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> createAvailability(
     Map<String, dynamic> availabilityData,
   ) async {
-    print('API: Creating availability for ${availabilityData['dayOfWeek']}');
+    debugPrint('API: Creating availability for ${availabilityData['dayOfWeek']}');
     return _makeRequest(
       'POST',
       'availability',
@@ -613,7 +638,7 @@ class ApiService {
   }
 
   Future<ApiResponse<List<Map<String, dynamic>>>> getMyAvailability() async {
-    print('API: Getting my availability schedule');
+    debugPrint('API: Getting my availability schedule');
     return _makeRequestForList(
       'GET',
       'availability',
@@ -742,7 +767,7 @@ class ApiService {
     String serviceId,
     Map<String, dynamic> serviceData,
   ) async {
-    print('API: Updating service $serviceId');
+    debugPrint('API: Updating service $serviceId');
     return _makeRequest(
       'PATCH',
       'services/$serviceId',
@@ -753,7 +778,7 @@ class ApiService {
   }
 
   Future<ApiResponse<void>> deleteService(String serviceId) async {
-    print('API: Deleting service $serviceId');
+    debugPrint('API: Deleting service $serviceId');
     return _makeRequest(
       'DELETE',
       'services/$serviceId',
@@ -769,7 +794,7 @@ class ApiService {
     int page = 1,
     int limit = 20,
   }) async {
-    print('API: Getting my bookings');
+    debugPrint('API: Getting my bookings');
 
     final queryParams = <String, String>{
       'page': page.toString(),
@@ -797,7 +822,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> getBookingDetails(
     String bookingId,
   ) async {
-    print('API: Getting booking details for $bookingId');
+    debugPrint('API: Getting booking details for $bookingId');
     return _makeRequest(
       'GET',
       'bookings/$bookingId',
@@ -811,7 +836,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> createBooking(
     Map<String, dynamic> bookingData,
   ) async {
-    print('API: Creating booking');
+    debugPrint('API: Creating booking');
     return _makeRequest(
       'POST',
       'bookings',
@@ -826,7 +851,7 @@ class ApiService {
     String bookingId,
     String reason,
   ) async {
-    print('API: Cancelling booking $bookingId');
+    debugPrint('API: Cancelling booking $bookingId');
     return _makeRequest(
       'PATCH',
       'bookings/$bookingId/cancel',
@@ -838,7 +863,7 @@ class ApiService {
 
   // Bookings endpoints for providers
   Future<ApiResponse<List<Map<String, dynamic>>>> getProviderBookings() async {
-    print('API: Getting provider bookings');
+    debugPrint('API: Getting provider bookings');
     return _makeRequestForList(
       'GET',
       'bookings/provider-bookings',
@@ -862,7 +887,7 @@ class ApiService {
     String bookingId,
     Map<String, dynamic> statusData,
   ) async {
-    print('API: Updating booking status $bookingId');
+    debugPrint('API: Updating booking status $bookingId');
     return _makeRequest(
       'PATCH',
       'bookings/$bookingId',
@@ -877,14 +902,14 @@ class ApiService {
     String availabilityId,
     Map<String, dynamic> availabilityData,
   ) async {
-    print('API: Updating availability $availabilityId');
-    print('DEBUG API: availabilityId = $availabilityId');
-    print('DEBUG API: availabilityId type = ${availabilityId.runtimeType}');
-    print('DEBUG API: availabilityData = $availabilityData');
-    print('DEBUG API: availabilityData keys = ${availabilityData.keys}');
+    debugPrint('API: Updating availability $availabilityId');
+    debugPrint('DEBUG API: availabilityId = $availabilityId');
+    debugPrint('DEBUG API: availabilityId type = ${availabilityId.runtimeType}');
+    debugPrint('DEBUG API: availabilityData = $availabilityData');
+    debugPrint('DEBUG API: availabilityData keys = ${availabilityData.keys}');
 
     for (final entry in availabilityData.entries) {
-      print(
+      debugPrint(
         'DEBUG API: ${entry.key} = ${entry.value} (${entry.value.runtimeType})',
       );
     }
@@ -915,7 +940,7 @@ class ApiService {
       availabilityData['notes'] = notes;
     }
 
-    print(
+    debugPrint(
       'API: Updating day availability by ID $dayId for $dayOfWeek with ${timeSlots.length} time slots',
     );
     return _makeRequest(
@@ -943,10 +968,10 @@ class ApiService {
       availabilityData['notes'] = notes;
     }
 
-    print(
+    debugPrint(
       'API: Updating availability by day name for $dayOfWeek with ${timeSlots.length} time slots',
     );
-    print('API: Using new route - availability/day/${dayOfWeek.toLowerCase()}');
+    debugPrint('API: Using new route - availability/day/${dayOfWeek.toLowerCase()}');
     return _makeRequest(
       'PATCH',
       'availability/day/${dayOfWeek.toLowerCase()}',
@@ -972,10 +997,10 @@ class ApiService {
       availabilityData['notes'] = notes;
     }
 
-    print(
+    debugPrint(
       'API: Creating/updating day availability for $dayOfWeek with ${timeSlots.length} time slots',
     );
-    print('API: Using new route - availability/day/${dayOfWeek.toLowerCase()}');
+    debugPrint('API: Using new route - availability/day/${dayOfWeek.toLowerCase()}');
     return _makeRequest(
       'PATCH',
       'availability/day/${dayOfWeek.toLowerCase()}',
@@ -986,7 +1011,7 @@ class ApiService {
   }
 
   Future<ApiResponse<void>> deleteAvailability(String availabilityId) async {
-    print('API: Deleting availability $availabilityId');
+    debugPrint('API: Deleting availability $availabilityId');
     return _makeRequest(
       'DELETE',
       'availability/$availabilityId',
@@ -1003,7 +1028,7 @@ class ApiService {
     required String startTime, // HH:mm format
     required String endTime, // HH:mm format
   }) async {
-    print(
+    debugPrint(
       'API: Checking availability for provider $providerId on $date from $startTime to $endTime',
     );
 
@@ -1020,7 +1045,7 @@ class ApiService {
   Future<ApiResponse<List<Map<String, dynamic>>>> getProviderAvailability(
     String providerId,
   ) async {
-    print('API: Getting provider availability for $providerId');
+    debugPrint('API: Getting provider availability for $providerId');
     return _makeRequestForList(
       'GET',
       'availability/provider/$providerId',
@@ -1032,7 +1057,7 @@ class ApiService {
 
   // Set default availability (Monday-Friday 9-5) - Updated to use new v2 API
   Future<ApiResponse<Map<String, dynamic>>> setDefaultAvailability() async {
-    print('API: Setting default availability (Mon-Fri 9-5)');
+    debugPrint('API: Setting default availability (Mon-Fri 9-5)');
     return _makeRequest(
       'POST',
       'availability/default',
@@ -1048,8 +1073,8 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> createSession(
     Map<String, dynamic> sessionData,
   ) async {
-    print('API: Creating session');
-    print('API: Session data: $sessionData');
+    debugPrint('API: Creating session');
+    debugPrint('API: Session data: $sessionData');
     return _makeRequest(
       'POST',
       'sessions',
@@ -1067,7 +1092,7 @@ class ApiService {
     int page = 1,
     int limit = 20,
   }) async {
-    print('API: Getting provider sessions with location (status: $status)');
+    debugPrint('API: Getting provider sessions with location (status: $status)');
 
     final queryParams = <String, String>{
       'page': page.toString(),
@@ -1093,8 +1118,8 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> createServiceRequestWithLocation(
     Map<String, dynamic> requestData,
   ) async {
-    print('API: Creating service request with location');
-    print('API: Request data: $requestData');
+    debugPrint('API: Creating service request with location');
+    debugPrint('API: Request data: $requestData');
     return _makeRequest(
       'POST',
       'service-requests',
@@ -1119,7 +1144,7 @@ class ApiService {
       try {
         // getProviderBookings returns List<Map<String, dynamic>>
         final bookingsList = response.data!;
-        print('API Response: ${bookingsList.length} bookings received');
+        debugPrint('API Response: ${bookingsList.length} bookings received');
         
         List<SessionModel> sessions = [];
         
@@ -1129,8 +1154,8 @@ class ApiService {
             final session = SessionModel.fromJson(booking);
             sessions.add(session);
           } catch (e) {
-            print('Error parsing booking: $e');
-            print('Booking data: $booking');
+            debugPrint('Error parsing booking: $e');
+            debugPrint('Booking data: $booking');
             // Continue with other bookings even if one fails
           }
         }
@@ -1160,8 +1185,8 @@ class ApiService {
         
         return ApiResponse<SessionListResponse>.success(sessionListResponse);
       } catch (e) {
-        print('Error parsing session list response: $e');
-        print('Response data: ${response.data}');
+        debugPrint('Error parsing session list response: $e');
+        debugPrint('Response data: ${response.data}');
         return ApiResponse<SessionListResponse>.error('Failed to parse session data: $e');
       }
     }
@@ -1224,19 +1249,19 @@ class ApiService {
     if (response.isSuccess && response.data != null) {
       // Log location and client information for each session
       for (final session in response.data!.sessions) {
-        print('Session ${session.id}:');
-        print('  Service: ${session.serviceName}');
-        print('  Client: ${session.seeker?.fullName ?? 'Unknown'}');
-        print('  Phone: ${session.seeker?.phoneNumber ?? 'N/A'}');
-        print('  Location: ${session.serviceLocation?.address ?? 'N/A'}');
-        print('  Province: ${session.serviceLocation?.province ?? 'N/A'}');
-        print('  GPS: ${session.serviceLocation?.latitude}, ${session.serviceLocation?.longitude}');
-        print('  Status: ${session.status.displayName}');
-        print('  Payment: ${session.paymentStatus.displayName}');
-        print('  Amount: ${session.formattedAmount}');
-        print('  Date: ${session.displayDate}');
-        print('  Duration: ${session.formattedDuration}');
-        print('---');
+        debugPrint('Session ${session.id}:');
+        debugPrint('  Service: ${session.serviceName}');
+        debugPrint('  Client: ${session.seeker?.fullName ?? 'Unknown'}');
+        debugPrint('  Phone: ${session.seeker?.phoneNumber ?? 'N/A'}');
+        debugPrint('  Location: ${session.serviceLocation?.address ?? 'N/A'}');
+        debugPrint('  Province: ${session.serviceLocation?.province ?? 'N/A'}');
+        debugPrint('  GPS: ${session.serviceLocation?.latitude}, ${session.serviceLocation?.longitude}');
+        debugPrint('  Status: ${session.status.displayName}');
+        debugPrint('  Payment: ${session.paymentStatus.displayName}');
+        debugPrint('  Amount: ${session.formattedAmount}');
+        debugPrint('  Date: ${session.displayDate}');
+        debugPrint('  Duration: ${session.formattedDuration}');
+        debugPrint('---');
       }
     }
 
@@ -1249,7 +1274,7 @@ class ApiService {
     int page = 1,
     int limit = 20,
   }) async {
-    print(
+    debugPrint(
       'API: Getting my sessions (status: $status, page: $page, limit: $limit)',
     );
 
@@ -1279,7 +1304,7 @@ class ApiService {
     int page = 1,
     int limit = 20,
   }) async {
-    print('API: Getting sessions as seeker (status: $status)');
+    debugPrint('API: Getting sessions as seeker (status: $status)');
 
     final queryParams = <String, String>{
       'page': page.toString(),
@@ -1307,7 +1332,7 @@ class ApiService {
     int page = 1,
     int limit = 20,
   }) async {
-    print('API: Getting sessions as provider (status: $status)');
+    debugPrint('API: Getting sessions as provider (status: $status)');
 
     final queryParams = <String, String>{
       'page': page.toString(),
@@ -1333,7 +1358,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> getSessionDetails(
     String sessionId,
   ) async {
-    print('API: Getting session details for $sessionId');
+    debugPrint('API: Getting session details for $sessionId');
     return _makeRequest(
       'GET',
       'sessions/$sessionId',
@@ -1348,8 +1373,8 @@ class ApiService {
     String sessionId,
     Map<String, dynamic> updateData,
   ) async {
-    print('API: Updating session $sessionId');
-    print('API: Update data: $updateData');
+    debugPrint('API: Updating session $sessionId');
+    debugPrint('API: Update data: $updateData');
     return _makeRequest(
       'PUT',
       'sessions/$sessionId',
@@ -1364,7 +1389,7 @@ class ApiService {
     String sessionId,
     String reason,
   ) async {
-    print('API: Cancelling session $sessionId with reason: $reason');
+    debugPrint('API: Cancelling session $sessionId with reason: $reason');
     return _makeRequest(
       'PUT',
       'sessions/$sessionId/cancel',
@@ -1376,7 +1401,7 @@ class ApiService {
 
   // Get category pricing
   Future<ApiResponse<List<Map<String, dynamic>>>> getCategoryPricing() async {
-    print('API: Getting category pricing');
+    debugPrint('API: Getting category pricing');
     return _makeRequestForList(
       'GET',
       'admin/session-config/category-pricing',
@@ -1434,7 +1459,7 @@ class ApiService {
     required String startTime, // HH:mm format
     required double durationHours,
   }) async {
-    print(
+    debugPrint(
       'API: Validating session availability for $durationHours hours starting at $startTime',
     );
 
@@ -1547,7 +1572,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> startLocationTracking(
     String sessionId,
   ) async {
-    print('API: Starting location tracking for session $sessionId');
+    debugPrint('API: Starting location tracking for session $sessionId');
     return _makeRequest(
       'POST',
       'sessions/$sessionId/tracking/start',
@@ -1562,7 +1587,7 @@ class ApiService {
     String sessionId,
     Map<String, dynamic> locationData,
   ) async {
-    print('API: Updating provider location for session $sessionId');
+    debugPrint('API: Updating provider location for session $sessionId');
     return _makeRequest(
       'PUT',
       'sessions/$sessionId/tracking/location',
@@ -1576,7 +1601,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> getProviderLocation(
     String sessionId,
   ) async {
-    print('API: Getting provider location for session $sessionId');
+    debugPrint('API: Getting provider location for session $sessionId');
     return _makeRequest(
       'GET',
       'sessions/$sessionId/tracking/location',
@@ -1593,7 +1618,7 @@ class ApiService {
     int limit = 5,
     int days = 7,
   }) async {
-    print('API: Getting upcoming bookings (limit: $limit, days: $days)');
+    debugPrint('API: Getting upcoming bookings (limit: $limit, days: $days)');
     return _makeRequest(
       'GET',
       'providers/bookings/upcoming?limit=$limit&days=$days',
@@ -1609,7 +1634,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> createAvailabilityV2(
     Map<String, dynamic> availabilityData,
   ) async {
-    print('API: Creating availability (v2)');
+    debugPrint('API: Creating availability (v2)');
     return _makeRequest(
       'POST',
       'availability',
@@ -1621,7 +1646,7 @@ class ApiService {
 
   // Get my availability schedule (updated)
   Future<ApiResponse<List<Map<String, dynamic>>>> getMyAvailabilityV2() async {
-    print('API: Getting my availability schedule (v2)');
+    debugPrint('API: Getting my availability schedule (v2)');
     return _makeRequestForList(
       'GET',
       'availability',
@@ -1635,7 +1660,7 @@ class ApiService {
   Future<ApiResponse<List<Map<String, dynamic>>>> getProviderAvailabilityV2(
     String providerId,
   ) async {
-    print('API: Getting provider availability (v2) for $providerId');
+    debugPrint('API: Getting provider availability (v2) for $providerId');
     return _makeRequestForList(
       'GET',
       'availability/provider/$providerId',
@@ -1650,7 +1675,7 @@ class ApiService {
     String availabilityId,
     Map<String, dynamic> availabilityData,
   ) async {
-    print('API: Updating availability (v2) $availabilityId');
+    debugPrint('API: Updating availability (v2) $availabilityId');
     return _makeRequest(
       'PUT',
       'availability/$availabilityId',
@@ -1662,7 +1687,7 @@ class ApiService {
 
   // Delete availability (updated)
   Future<ApiResponse<void>> deleteAvailabilityV2(String availabilityId) async {
-    print('API: Deleting availability (v2) $availabilityId');
+    debugPrint('API: Deleting availability (v2) $availabilityId');
     return _makeRequest(
       'DELETE',
       'availability/$availabilityId',
@@ -1674,7 +1699,7 @@ class ApiService {
 
   // Set default availability (updated)
   Future<ApiResponse<Map<String, dynamic>>> setDefaultAvailabilityV2() async {
-    print('API: Setting default availability (v2)');
+    debugPrint('API: Setting default availability (v2)');
     return _makeRequest(
       'POST',
       'availability/default',
@@ -1691,7 +1716,7 @@ class ApiService {
     required String startTime,
     required String endTime,
   }) async {
-    print('API: Checking availability (v2) for provider $providerId');
+    debugPrint('API: Checking availability (v2) for provider $providerId');
     return _makeRequest(
       'GET',
       'availability/check?providerId=$providerId&date=$date&startTime=$startTime&endTime=$endTime',
@@ -1704,7 +1729,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> getSeekerTrackingView(
     String sessionId,
   ) async {
-    print('API: Getting seeker tracking view for session $sessionId');
+    debugPrint('API: Getting seeker tracking view for session $sessionId');
     return _makeRequest(
       'GET',
       'sessions/$sessionId/tracking/seeker',
@@ -1718,7 +1743,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> completeServiceTracking(
     String sessionId,
   ) async {
-    print('API: Completing service tracking for session $sessionId');
+    debugPrint('API: Completing service tracking for session $sessionId');
     return _makeRequest(
       'PUT',
       'sessions/$sessionId/tracking/complete',
@@ -1746,7 +1771,7 @@ class ApiService {
     String sessionId,
     Map<String, dynamic> emergencyData,
   ) async {
-    print('API: Reporting emergency stop for session $sessionId');
+    debugPrint('API: Reporting emergency stop for session $sessionId');
     return _makeRequest(
       'POST',
       'sessions/$sessionId/tracking/emergency',
@@ -1760,7 +1785,7 @@ class ApiService {
   Future<ApiResponse<List<Map<String, dynamic>>>> getTrackingHistory(
     String sessionId,
   ) async {
-    print('API: Getting tracking history for session $sessionId');
+    debugPrint('API: Getting tracking history for session $sessionId');
     return _makeRequestForList(
       'GET',
       'sessions/$sessionId/tracking/history',
@@ -1786,7 +1811,7 @@ class ApiService {
   // Provider Dashboard endpoints
   Future<ApiResponse<Map<String, dynamic>>>
   getProviderDashboardSummary() async {
-    print('API: Getting provider dashboard summary');
+    debugPrint('API: Getting provider dashboard summary');
     return _makeRequest(
       'GET',
       'providers/dashboard',
@@ -1801,7 +1826,7 @@ class ApiService {
     String? startDate,
     String? endDate,
   }) async {
-    print('API: Getting provider earnings (period: $period)');
+    debugPrint('API: Getting provider earnings (period: $period)');
 
     final queryParams = <String, String>{'period': period};
 
@@ -1825,7 +1850,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> getProviderAnalytics({
     String period = 'month',
   }) async {
-    print('API: Getting provider analytics (period: $period)');
+    debugPrint('API: Getting provider analytics (period: $period)');
     return _makeRequest(
       'GET',
       'providers/analytics?period=$period',
@@ -1836,7 +1861,7 @@ class ApiService {
   }
 
   Future<ApiResponse<Map<String, dynamic>>> getProviderWallet() async {
-    print('API: Getting provider wallet information');
+    debugPrint('API: Getting provider wallet information');
     return _makeRequest(
       'GET',
       'providers/wallet',
@@ -1852,7 +1877,7 @@ class ApiService {
     required Map<String, dynamic> paymentDetails,
     String? notes,
   }) async {
-    print('API: Requesting withdrawal of $amount FCFA via $withdrawalMethod');
+    debugPrint('API: Requesting withdrawal of $amount FCFA via $withdrawalMethod');
 
     final requestData = <String, dynamic>{
       'amount': amount,
@@ -1889,7 +1914,7 @@ class ApiService {
     int page = 1,
     int limit = 20,
   }) async {
-    print('API: Getting withdrawal history (status: $status, page: $page)');
+    debugPrint('API: Getting withdrawal history (status: $status, page: $page)');
 
     final queryParams = <String, String>{
       'page': page.toString(),
@@ -1916,7 +1941,7 @@ class ApiService {
     int limit = 5,
     int days = 7,
   }) async {
-    print(
+    debugPrint(
       'API: Getting provider upcoming bookings (limit: $limit, days: $days)',
     );
     return _makeRequest(
@@ -1934,7 +1959,7 @@ class ApiService {
     int page = 1,
     int limit = 20,
   }) async {
-    print('API: Getting provider reviews for $providerId (page: $page)');
+    debugPrint('API: Getting provider reviews for $providerId (page: $page)');
     return _makeRequest(
       'GET',
       'users/provider/$providerId/reviews?page=$page&limit=$limit',
@@ -1948,8 +1973,8 @@ class ApiService {
     String providerId,
     Map<String, dynamic> reviewData,
   ) async {
-    print('API: Creating review for provider $providerId');
-    print('API: Review data: $reviewData');
+    debugPrint('API: Creating review for provider $providerId');
+    debugPrint('API: Review data: $reviewData');
     return _makeRequest(
       'POST',
       'users/provider/$providerId/reviews',
@@ -1963,8 +1988,8 @@ class ApiService {
     String reviewId,
     Map<String, dynamic> responseData,
   ) async {
-    print('API: Responding to review $reviewId');
-    print('API: Response data: $responseData');
+    debugPrint('API: Responding to review $reviewId');
+    debugPrint('API: Response data: $responseData');
     return _makeRequest(
       'POST',
       'users/provider/reviews/$reviewId/respond',
@@ -1985,8 +2010,8 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> createServiceRequest(
     Map<String, dynamic> requestData,
   ) async {
-    print('API: Creating service request for ${requestData['category']}');
-    print('API: Request data: $requestData');
+    debugPrint('API: Creating service request for ${requestData['category']}');
+    debugPrint('API: Request data: $requestData');
     return _makeRequest(
       'POST',
       'service-requests',
@@ -2002,7 +2027,7 @@ class ApiService {
     int page = 1,
     int limit = 20,
   }) async {
-    print('API: Getting my service requests (status: $status, page: $page)');
+    debugPrint('API: Getting my service requests (status: $status, page: $page)');
 
     final queryParams = <String, String>{
       'page': page.toString(),
@@ -2029,7 +2054,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> getServiceRequestDetails(
     String requestId,
   ) async {
-    print('API: Getting service request details for $requestId');
+    debugPrint('API: Getting service request details for $requestId');
     return _makeRequest(
       'GET',
       'service-requests/$requestId',
@@ -2044,7 +2069,7 @@ class ApiService {
     String requestId,
     String reason,
   ) async {
-    print('API: Cancelling service request $requestId');
+    debugPrint('API: Cancelling service request $requestId');
     return _makeRequest(
       'PATCH',
       'service-requests/$requestId/cancel',
@@ -2060,7 +2085,7 @@ class ApiService {
   Future<ApiResponse<Map<String, dynamic>>> setupProviderProfile(
     Map<String, dynamic> profileData,
   ) async {
-    print('API: Setting up provider profile');
+    debugPrint('API: Setting up provider profile');
     return _makeRequest(
       'PATCH',
       'users/profile/setup',
@@ -2072,7 +2097,7 @@ class ApiService {
 
   // Check profile status
   Future<ApiResponse<Map<String, dynamic>>> checkProfileStatus() async {
-    print('API: Checking profile status');
+    debugPrint('API: Checking profile status');
     return _makeRequest(
       'GET',
       'users/profile/status',

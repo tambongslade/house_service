@@ -109,8 +109,10 @@ class AppState extends ChangeNotifier {
     String fullName,
     String email,
     String password,
-    String phoneNumber,
-  ) async {
+    String phoneNumber, {
+    String? role,
+    Map<String, dynamic>? providerSetupData,
+  }) async {
     try {
       print('Attempting registration for: $email');
       final response = await _apiService.register(
@@ -118,6 +120,8 @@ class AppState extends ChangeNotifier {
         email,
         password,
         phoneNumber,
+        role: role,
+        providerSetupData: providerSetupData,
       );
 
       print(
@@ -125,15 +129,25 @@ class AppState extends ChangeNotifier {
       );
 
       if (response.isSuccess && response.data != null) {
-        await _apiService.setToken(response.data!.accessToken);
-        _user = response.data!.user;
-        _isLoggedIn = true;
+        // For providers with setup data, the API returns PENDING_APPROVAL status
+        // so we don't want to log them in automatically
+        if (role == 'provider' && providerSetupData != null) {
+          // Provider with complete setup - account is pending approval
+          // Don't set login state or tokens
+          print('Provider registration with setup data successful - pending approval');
+          return (success: true, error: null);
+        } else {
+          // Regular registration or seeker registration
+          await _apiService.setToken(response.data!.accessToken);
+          _user = response.data!.user;
+          _isLoggedIn = true;
 
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('user_logged_in', true);
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('user_logged_in', true);
 
-        notifyListeners();
-        return (success: true, error: null);
+          notifyListeners();
+          return (success: true, error: null);
+        }
       }
 
       // Return the specific error message from the API

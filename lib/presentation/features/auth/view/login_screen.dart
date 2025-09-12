@@ -6,7 +6,7 @@ import '../../../../core/models/user_model.dart';
 import '../../provider/view/provider_main_screen.dart';
 import '../../seeker/navigation/seeker_main_screen.dart';
 import 'role_selection_screen.dart';
-import 'signup_screen.dart';
+import 'signup_with_role_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _navigateToSignup() {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const SignupScreen()),
+      MaterialPageRoute(builder: (context) => const SignupWithRoleScreen()),
     );
   }
 
