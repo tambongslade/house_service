@@ -93,25 +93,50 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
           'Sessions: Expected to see bookings for provider: ${currentUser?.id}',
         );
       }
-      final response = await _apiService.getProviderSessionsTyped(
+      final response = await _apiService.getMySessions(
+        status: null, // Get all sessions first, then filter client-side
         page: 1,
-        limit: 50, // Load more sessions
+        limit: 50,
       );
 
       if (!mounted) return;
 
       if (response.isSuccess && response.data != null) {
-        final sessionListResponse = response.data!;
+        final responseData = response.data!;
+        
+        // Parse the My Sessions response format: { "asSeeker": {...}, "asProvider": {...} }
+        final asProviderData = responseData['asProvider'] as Map<String, dynamic>? ?? {};
+        final asProviderSessions = asProviderData['sessions'] as List<dynamic>? ?? [];
+        
+        // Convert to SessionModel objects
+        List<SessionModel> sessions = [];
+        for (final sessionData in asProviderSessions) {
+          try {
+            final session = SessionModel.fromJson(sessionData as Map<String, dynamic>);
+            sessions.add(session);
+          } catch (e) {
+            print('Error parsing session: $e');
+            print('Session data: $sessionData');
+          }
+        }
+        
+        // Create summary from sessions
+        final summary = SessionSummary(
+          pending: sessions.where((s) => s.status.value == 'pending_assignment' || s.status.value == 'assigned').length,
+          confirmed: sessions.where((s) => s.status.value == 'confirmed').length,
+          inProgress: sessions.where((s) => s.status.value == 'in_progress').length,
+          completed: sessions.where((s) => s.status.value == 'completed').length,
+          cancelled: sessions.where((s) => s.status.value == 'cancelled').length,
+        );
         
         setState(() {
-          _sessions = sessionListResponse.sessions;
-          _summary = sessionListResponse.summary;
+          _sessions = sessions;
+          _summary = summary;
           _isLoading = false;
         });
 
-        print('Sessions: Loaded ${_sessions.length} sessions');
+        print('Sessions: Loaded ${_sessions.length} sessions as provider');
         print('Sessions: Summary - ${_summary?.toJson()}');
-        print('Sessions: Pagination - ${sessionListResponse.pagination.toJson()}');
 
         // Debug: Print first session structure
         if (_sessions.isNotEmpty) {
@@ -141,6 +166,10 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
   List<SessionModel> get _filteredSessions {
     if (_selectedFilter == 'all') return _sessions;
     return _sessions.where((session) {
+      // Handle special mappings for filter compatibility
+      if (_selectedFilter == 'pending') {
+        return session.status.value == 'pending_assignment' || session.status.value == 'assigned';
+      }
       return session.status.value == _selectedFilter;
     }).toList();
   }
@@ -961,7 +990,8 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
                 ),
               ),
             ],
-            if (status == 'assigned' ||
+            if (status == 'pending_assignment' ||
+                status == 'assigned' ||
                 status == 'pending' ||
                 status == 'confirmed' ||
                 status == 'in_progress') ...[
@@ -989,7 +1019,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
     print('Sessions: Session data: $session');
     print('Sessions: Session ID: ${session.id}');
 
-    if (status == 'assigned') {
+    if (status == 'pending_assignment' || status == 'assigned') {
       return Row(
         children: [
           Expanded(
@@ -1001,7 +1031,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               child: TextButton(
                 onPressed: () {
                   HapticFeedback.lightImpact();
-                  _updateSessionStatus(session.id, 'cancelled');
+                  _updateSessionStatus(session.id, 'rejected');
                 },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -1061,7 +1091,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               child: TextButton(
                 onPressed: () {
                   HapticFeedback.lightImpact();
-                  _updateSessionStatus(session.id, 'cancelled');
+                  _updateSessionStatus(session.id, 'rejected');
                 },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -1367,6 +1397,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
 
   Color _getStatusColor(String status) {
     switch (status) {
+      case 'pending_assignment':
       case 'assigned':
         return const Color(0xFF6366F1);
       case 'pending':
@@ -1378,6 +1409,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
       case 'completed':
         return const Color(0xFF10B981);
       case 'cancelled':
+      case 'rejected':
         return const Color(0xFFEF4444);
       default:
         return const Color(0xFF64748B);
@@ -1386,6 +1418,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
 
   IconData _getStatusIcon(String status) {
     switch (status) {
+      case 'pending_assignment':
       case 'assigned':
         return Icons.assignment;
       case 'pending':
@@ -1397,6 +1430,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
       case 'completed':
         return Icons.check_circle_outline;
       case 'cancelled':
+      case 'rejected':
         return Icons.cancel;
       default:
         return Icons.help;
@@ -1440,11 +1474,11 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
     try {
       print('Sessions: Updating session $sessionId to $newStatus');
 
-      // Handle cancellation differently (uses cancel endpoint with reason)
-      if (newStatus == 'cancelled') {
+      // Handle rejection differently (uses cancel endpoint with reason)
+      if (newStatus == 'rejected') {
         final response = await _apiService.cancelSession(
           sessionId,
-          'Declined by provider',
+          'Rejected by provider',
         );
 
         if (response.isSuccess) {
