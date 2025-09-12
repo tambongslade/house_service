@@ -8,7 +8,6 @@ import 'package:house_service/l10n/app_localizations.dart';
 import 'package:house_service/core/state/app_state.dart';
 import 'package:house_service/core/models/provider_models.dart';
 import 'package:house_service/core/models/service_request_models.dart';
-import 'package:house_service/presentation/features/seeker/providers/provider_profile_screen.dart';
 
 class SeekerMapScreen extends StatefulWidget {
   final bool isForLocationSelection;
@@ -399,17 +398,6 @@ class _SeekerMapScreenState extends State<SeekerMapScreen> {
     }
   }
 
-  void _navigateToProviderProfile(String providerId, String providerName) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProviderProfileScreen(
-          providerId: providerId,
-          providerName: providerName,
-        ),
-      ),
-    );
-  }
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;

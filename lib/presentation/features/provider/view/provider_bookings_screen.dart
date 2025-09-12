@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/services/api_service.dart';
 import '../../../../core/state/app_state.dart';
+import '../../../../core/models/session_models.dart';
 import '../../../../l10n/app_localizations.dart';
+import 'provider_session_details_screen.dart';
 
 class ProviderBookingsScreen extends StatefulWidget {
   const ProviderBookingsScreen({super.key});
@@ -15,8 +17,8 @@ class ProviderBookingsScreen extends StatefulWidget {
 class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
     with TickerProviderStateMixin {
   final ApiService _apiService = ApiService();
-  List<Map<String, dynamic>> _sessions = [];
-  Map<String, dynamic> _summary = {};
+  List<SessionModel> _sessions = [];
+  SessionSummary? _summary;
   bool _isLoading = true;
   String? _errorMessage;
   String _selectedFilter = 'all';
@@ -91,7 +93,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
           'Sessions: Expected to see bookings for provider: ${currentUser?.id}',
         );
       }
-      final response = await _apiService.getSessionsAsProvider(
+      final response = await _apiService.getProviderSessionsTyped(
         page: 1,
         limit: 50, // Load more sessions
       );
@@ -99,37 +101,25 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
       if (!mounted) return;
 
       if (response.isSuccess && response.data != null) {
-        // Extract sessions from the response structure
-        final sessionsList = response.data!['sessions'] as List<dynamic>? ?? [];
-        final summary =
-            response.data!['summary'] as Map<String, dynamic>? ?? {};
-        final pagination =
-            response.data!['pagination'] as Map<String, dynamic>? ?? {};
-
+        final sessionListResponse = response.data!;
+        
         setState(() {
-          _sessions = sessionsList.whereType<Map<String, dynamic>>().toList();
-          _summary = summary;
+          _sessions = sessionListResponse.sessions;
+          _summary = sessionListResponse.summary;
           _isLoading = false;
         });
 
         print('Sessions: Loaded ${_sessions.length} sessions');
-        print('Sessions: Summary - $summary');
-        print('Sessions: Pagination - $pagination');
+        print('Sessions: Summary - ${_summary?.toJson()}');
+        print('Sessions: Pagination - ${sessionListResponse.pagination.toJson()}');
 
         // Debug: Print first session structure
         if (_sessions.isNotEmpty) {
-          print('Sessions: First session structure: ${_sessions.first}');
-          print('Sessions: First session ID (_id): ${_sessions.first['_id']}');
-          print('Sessions: First session ID (id): ${_sessions.first['id']}');
+          print('Sessions: First session: ${_sessions.first.toJson()}');
+          print('Sessions: First session ID: ${_sessions.first.id}');
+          print('Sessions: First session location: ${_sessions.first.serviceLocation?.address}');
+          print('Sessions: First session seeker: ${_sessions.first.seeker?.fullName}');
         }
-
-        // Debug: Log expected provider ID from recent booking
-        print(
-          'Sessions: IMPORTANT - From your recent booking logs, you booked with provider ID: 6889f369ccc51961944515f9',
-        );
-        print(
-          'Sessions: If these IDs don\'t match, that explains why you see no sessions!',
-        );
       } else {
         setState(() {
           _errorMessage = response.error ?? 'Failed to load sessions';
@@ -148,21 +138,31 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
     }
   }
 
-  List<Map<String, dynamic>> get _filteredSessions {
+  List<SessionModel> get _filteredSessions {
     if (_selectedFilter == 'all') return _sessions;
     return _sessions.where((session) {
-      final status = session['status']?.toString().toLowerCase() ?? '';
-      return status == _selectedFilter;
+      return session.status.value == _selectedFilter;
     }).toList();
   }
 
   int _getStatusCount(String status) {
     if (status == 'all') return _sessions.length;
+    if (_summary == null) return 0;
 
-    return _sessions.where((session) {
-      final sessionStatus = session['status']?.toString().toLowerCase() ?? '';
-      return sessionStatus == status;
-    }).length;
+    switch (status) {
+      case 'pending':
+        return _summary!.pending;
+      case 'confirmed':
+        return _summary!.confirmed;
+      case 'in_progress':
+        return _summary!.inProgress;
+      case 'completed':
+        return _summary!.completed;
+      case 'cancelled':
+        return _summary!.cancelled;
+      default:
+        return 0;
+    }
   }
 
   @override
@@ -225,20 +225,9 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
   }
 
   Widget _buildHeader() {
-    // Use summary data from API response with safe parsing
-    int _parseCount(dynamic value) {
-      if (value == null) return 0;
-      if (value is int) return value;
-      if (value is String) return int.tryParse(value) ?? 0;
-      return 0;
-    }
-
-    final assignedCount = _parseCount(_summary['assigned']);
-    final pendingCount = _parseCount(_summary['pending']);
-    final confirmedCount = _parseCount(_summary['confirmed']);
-    final completedCount = _parseCount(_summary['completed']);
-    // final inProgressCount = _parseCount(_summary['inProgress']);
-    // final totalEarnings = _parseEarnings(_summary['totalEarnings']);
+    final pendingCount = _summary?.pending ?? 0;
+    final confirmedCount = _summary?.confirmed ?? 0;
+    final completedCount = _summary?.completed ?? 0;
 
     return Container(
       margin: const EdgeInsets.all(20),
@@ -308,12 +297,6 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
           const SizedBox(height: 20),
           Row(
             children: [
-              _buildQuickStat(
-                'Assigned',
-                assignedCount.toString(),
-                const Color(0xFF6366F1),
-              ),
-              const SizedBox(width: 8),
               _buildQuickStat(
                 AppLocalizations.of(context)!.pending,
                 pendingCount.toString(),
@@ -519,62 +502,22 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
     );
   }
 
-  Widget _buildSessionCard(Map<String, dynamic> session, int index) {
-    final status = session['status']?.toString().toLowerCase() ?? 'pending';
-
-    // Extract seeker name from seekerId data
-    String seekerName = 'Customer';
-    final seekerVal = session['seekerId'];
-    if (seekerVal is Map<String, dynamic>) {
-      seekerName = (seekerVal['fullName'] as String?) ?? seekerName;
-    } else if (seekerVal is String) {
-      if (seekerVal.isNotEmpty && !seekerVal.startsWith('{')) {
-        // If it's a plain string ID, keep the default
-        seekerName = 'Customer';
-      } else {
-        // Handle malformed format: fullName: 'tambong slade'
-        final match = RegExp(
-          r"fullName:\s*'([^']+)'",
-          multiLine: true,
-        ).firstMatch(seekerVal);
-        if (match != null) {
-          seekerName = match.group(1)!;
-        } else {
-          // Try other patterns
-          final patterns = [
-            RegExp(r'fullName:\s*"([^"]+)"', multiLine: true),
-            RegExp(r"fullName[:\s]*'([^']+)'", multiLine: true),
-          ];
-
-          for (final pattern in patterns) {
-            final match2 = pattern.firstMatch(seekerVal);
-            if (match2 != null) {
-              seekerName = match2.group(1)!.trim();
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    // Add service location and address for better context
-    final serviceLocation = session['serviceLocation'] ?? '';
-    final serviceAddress = session['serviceAddress'] ?? '';
-    final notes = session['notes'] ?? '';
-    final assignmentNotes = session['assignmentNotes'] ?? '';
-    final serviceTitle =
-        session['serviceName'] ?? AppLocalizations.of(context)!.service;
-    final category = session['category'] ?? '';
-    final sessionDate = session['sessionDate'] ?? '';
-    final startTime = session['startTime'] ?? '';
-    final endTime = session['endTime'] ?? '';
-    final duration = session['baseDuration'] ?? 4.0;
-    final overtimeHours = session['overtimeHours'] ?? 0.0;
-    final basePrice = session['basePrice'] ?? 3000;
-    final overtimePrice = session['overtimePrice'] ?? 0;
-    final totalAmount = session['totalAmount'] ?? basePrice;
-    final currency = session['currency'] ?? 'FCFA';
-    final paymentStatus = session['paymentStatus'] ?? 'pending';
+  Widget _buildSessionCard(SessionModel session, int index) {
+    final status = session.status.value;
+    final seekerName = session.seeker?.fullName ?? 'Customer';
+    final serviceTitle = session.serviceName;
+    final category = session.category;
+    final sessionDate = session.sessionDate.toIso8601String().split('T')[0];
+    final startTime = session.startTime;
+    final endTime = session.endTime;
+    final duration = session.baseDuration;
+    final overtimeHours = session.overtimeHours;
+    final totalAmount = session.totalAmount;
+    final currency = session.currency;
+    final paymentStatus = session.paymentStatus.value;
+    final notes = session.notes ?? '';
+    final serviceLocation = session.serviceLocation;
+    final seekerInfo = session.seeker;
 
     final statusColor = _getStatusColor(status);
     final statusIcon = _getStatusIcon(status);
@@ -593,9 +536,14 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _navigateToSessionDetails(session),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -799,8 +747,8 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
                             const SizedBox(height: 2),
                             Text(
                               AppLocalizations.of(context)!.basePlusOvertime(
-                                basePrice.toString(),
-                                overtimePrice.toString(),
+                                session.basePrice.toString(),
+                                session.overtimePrice.toString(),
                               ),
                               style: const TextStyle(
                                 fontSize: 12,
@@ -836,9 +784,150 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
                 ],
               ),
             ),
-            if (serviceLocation.isNotEmpty ||
-                notes.isNotEmpty ||
-                assignmentNotes.isNotEmpty) ...[
+            // NEW: Enhanced location and client information section
+            if (serviceLocation != null || seekerInfo != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF3B82F6).withOpacity(0.05),
+                      const Color(0xFF8B5CF6).withOpacity(0.05),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFF3B82F6).withOpacity(0.1),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Client Information
+                    if (seekerInfo != null) ...[
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF10B981).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.person,
+                              size: 16,
+                              color: Color(0xFF10B981),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Client: ${seekerInfo.fullName}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF1E293B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                if (seekerInfo.phoneNumber.isNotEmpty) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    seekerInfo.phoneNumber,
+                                    style: const TextStyle(
+                                      color: Color(0xFF64748B),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    
+                    // Service Location
+                    if (serviceLocation != null) ...[
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF3B82F6).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.location_on,
+                              size: 16,
+                              color: Color(0xFF3B82F6),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Service Location',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF1E293B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  serviceLocation.address,
+                                  style: const TextStyle(
+                                    color: Color(0xFF64748B),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                if (serviceLocation.province.isNotEmpty) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    serviceLocation.province,
+                                    style: TextStyle(
+                                      color: const Color(0xFF3B82F6),
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          // Map button
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF3B82F6).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.map,
+                              size: 16,
+                              color: Color(0xFF3B82F6),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+            
+            // Original notes section
+            if (notes.isNotEmpty) ...[
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -849,85 +938,25 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (serviceLocation.isNotEmpty) ...[
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 16,
-                            color: Colors.grey[600],
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              serviceLocation,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF475569),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (serviceAddress.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 24),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.note,
+                          size: 16,
+                          color: Colors.grey[600],
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
                           child: Text(
-                            serviceAddress,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
+                            'Notes: $notes',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFF475569),
                             ),
                           ),
                         ),
                       ],
-                    ],
-                    if (notes.isNotEmpty) ...[
-                      if (serviceLocation.isNotEmpty) const SizedBox(height: 8),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.note, size: 16, color: Colors.grey[600]),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Notes: $notes',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Color(0xFF475569),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                    if (assignmentNotes.isNotEmpty && status == 'assigned') ...[
-                      if (notes.isNotEmpty || serviceLocation.isNotEmpty)
-                        const SizedBox(height: 8),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.assignment_outlined,
-                            size: 16,
-                            color: const Color(0xFF6366F1),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Assignment: $assignmentNotes',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF6366F1),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ],
                 ),
               ),
@@ -940,15 +969,25 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               _buildActionButtons(session, status),
             ],
           ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildActionButtons(Map<String, dynamic> session, String status) {
+  void _navigateToSessionDetails(SessionModel session) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProviderSessionDetailsScreen(session: session.toJson()),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(SessionModel session, String status) {
     print('Sessions: _buildActionButtons called with status: $status');
     print('Sessions: Session data: $session');
-    print('Sessions: Session ID: ${session['id']}');
+    print('Sessions: Session ID: ${session.id}');
 
     if (status == 'assigned') {
       return Row(
@@ -962,7 +1001,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               child: TextButton(
                 onPressed: () {
                   HapticFeedback.lightImpact();
-                  _updateSessionStatus(session['id'] as String?, 'cancelled');
+                  _updateSessionStatus(session.id, 'cancelled');
                 },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -991,7 +1030,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               child: ElevatedButton(
                 onPressed: () {
                   HapticFeedback.mediumImpact();
-                  _updateSessionStatus(session['id'] as String?, 'confirmed');
+                  _updateSessionStatus(session.id, 'confirmed');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
@@ -1022,7 +1061,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               child: TextButton(
                 onPressed: () {
                   HapticFeedback.lightImpact();
-                  _updateSessionStatus(session['id'] as String?, 'cancelled');
+                  _updateSessionStatus(session.id, 'cancelled');
                 },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -1051,7 +1090,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
               child: ElevatedButton(
                 onPressed: () {
                   HapticFeedback.mediumImpact();
-                  _updateSessionStatus(session['id'] as String?, 'confirmed');
+                  _updateSessionStatus(session.id, 'confirmed');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
@@ -1084,7 +1123,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
         child: ElevatedButton(
           onPressed: () {
             HapticFeedback.mediumImpact();
-            _updateSessionStatus(session['id'] as String?, 'in_progress');
+            _updateSessionStatus(session.id, 'in_progress');
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
@@ -1115,7 +1154,7 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
         child: ElevatedButton(
           onPressed: () {
             HapticFeedback.mediumImpact();
-            _updateSessionStatus(session['id'] as String?, 'completed');
+            _updateSessionStatus(session.id, 'completed');
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,

@@ -6,7 +6,8 @@
       "Bash(flutter gen-l10n:*)",
       "Bash(flutter clean:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(flutter build:*)"
+      "Bash(flutter build:*)",
+      "Read(//Users/user/Desktop/**)"
     ],
     "deny": []
   }

@@ -119,6 +119,7 @@
   "sessions": "Sessions",
   "availability": "Availability",
   "profile": "Profile",
+  "setupProviderProfile": "Setup Provider Profile",
   "editProfile": "Edit Profile",
   "updatePersonalInfo": "Update your personal information",
   "securitySettings": "Security Settings",

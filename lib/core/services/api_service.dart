@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/api_response.dart';
 import '../models/auth_models.dart';
 import '../models/user_model.dart';
+import '../models/session_models.dart';
+import '../models/service_request_models.dart';
 
 class ApiService {
   // Local development base URL
@@ -1057,6 +1059,190 @@ class ApiService {
     );
   }
 
+  // ============== ENHANCED SESSION ENDPOINTS WITH LOCATION ==============
+
+  // Get provider sessions with location and seeker information
+  Future<ApiResponse<Map<String, dynamic>>> getProviderSessionsWithLocation({
+    String? status,
+    int page = 1,
+    int limit = 20,
+  }) async {
+    print('API: Getting provider sessions with location (status: $status)');
+
+    final queryParams = <String, String>{
+      'page': page.toString(),
+      'limit': limit.toString(),
+    };
+    if (status != null && status.isNotEmpty) {
+      queryParams['status'] = status;
+    }
+
+    final query = queryParams.entries
+        .map((e) => '${e.key}=${e.value}')
+        .join('&');
+    return _makeRequest(
+      'GET',
+      'sessions/provider?$query',
+      null,
+      (data) => data,
+      requiresAuth: true,
+    );
+  }
+
+  // Create service request with location
+  Future<ApiResponse<Map<String, dynamic>>> createServiceRequestWithLocation(
+    Map<String, dynamic> requestData,
+  ) async {
+    print('API: Creating service request with location');
+    print('API: Request data: $requestData');
+    return _makeRequest(
+      'POST',
+      'service-requests',
+      requestData,
+      (data) => data,
+      requiresAuth: true,
+    );
+  }
+
+  // ============== TYPED SESSION METHODS ==============
+
+  // Get provider sessions with typed response
+  Future<ApiResponse<SessionListResponse>> getProviderSessionsTyped({
+    String? status,
+    int page = 1,
+    int limit = 20,
+  }) async {
+    // Use the correct bookings endpoint instead of sessions/provider
+    final response = await getProviderBookings();
+
+    if (response.isSuccess && response.data != null) {
+      try {
+        // getProviderBookings returns List<Map<String, dynamic>>
+        final bookingsList = response.data!;
+        print('API Response: ${bookingsList.length} bookings received');
+        
+        List<SessionModel> sessions = [];
+        
+        // Convert bookings to SessionModel
+        for (final booking in bookingsList) {
+          try {
+            final session = SessionModel.fromJson(booking);
+            sessions.add(session);
+          } catch (e) {
+            print('Error parsing booking: $e');
+            print('Booking data: $booking');
+            // Continue with other bookings even if one fails
+          }
+        }
+        
+        // Create summary from sessions
+        final summary = SessionSummary(
+          pending: sessions.where((s) => s.status.value == 'pending').length,
+          confirmed: sessions.where((s) => s.status.value == 'confirmed').length,
+          inProgress: sessions.where((s) => s.status.value == 'in_progress').length,
+          completed: sessions.where((s) => s.status.value == 'completed').length,
+          cancelled: sessions.where((s) => s.status.value == 'cancelled').length,
+        );
+        
+        // Create pagination info
+        final pagination = PaginationInfo(
+          total: sessions.length,
+          page: page,
+          limit: limit,
+          totalPages: (sessions.length / limit).ceil(),
+        );
+        
+        final sessionListResponse = SessionListResponse(
+          sessions: sessions,
+          summary: summary,
+          pagination: pagination,
+        );
+        
+        return ApiResponse<SessionListResponse>.success(sessionListResponse);
+      } catch (e) {
+        print('Error parsing session list response: $e');
+        print('Response data: ${response.data}');
+        return ApiResponse<SessionListResponse>.error('Failed to parse session data: $e');
+      }
+    }
+
+    return ApiResponse<SessionListResponse>.error(response.error ?? 'Failed to load sessions');
+  }
+
+  // Create service request with typed response
+  Future<ApiResponse<Map<String, dynamic>>> createServiceRequestTyped(
+    CreateServiceRequestModel request,
+  ) async {
+    return createServiceRequestWithLocation(request.toJson());
+  }
+
+  // ============== HELPER METHODS FOR LOCATION-BASED SESSIONS ==============
+
+  // Example method showing how to create a service request with location
+  Future<ApiResponse<Map<String, dynamic>>> createServiceRequestExample({
+    required String category,
+    required DateTime serviceDate,
+    required String startTime,
+    required int duration,
+    required double latitude,
+    required double longitude,
+    required String address,
+    required String province,
+    String? specialInstructions,
+    String? description,
+  }) async {
+    final serviceRequest = CreateServiceRequestModel(
+      category: category,
+      serviceDate: serviceDate.toIso8601String().split('T')[0], // Convert DateTime to YYYY-MM-DD
+      startTime: startTime,
+      duration: duration.toDouble(), // Convert int to double
+      location: ServiceRequestLocation(
+        latitude: latitude,
+        longitude: longitude,
+        address: address,
+      ),
+      province: province,
+      specialInstructions: specialInstructions,
+      description: description,
+    );
+
+    return createServiceRequestTyped(serviceRequest);
+  }
+
+  // Example method showing how to get provider sessions with location data
+  Future<ApiResponse<SessionListResponse>> getProviderSessionsExample({
+    String? status,
+    int page = 1,
+    int limit = 20,
+  }) async {
+    final response = await getProviderSessionsTyped(
+      status: status,
+      page: page,
+      limit: limit,
+    );
+
+    if (response.isSuccess && response.data != null) {
+      // Log location and client information for each session
+      for (final session in response.data!.sessions) {
+        print('Session ${session.id}:');
+        print('  Service: ${session.serviceName}');
+        print('  Client: ${session.seeker?.fullName ?? 'Unknown'}');
+        print('  Phone: ${session.seeker?.phoneNumber ?? 'N/A'}');
+        print('  Location: ${session.serviceLocation?.address ?? 'N/A'}');
+        print('  Province: ${session.serviceLocation?.province ?? 'N/A'}');
+        print('  GPS: ${session.serviceLocation?.latitude}, ${session.serviceLocation?.longitude}');
+        print('  Status: ${session.status.displayName}');
+        print('  Payment: ${session.paymentStatus.displayName}');
+        print('  Amount: ${session.formattedAmount}');
+        print('  Date: ${session.displayDate}');
+        print('  Duration: ${session.formattedDuration}');
+        print('---');
+      }
+    }
+
+    return response;
+  }
+
   // Get my sessions (both as seeker and provider)
   Future<ApiResponse<Map<String, dynamic>>> getMySessions({
     String? status,
@@ -1863,6 +2049,34 @@ class ApiService {
       'PATCH',
       'service-requests/$requestId/cancel',
       {'reason': reason},
+      (data) => data,
+      requiresAuth: true,
+    );
+  }
+
+  // ============== PROVIDER PROFILE SETUP ENDPOINTS ==============
+
+  // Setup provider profile
+  Future<ApiResponse<Map<String, dynamic>>> setupProviderProfile(
+    Map<String, dynamic> profileData,
+  ) async {
+    print('API: Setting up provider profile');
+    return _makeRequest(
+      'PATCH',
+      'users/profile/setup',
+      profileData,
+      (data) => data,
+      requiresAuth: true,
+    );
+  }
+
+  // Check profile status
+  Future<ApiResponse<Map<String, dynamic>>> checkProfileStatus() async {
+    print('API: Checking profile status');
+    return _makeRequest(
+      'GET',
+      'users/profile/status',
+      null,
       (data) => data,
       requiresAuth: true,
     );

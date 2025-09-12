@@ -78,7 +78,11 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
 
         if (mounted) {
           setState(() {
-            _requests = requestsResponse.requests;
+            // Filter out expired requests
+            print('Total requests received: ${requestsResponse.requests.length}');
+            final filteredRequests = requestsResponse.requests.where((request) => request.shouldShowInList).toList();
+            print('Requests after filtering: ${filteredRequests.length}');
+            _requests = filteredRequests;
             _hasMoreData = requestsResponse.requests.length >= 20;
             _isLoading = false;
           });
@@ -130,7 +134,9 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
 
         if (mounted) {
           setState(() {
-            _requests.addAll(requestsResponse.requests);
+            // Filter out expired requests before adding
+            final filteredRequests = requestsResponse.requests.where((request) => request.shouldShowInList).toList();
+            _requests.addAll(filteredRequests);
             _hasMoreData = requestsResponse.requests.length >= 20;
             _isLoading = false;
           });
@@ -161,6 +167,8 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
 
   Color _getStatusColor(ServiceRequestStatus status) {
     switch (status) {
+      case ServiceRequestStatus.pendingAssignment:
+        return Colors.grey;
       case ServiceRequestStatus.pending:
         return Colors.orange;
       case ServiceRequestStatus.confirmed:
@@ -178,6 +186,8 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
 
   IconData _getStatusIcon(ServiceRequestStatus status) {
     switch (status) {
+      case ServiceRequestStatus.pendingAssignment:
+        return Icons.search;
       case ServiceRequestStatus.pending:
         return Icons.pending;
       case ServiceRequestStatus.confirmed:
@@ -493,9 +503,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                       child: _buildInfoItem(
                         Icons.calendar_today,
                         'Date',
-                        request.serviceDate.isNotEmpty
-                            ? _formatDisplayDate(request.serviceDate)
-                            : 'N/A',
+                        _formatDisplayDate(request.serviceDate.toIso8601String().split('T')[0]),
                         Colors.blue.shade600,
                       ),
                     ),
@@ -743,7 +751,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildDetailRow('Status', request.statusDisplayName),
-                  _buildDetailRow('Date', request.serviceDate),
+                  _buildDetailRow('Date', request.serviceDate.toIso8601String().split('T')[0]),
                   _buildDetailRow('Time', request.startTime),
                   _buildDetailRow('Duration', '${request.duration} hours'),
                   _buildDetailRow('Province', request.province),

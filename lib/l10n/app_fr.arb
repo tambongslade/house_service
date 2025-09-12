@@ -119,6 +119,7 @@
   "sessions": "Sessions",
   "availability": "Disponibilité",
   "profile": "Profil",
+  "setupProviderProfile": "Configurer le Profil Prestataire",
   "editProfile": "Modifier le Profil",
   "updatePersonalInfo": "Mettre à jour vos informations personnelles",
   "securitySettings": "Paramètres de Sécurité",
