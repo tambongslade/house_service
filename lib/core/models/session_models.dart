@@ -578,12 +578,21 @@ class SessionSummary {
   });
 
   factory SessionSummary.fromJson(Map<String, dynamic> json) {
+    int _extractCount(dynamic value) {
+      if (value is num) {
+        return value.toInt();
+      } else if (value is Map<String, dynamic> && value.containsKey('count')) {
+        return (value['count'] as num).toInt();
+      }
+      return 0;
+    }
+
     return SessionSummary(
-      pending: (json['pending'] as num).toInt(),
-      confirmed: (json['confirmed'] as num).toInt(),
-      inProgress: (json['inProgress'] as num).toInt(),
-      completed: (json['completed'] as num).toInt(),
-      cancelled: (json['cancelled'] as num).toInt(),
+      pending: _extractCount(json['pending']),
+      confirmed: _extractCount(json['confirmed']),
+      inProgress: _extractCount(json['inProgress']),
+      completed: _extractCount(json['completed']),
+      cancelled: _extractCount(json['cancelled']),
     );
   }
 

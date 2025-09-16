@@ -56,8 +56,14 @@ class _ProviderSessionDetailsScreenState extends State<ProviderSessionDetailsScr
   }
 
   void _parseSessionData() {
+    print('SessionDetails: Starting to parse session data');
+    print('SessionDetails: Full session data: ${widget.session}');
+    print('SessionDetails: Session keys: ${widget.session.keys.toList()}');
+
     // Parse seeker data
     final seekerData = widget.session['seekerId'];
+    print('SessionDetails: seekerId data: $seekerData');
+    print('SessionDetails: seekerId type: ${seekerData.runtimeType}');
     if (seekerData is String && seekerData.isNotEmpty) {
       // Extract values using regex with simpler patterns
       final namePattern = RegExp(r"fullName:\s*'([^']+)'");
@@ -85,6 +91,8 @@ class _ProviderSessionDetailsScreenState extends State<ProviderSessionDetailsScr
 
     // Parse service data
     final serviceData = widget.session['serviceId'];
+    print('SessionDetails: serviceId data: $serviceData');
+    print('SessionDetails: serviceId type: ${serviceData.runtimeType}');
     if (serviceData is String && serviceData.isNotEmpty) {
       // Extract service information using regex with simpler patterns
       final titlePattern = RegExp(r"title:\s*'([^']+)'");
@@ -321,11 +329,28 @@ class _ProviderSessionDetailsScreenState extends State<ProviderSessionDetailsScr
         ),
         _buildInfoRow(
           'Service ID',
-          widget.session['serviceId']?.toString().substring(0, 8) ?? 'N/A',
+          _getServiceIdDisplay(),
           Icons.fingerprint_outlined,
         ),
       ],
     );
+  }
+
+  String _getServiceIdDisplay() {
+    final serviceIdData = widget.session['serviceId'];
+    print('SessionDetails: serviceId for display: $serviceIdData');
+    print('SessionDetails: serviceId type: ${serviceIdData.runtimeType}');
+
+    if (serviceIdData is String && serviceIdData.length > 8) {
+      return serviceIdData.substring(0, 8);
+    } else if (serviceIdData is Map<String, dynamic>) {
+      // If serviceId is an object, try to get an id field
+      final id = serviceIdData['_id'] ?? serviceIdData['id'] ?? serviceIdData.toString();
+      final idString = id.toString();
+      return idString.length > 8 ? idString.substring(0, 8) : idString;
+    } else {
+      return serviceIdData?.toString() ?? 'N/A';
+    }
   }
 
   Widget _buildDateTimeInfo() {
@@ -366,9 +391,26 @@ class _ProviderSessionDetailsScreenState extends State<ProviderSessionDetailsScr
   }
 
   Widget _buildLocationInfo() {
-    // Note: The session data doesn't include location info, but we'll prepare for it
-    final location = widget.session['serviceLocation'] ?? widget.session['location'] ?? 'Not specified';
-    final address = widget.session['serviceAddress'] ?? widget.session['address'] ?? 'Address not provided';
+    print('SessionDetails: Building location info');
+    final locationData = widget.session['serviceLocation'] ?? widget.session['location'];
+    print('SessionDetails: serviceLocation data: $locationData');
+    print('SessionDetails: serviceLocation type: ${locationData.runtimeType}');
+
+    String location;
+    String address;
+
+    if (locationData is Map<String, dynamic>) {
+      // Handle location as a map with latitude, longitude, address, province
+      location = locationData['province']?.toString() ?? 'Not specified';
+      address = locationData['address']?.toString() ?? 'Address not provided';
+      print('SessionDetails: Parsed location - province: $location, address: $address');
+    } else if (locationData is String) {
+      location = locationData;
+      address = widget.session['serviceAddress']?.toString() ?? widget.session['address']?.toString() ?? 'Address not provided';
+    } else {
+      location = 'Not specified';
+      address = widget.session['serviceAddress']?.toString() ?? widget.session['address']?.toString() ?? 'Address not provided';
+    }
 
     return _buildInfoCard(
       title: 'Location Information',

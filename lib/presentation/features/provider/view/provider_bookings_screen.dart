@@ -1007,6 +1007,12 @@ class _ProviderBookingsScreenState extends State<ProviderBookingsScreen>
   }
 
   void _navigateToSessionDetails(SessionModel session) {
+    print('Sessions: Navigating to session details');
+    print('Sessions: Session ID: ${session.id}');
+    print('Sessions: Session status: ${session.status}');
+    print('Sessions: Session data type: ${session.runtimeType}');
+    print('Sessions: Session JSON: ${session.toJson()}');
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ProviderSessionDetailsScreen(session: session.toJson()),
