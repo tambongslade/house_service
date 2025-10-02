@@ -266,6 +266,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile => 'Profile';
 
   @override
+  String get setupProviderProfile => 'Setup Provider Profile';
+
+  @override
   String get editProfile => 'Edit Profile';
 
   @override
@@ -998,4 +1001,163 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openSettings => 'Open Settings';
+
+  @override
+  String get welcomeTitle => 'Welcome!';
+
+  @override
+  String get welcomeSubtitle => 'We\'re here to help!';
+
+  @override
+  String get welcomeDescription => 'Find trusted service providers in your area';
+
+  @override
+  String get homeAideServices => 'HOME AIDE Services';
+
+  @override
+  String get iAm => 'I am';
+
+  @override
+  String get iOfferProfessionalServices => 'I offer professional services.';
+
+  @override
+  String get pricingInformation => 'Pricing Information';
+
+  @override
+  String get deepCleaningAllRooms => 'Deep cleaning of all rooms';
+
+  @override
+  String get kitchenBathroomSanitization => 'Kitchen and bathroom sanitization';
+
+  @override
+  String get floorMoppingVacuuming => 'Floor mopping and vacuuming';
+
+  @override
+  String get dustRemovalSurfaces => 'Dust removal from surfaces';
+
+  @override
+  String get trashRemoval => 'Trash removal';
+
+  @override
+  String get leakDetectionRepair => 'Leak detection and repair';
+
+  @override
+  String get pipeInstallationReplacement => 'Pipe installation and replacement';
+
+  @override
+  String get toiletSinkRepairs => 'Toilet and sink repairs';
+
+  @override
+  String get drainCleaningUnclogging => 'Drain cleaning and unclogging';
+
+  @override
+  String get waterHeaterMaintenance => 'Water heater maintenance';
+
+  @override
+  String get emergencyPlumbingServices => 'Emergency plumbing services';
+
+  @override
+  String get wiringInstallationRepair => 'Wiring installation and repair';
+
+  @override
+  String get lightFixtureInstallation => 'Light fixture installation';
+
+  @override
+  String get socketSwitchReplacement => 'Socket and switch replacement';
+
+  @override
+  String get circuitBreakerMaintenance => 'Circuit breaker maintenance';
+
+  @override
+  String get electricalSafetyInspections => 'Electrical safety inspections';
+
+  @override
+  String get emergencyElectricalServices => 'Emergency electrical services';
+
+  @override
+  String get surfacePreparationPriming => 'Surface preparation and priming';
+
+  @override
+  String get interiorExteriorPainting => 'Interior and exterior painting';
+
+  @override
+  String get wallTextureRepair => 'Wall texture repair';
+
+  @override
+  String get paintColorConsultation => 'Paint color consultation';
+
+  @override
+  String get qualityPaintMaterials => 'Quality paint and materials';
+
+  @override
+  String get lawnMowingTrimming => 'Lawn mowing and trimming';
+
+  @override
+  String get plantCareMaintenance => 'Plant care and maintenance';
+
+  @override
+  String get gardenDesignLayout => 'Garden design and layout';
+
+  @override
+  String get pestControlPlants => 'Pest control for plants';
+
+  @override
+  String get seasonalPlanting => 'Seasonal planting';
+
+  @override
+  String get gardenCleanupMaintenance => 'Garden cleanup and maintenance';
+
+  @override
+  String get customFurnitureCreation => 'Custom furniture creation';
+
+  @override
+  String get furnitureRepairRestoration => 'Furniture repair and restoration';
+
+  @override
+  String get cabinetInstallation => 'Cabinet installation';
+
+  @override
+  String get doorWindowFrameWork => 'Door and window frame work';
+
+  @override
+  String get shelvingStorageSolutions => 'Shelving and storage solutions';
+
+  @override
+  String get woodFinishingStaining => 'Wood finishing and staining';
+
+  @override
+  String get mealPlanningPreparation => 'Meal planning and preparation';
+
+  @override
+  String get groceryShoppingShopping => 'Grocery shopping for ingredients';
+
+  @override
+  String get cookingPresentation => 'Cooking and presentation';
+
+  @override
+  String get kitchenCleanupAfterService => 'Kitchen cleanup after service';
+
+  @override
+  String get specialDietaryAccommodations => 'Special dietary accommodations';
+
+  @override
+  String get recipeConsultation => 'Recipe consultation';
+
+  @override
+  String get personalizedLessonPlanning => 'Personalized lesson planning';
+
+  @override
+  String get homeworkAssignmentHelp => 'Homework and assignment help';
+
+  @override
+  String get examPreparation => 'Exam preparation';
+
+  @override
+  String get progressTrackingReports => 'Progress tracking and reports';
+
+  @override
+  String get studyMaterialsResources => 'Study materials and resources';
+
+  @override
+  String get hairCuttingStyling => 'Hair cutting and styling';
 }

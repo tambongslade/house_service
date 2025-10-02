@@ -41,5 +41,8 @@
   "rejectSessionConfirm": "Are you sure you want to reject this session? This action cannot be undone.",
   "confirm": "Confirm",
   "reject": "Reject",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "welcomeTitle": "Welcome!",
+  "welcomeSubtitle": "We're here to help!",
+  "welcomeDescription": "Find trusted service providers in your area"
 }

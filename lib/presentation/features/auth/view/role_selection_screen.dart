@@ -99,9 +99,9 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             'assets/images/LOGO.png',
             fit: BoxFit.contain,
             errorBuilder: (context, error, stackTrace) {
-              return const Text(
-                'HOME AIDE Services',
-                style: TextStyle(
+              return Text(
+                AppLocalizations.of(context)!.homeAideServices,
+                style: const TextStyle(
                   color: Colors.green,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -121,9 +121,9 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
               const SizedBox(height: 40),
 
               // Title
-              const Text(
-                'I am',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.iAm,
+                style: const TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w300,
                   color: Color(0xFF2D3748),
@@ -136,7 +136,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
               _buildRoleOption(
                 role: UserRole.serviceProvider,
                 title: AppLocalizations.of(context)!.serviceProvider,
-                subtitle: 'I offer professional services.',
+                subtitle: AppLocalizations.of(context)!.iOfferProfessionalServices,
                 isSelected: selectedRole == UserRole.serviceProvider,
                 onTap: () {
                   setState(() {
@@ -192,9 +192,9 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                               ),
                             ),
                           )
-                          : const Text(
-                            'Next',
-                            style: TextStyle(
+                          : Text(
+                            AppLocalizations.of(context)!.next,
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),

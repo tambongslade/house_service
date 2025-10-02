@@ -308,16 +308,16 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // --- Special Offers Section ---
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: _buildSectionHeader(
-                AppLocalizations.of(context)!.specialOffers,
-                () {
-                  /* TODO: Navigate to all offers */
-                },
-                context,
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 8.0),
+            //   child: _buildSectionHeader(
+            //     AppLocalizations.of(context)!.specialOffers,
+            //     () {
+            //       /* TODO: Navigate to all offers */
+            //     },
+            //     context,
+            //   ),
+            // ),
             const SizedBox(height: 12),
 
             // Special Offer Card
@@ -350,8 +350,8 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "30%",
-                          style: textTheme.displayLarge?.copyWith(
+                          AppLocalizations.of(context)!.welcomeTitle,
+                          style: textTheme.displayMedium?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             height: 1,
@@ -359,7 +359,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Today's Special!",
+                          AppLocalizations.of(context)!.welcomeSubtitle,
                           style: textTheme.headlineSmall?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w500,
@@ -367,7 +367,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Get discount for every order",
+                          AppLocalizations.of(context)!.welcomeDescription,
                           style: textTheme.bodyMedium?.copyWith(
                             color: Colors.white,
                           ),

@@ -593,6 +593,12 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get profile;
 
+  /// No description provided for @setupProviderProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup Provider Profile'**
+  String get setupProviderProfile;
+
   /// No description provided for @editProfile.
   ///
   /// In en, this message translates to:
@@ -1948,6 +1954,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open Settings'**
   String get openSettings;
+
+  /// No description provided for @welcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome!'**
+  String get welcomeTitle;
+
+  /// No description provided for @welcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re here to help!'**
+  String get welcomeSubtitle;
+
+  /// No description provided for @welcomeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Find trusted service providers in your area'**
+  String get welcomeDescription;
+
+  /// No description provided for @homeAideServices.
+  ///
+  /// In en, this message translates to:
+  /// **'HOME AIDE Services'**
+  String get homeAideServices;
+
+  /// No description provided for @iAm.
+  ///
+  /// In en, this message translates to:
+  /// **'I am'**
+  String get iAm;
+
+  /// No description provided for @iOfferProfessionalServices.
+  ///
+  /// In en, this message translates to:
+  /// **'I offer professional services.'**
+  String get iOfferProfessionalServices;
+
+  /// No description provided for @pricingInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing Information'**
+  String get pricingInformation;
+
+  /// No description provided for @deepCleaningAllRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep cleaning of all rooms'**
+  String get deepCleaningAllRooms;
+
+  /// No description provided for @kitchenBathroomSanitization.
+  ///
+  /// In en, this message translates to:
+  /// **'Kitchen and bathroom sanitization'**
+  String get kitchenBathroomSanitization;
+
+  /// No description provided for @floorMoppingVacuuming.
+  ///
+  /// In en, this message translates to:
+  /// **'Floor mopping and vacuuming'**
+  String get floorMoppingVacuuming;
+
+  /// No description provided for @dustRemovalSurfaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Dust removal from surfaces'**
+  String get dustRemovalSurfaces;
+
+  /// No description provided for @trashRemoval.
+  ///
+  /// In en, this message translates to:
+  /// **'Trash removal'**
+  String get trashRemoval;
+
+  /// No description provided for @leakDetectionRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Leak detection and repair'**
+  String get leakDetectionRepair;
+
+  /// No description provided for @pipeInstallationReplacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Pipe installation and replacement'**
+  String get pipeInstallationReplacement;
+
+  /// No description provided for @toiletSinkRepairs.
+  ///
+  /// In en, this message translates to:
+  /// **'Toilet and sink repairs'**
+  String get toiletSinkRepairs;
+
+  /// No description provided for @drainCleaningUnclogging.
+  ///
+  /// In en, this message translates to:
+  /// **'Drain cleaning and unclogging'**
+  String get drainCleaningUnclogging;
+
+  /// No description provided for @waterHeaterMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Water heater maintenance'**
+  String get waterHeaterMaintenance;
+
+  /// No description provided for @emergencyPlumbingServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency plumbing services'**
+  String get emergencyPlumbingServices;
+
+  /// No description provided for @wiringInstallationRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Wiring installation and repair'**
+  String get wiringInstallationRepair;
+
+  /// No description provided for @lightFixtureInstallation.
+  ///
+  /// In en, this message translates to:
+  /// **'Light fixture installation'**
+  String get lightFixtureInstallation;
+
+  /// No description provided for @socketSwitchReplacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Socket and switch replacement'**
+  String get socketSwitchReplacement;
+
+  /// No description provided for @circuitBreakerMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Circuit breaker maintenance'**
+  String get circuitBreakerMaintenance;
+
+  /// No description provided for @electricalSafetyInspections.
+  ///
+  /// In en, this message translates to:
+  /// **'Electrical safety inspections'**
+  String get electricalSafetyInspections;
+
+  /// No description provided for @emergencyElectricalServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency electrical services'**
+  String get emergencyElectricalServices;
+
+  /// No description provided for @surfacePreparationPriming.
+  ///
+  /// In en, this message translates to:
+  /// **'Surface preparation and priming'**
+  String get surfacePreparationPriming;
+
+  /// No description provided for @interiorExteriorPainting.
+  ///
+  /// In en, this message translates to:
+  /// **'Interior and exterior painting'**
+  String get interiorExteriorPainting;
+
+  /// No description provided for @wallTextureRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Wall texture repair'**
+  String get wallTextureRepair;
+
+  /// No description provided for @paintColorConsultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Paint color consultation'**
+  String get paintColorConsultation;
+
+  /// No description provided for @qualityPaintMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality paint and materials'**
+  String get qualityPaintMaterials;
+
+  /// No description provided for @lawnMowingTrimming.
+  ///
+  /// In en, this message translates to:
+  /// **'Lawn mowing and trimming'**
+  String get lawnMowingTrimming;
+
+  /// No description provided for @plantCareMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Plant care and maintenance'**
+  String get plantCareMaintenance;
+
+  /// No description provided for @gardenDesignLayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Garden design and layout'**
+  String get gardenDesignLayout;
+
+  /// No description provided for @pestControlPlants.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest control for plants'**
+  String get pestControlPlants;
+
+  /// No description provided for @seasonalPlanting.
+  ///
+  /// In en, this message translates to:
+  /// **'Seasonal planting'**
+  String get seasonalPlanting;
+
+  /// No description provided for @gardenCleanupMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Garden cleanup and maintenance'**
+  String get gardenCleanupMaintenance;
+
+  /// No description provided for @customFurnitureCreation.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom furniture creation'**
+  String get customFurnitureCreation;
+
+  /// No description provided for @furnitureRepairRestoration.
+  ///
+  /// In en, this message translates to:
+  /// **'Furniture repair and restoration'**
+  String get furnitureRepairRestoration;
+
+  /// No description provided for @cabinetInstallation.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet installation'**
+  String get cabinetInstallation;
+
+  /// No description provided for @doorWindowFrameWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Door and window frame work'**
+  String get doorWindowFrameWork;
+
+  /// No description provided for @shelvingStorageSolutions.
+  ///
+  /// In en, this message translates to:
+  /// **'Shelving and storage solutions'**
+  String get shelvingStorageSolutions;
+
+  /// No description provided for @woodFinishingStaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Wood finishing and staining'**
+  String get woodFinishingStaining;
+
+  /// No description provided for @mealPlanningPreparation.
+  ///
+  /// In en, this message translates to:
+  /// **'Meal planning and preparation'**
+  String get mealPlanningPreparation;
+
+  /// No description provided for @groceryShoppingShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Grocery shopping for ingredients'**
+  String get groceryShoppingShopping;
+
+  /// No description provided for @cookingPresentation.
+  ///
+  /// In en, this message translates to:
+  /// **'Cooking and presentation'**
+  String get cookingPresentation;
+
+  /// No description provided for @kitchenCleanupAfterService.
+  ///
+  /// In en, this message translates to:
+  /// **'Kitchen cleanup after service'**
+  String get kitchenCleanupAfterService;
+
+  /// No description provided for @specialDietaryAccommodations.
+  ///
+  /// In en, this message translates to:
+  /// **'Special dietary accommodations'**
+  String get specialDietaryAccommodations;
+
+  /// No description provided for @recipeConsultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe consultation'**
+  String get recipeConsultation;
+
+  /// No description provided for @personalizedLessonPlanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized lesson planning'**
+  String get personalizedLessonPlanning;
+
+  /// No description provided for @homeworkAssignmentHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Homework and assignment help'**
+  String get homeworkAssignmentHelp;
+
+  /// No description provided for @examPreparation.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam preparation'**
+  String get examPreparation;
+
+  /// No description provided for @progressTrackingReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress tracking and reports'**
+  String get progressTrackingReports;
+
+  /// No description provided for @studyMaterialsResources.
+  ///
+  /// In en, this message translates to:
+  /// **'Study materials and resources'**
+  String get studyMaterialsResources;
+
+  /// No description provided for @hairCuttingStyling.
+  ///
+  /// In en, this message translates to:
+  /// **'Hair cutting and styling'**
+  String get hairCuttingStyling;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

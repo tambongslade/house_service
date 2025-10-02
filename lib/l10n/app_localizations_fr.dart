@@ -266,6 +266,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profile => 'Profil';
 
   @override
+  String get setupProviderProfile => 'Configurer le Profil Prestataire';
+
+  @override
   String get editProfile => 'Modifier le Profil';
 
   @override
@@ -998,4 +1001,163 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get openSettings => 'Ouvrir les Paramètres';
+
+  @override
+  String get welcomeTitle => 'Bienvenue !';
+
+  @override
+  String get welcomeSubtitle => 'Nous sommes là pour vous aider !';
+
+  @override
+  String get welcomeDescription => 'Trouvez des prestataires de services de confiance dans votre région';
+
+  @override
+  String get homeAideServices => 'Services HOME AIDE';
+
+  @override
+  String get iAm => 'Je suis';
+
+  @override
+  String get iOfferProfessionalServices => 'J\'offre des services professionnels.';
+
+  @override
+  String get pricingInformation => 'Informations Tarifaires';
+
+  @override
+  String get deepCleaningAllRooms => 'Nettoyage en profondeur de toutes les pièces';
+
+  @override
+  String get kitchenBathroomSanitization => 'Désinfection cuisine et salle de bain';
+
+  @override
+  String get floorMoppingVacuuming => 'Lavage et aspiration des sols';
+
+  @override
+  String get dustRemovalSurfaces => 'Élimination de la poussière des surfaces';
+
+  @override
+  String get trashRemoval => 'Enlèvement des déchets';
+
+  @override
+  String get leakDetectionRepair => 'Détection et réparation de fuites';
+
+  @override
+  String get pipeInstallationReplacement => 'Installation et remplacement de tuyaux';
+
+  @override
+  String get toiletSinkRepairs => 'Réparations toilettes et éviers';
+
+  @override
+  String get drainCleaningUnclogging => 'Nettoyage et débouchage des canalisations';
+
+  @override
+  String get waterHeaterMaintenance => 'Entretien chauffe-eau';
+
+  @override
+  String get emergencyPlumbingServices => 'Services de plomberie d\'urgence';
+
+  @override
+  String get wiringInstallationRepair => 'Installation et réparation de câblage';
+
+  @override
+  String get lightFixtureInstallation => 'Installation de luminaires';
+
+  @override
+  String get socketSwitchReplacement => 'Remplacement prises et interrupteurs';
+
+  @override
+  String get circuitBreakerMaintenance => 'Maintenance disjoncteurs';
+
+  @override
+  String get electricalSafetyInspections => 'Inspections de sécurité électrique';
+
+  @override
+  String get emergencyElectricalServices => 'Services électriques d\'urgence';
+
+  @override
+  String get surfacePreparationPriming => 'Préparation des surfaces et sous-couche';
+
+  @override
+  String get interiorExteriorPainting => 'Peinture intérieure et extérieure';
+
+  @override
+  String get wallTextureRepair => 'Réparation texture des murs';
+
+  @override
+  String get paintColorConsultation => 'Consultation couleur peinture';
+
+  @override
+  String get qualityPaintMaterials => 'Peinture et matériaux de qualité';
+
+  @override
+  String get lawnMowingTrimming => 'Tonte et taille de pelouse';
+
+  @override
+  String get plantCareMaintenance => 'Soin et entretien des plantes';
+
+  @override
+  String get gardenDesignLayout => 'Conception et aménagement de jardin';
+
+  @override
+  String get pestControlPlants => 'Lutte antiparasitaire pour plantes';
+
+  @override
+  String get seasonalPlanting => 'Plantation saisonnière';
+
+  @override
+  String get gardenCleanupMaintenance => 'Nettoyage et entretien de jardin';
+
+  @override
+  String get customFurnitureCreation => 'Création de meubles sur mesure';
+
+  @override
+  String get furnitureRepairRestoration => 'Réparation et restauration de meubles';
+
+  @override
+  String get cabinetInstallation => 'Installation d\'armoires';
+
+  @override
+  String get doorWindowFrameWork => 'Travaux cadres portes et fenêtres';
+
+  @override
+  String get shelvingStorageSolutions => 'Solutions d\'étagères et de rangement';
+
+  @override
+  String get woodFinishingStaining => 'Finition et teinture du bois';
+
+  @override
+  String get mealPlanningPreparation => 'Planification et préparation de repas';
+
+  @override
+  String get groceryShoppingShopping => 'Courses pour ingrédients';
+
+  @override
+  String get cookingPresentation => 'Cuisine et présentation';
+
+  @override
+  String get kitchenCleanupAfterService => 'Nettoyage cuisine après service';
+
+  @override
+  String get specialDietaryAccommodations => 'Accommodations alimentaires spéciales';
+
+  @override
+  String get recipeConsultation => 'Consultation de recettes';
+
+  @override
+  String get personalizedLessonPlanning => 'Planification de cours personnalisée';
+
+  @override
+  String get homeworkAssignmentHelp => 'Aide aux devoirs et travaux';
+
+  @override
+  String get examPreparation => 'Préparation aux examens';
+
+  @override
+  String get progressTrackingReports => 'Suivi des progrès et rapports';
+
+  @override
+  String get studyMaterialsResources => 'Matériaux et ressources d\'étude';
+
+  @override
+  String get hairCuttingStyling => 'Coupe et coiffage';
 }

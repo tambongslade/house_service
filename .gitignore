@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment and API keys
+.env
+android/local.properties
+ios/Flutter/GoogleMapsConfig.plist

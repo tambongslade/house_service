@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:house_service/l10n/app_localizations.dart';
 import 'package:house_service/presentation/features/seeker/service_request/service_request_form_screen.dart';
 
 class CategoryDescriptionScreen extends StatelessWidget {
@@ -15,7 +16,7 @@ class CategoryDescriptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final categoryData = _getCategoryData(category);
+    final categoryData = _getCategoryData(category, context);
 
     return Scaffold(
       appBar: AppBar(
@@ -172,7 +173,7 @@ class CategoryDescriptionScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Pricing Information',
+                        AppLocalizations.of(context)!.pricingInformation,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.green.shade700,
@@ -290,7 +291,7 @@ class CategoryDescriptionScreen extends StatelessWidget {
     );
   }
 
-  Map<String, dynamic> _getCategoryData(String category) {
+  Map<String, dynamic> _getCategoryData(String category, BuildContext context) {
     switch (category.toLowerCase()) {
       case 'cleaning':
         return {
@@ -299,12 +300,12 @@ class CategoryDescriptionScreen extends StatelessWidget {
           'isSvg': true,
           'description': 'Professional cleaning services for your home or office. Our certified cleaners use eco-friendly products and modern equipment to ensure your space is spotless and hygienic.',
           'included': [
-            'Deep cleaning of all rooms',
-            'Kitchen and bathroom sanitization',
-            'Floor mopping and vacuuming',
-            'Dust removal from surfaces',
+            AppLocalizations.of(context)!.deepCleaningAllRooms,
+            AppLocalizations.of(context)!.kitchenBathroomSanitization,
+            AppLocalizations.of(context)!.floorMoppingVacuuming,
+            AppLocalizations.of(context)!.dustRemovalSurfaces,
             'Window cleaning (interior)',
-            'Trash removal',
+            AppLocalizations.of(context)!.trashRemoval,
           ],
           'pricing': 'Starting from 3,000 FCFA for a 4-hour session. Pricing may vary based on space size and specific requirements.',
         };
@@ -315,12 +316,12 @@ class CategoryDescriptionScreen extends StatelessWidget {
           'isSvg': true,
           'description': 'Expert plumbing services for repairs, installations, and maintenance. Our licensed plumbers handle everything from leaky faucets to complete pipe installations.',
           'included': [
-            'Leak detection and repair',
-            'Pipe installation and replacement',
-            'Toilet and sink repairs',
-            'Drain cleaning and unclogging',
-            'Water heater maintenance',
-            'Emergency plumbing services',
+            AppLocalizations.of(context)!.leakDetectionRepair,
+            AppLocalizations.of(context)!.pipeInstallationReplacement,
+            AppLocalizations.of(context)!.toiletSinkRepairs,
+            AppLocalizations.of(context)!.drainCleaningUnclogging,
+            AppLocalizations.of(context)!.waterHeaterMaintenance,
+            AppLocalizations.of(context)!.emergencyPlumbingServices,
           ],
           'pricing': 'Starting from 3,000 FCFA for a 4-hour session. Additional charges may apply for parts and materials.',
         };
@@ -331,12 +332,12 @@ class CategoryDescriptionScreen extends StatelessWidget {
           'isSvg': false,
           'description': 'Certified electrical services for safe and reliable installations, repairs, and maintenance. Our electricians are trained to handle residential and commercial electrical work.',
           'included': [
-            'Wiring installation and repair',
-            'Light fixture installation',
-            'Socket and switch replacement',
-            'Circuit breaker maintenance',
-            'Electrical safety inspections',
-            'Emergency electrical services',
+            AppLocalizations.of(context)!.wiringInstallationRepair,
+            AppLocalizations.of(context)!.lightFixtureInstallation,
+            AppLocalizations.of(context)!.socketSwitchReplacement,
+            AppLocalizations.of(context)!.circuitBreakerMaintenance,
+            AppLocalizations.of(context)!.electricalSafetyInspections,
+            AppLocalizations.of(context)!.emergencyElectricalServices,
           ],
           'pricing': 'Starting from 3,000 FCFA for a 4-hour session. Costs for electrical components are additional.',
         };
@@ -347,12 +348,12 @@ class CategoryDescriptionScreen extends StatelessWidget {
           'isSvg': true,
           'description': 'Professional painting services to transform your space. Our painters use premium paints and techniques to deliver beautiful, long-lasting results.',
           'included': [
-            'Surface preparation and priming',
-            'Interior and exterior painting',
-            'Wall texture repair',
-            'Paint color consultation',
+            AppLocalizations.of(context)!.surfacePreparationPriming,
+            AppLocalizations.of(context)!.interiorExteriorPainting,
+            AppLocalizations.of(context)!.wallTextureRepair,
+            AppLocalizations.of(context)!.paintColorConsultation,
             'Clean-up after completion',
-            'Quality paint and materials',
+            AppLocalizations.of(context)!.qualityPaintMaterials,
           ],
           'pricing': 'Starting from 3,000 FCFA for a 4-hour session. Paint and materials are included in the base price.',
         };
@@ -364,12 +365,12 @@ class CategoryDescriptionScreen extends StatelessWidget {
           'isSystemIcon': true,
           'description': 'Comprehensive gardening and landscaping services to maintain and beautify your outdoor spaces. Our gardeners are experienced with local plants and climate.',
           'included': [
-            'Lawn mowing and trimming',
-            'Plant care and maintenance',
-            'Garden design and layout',
-            'Pest control for plants',
-            'Seasonal planting',
-            'Garden cleanup and maintenance',
+            AppLocalizations.of(context)!.lawnMowingTrimming,
+            AppLocalizations.of(context)!.plantCareMaintenance,
+            AppLocalizations.of(context)!.gardenDesignLayout,
+            AppLocalizations.of(context)!.pestControlPlants,
+            AppLocalizations.of(context)!.seasonalPlanting,
+            AppLocalizations.of(context)!.gardenCleanupMaintenance,
           ],
           'pricing': 'Starting from 3,000 FCFA for a 4-hour session. Seeds and plants are additional costs.',
         };
@@ -381,12 +382,12 @@ class CategoryDescriptionScreen extends StatelessWidget {
           'isSystemIcon': true,
           'description': 'Skilled carpentry services for furniture making, repairs, and custom woodwork. Our carpenters use quality materials and traditional techniques.',
           'included': [
-            'Custom furniture creation',
-            'Furniture repair and restoration',
-            'Cabinet installation',
-            'Door and window frame work',
-            'Shelving and storage solutions',
-            'Wood finishing and staining',
+            AppLocalizations.of(context)!.customFurnitureCreation,
+            AppLocalizations.of(context)!.furnitureRepairRestoration,
+            AppLocalizations.of(context)!.cabinetInstallation,
+            AppLocalizations.of(context)!.doorWindowFrameWork,
+            AppLocalizations.of(context)!.shelvingStorageSolutions,
+            AppLocalizations.of(context)!.woodFinishingStaining,
           ],
           'pricing': 'Starting from 3,000 FCFA for a 4-hour session. Wood materials and hardware are additional.',
         };
@@ -398,12 +399,12 @@ class CategoryDescriptionScreen extends StatelessWidget {
           'isSystemIcon': true,
           'description': 'Professional cooking services for events, daily meals, or special occasions. Our chefs specialize in local and international cuisines.',
           'included': [
-            'Meal planning and preparation',
-            'Grocery shopping for ingredients',
-            'Cooking and presentation',
-            'Kitchen cleanup after service',
-            'Special dietary accommodations',
-            'Recipe consultation',
+            AppLocalizations.of(context)!.mealPlanningPreparation,
+            AppLocalizations.of(context)!.groceryShoppingShopping,
+            AppLocalizations.of(context)!.cookingPresentation,
+            AppLocalizations.of(context)!.kitchenCleanupAfterService,
+            AppLocalizations.of(context)!.specialDietaryAccommodations,
+            AppLocalizations.of(context)!.recipeConsultation,
           ],
           'pricing': 'Starting from 3,000 FCFA for a 4-hour session. Ingredients and groceries are additional costs.',
         };
@@ -415,12 +416,12 @@ class CategoryDescriptionScreen extends StatelessWidget {
           'isSystemIcon': true,
           'description': 'Quality tutoring services for students of all ages. Our tutors are qualified in various subjects and teaching methods.',
           'included': [
-            'Personalized lesson planning',
+            AppLocalizations.of(context)!.personalizedLessonPlanning,
             'Subject-specific instruction',
-            'Homework and assignment help',
-            'Exam preparation',
-            'Progress tracking and reports',
-            'Study materials and resources',
+            AppLocalizations.of(context)!.homeworkAssignmentHelp,
+            AppLocalizations.of(context)!.examPreparation,
+            AppLocalizations.of(context)!.progressTrackingReports,
+            AppLocalizations.of(context)!.studyMaterialsResources,
           ],
           'pricing': 'Starting from 3,000 FCFA for a 4-hour session. All materials and resources included.',
         };
@@ -431,7 +432,7 @@ class CategoryDescriptionScreen extends StatelessWidget {
           'isSvg': true,
           'description': 'Professional beauty and personal care services in the comfort of your home. Our certified beauticians provide a range of treatments.',
           'included': [
-            'Hair cutting and styling',
+            AppLocalizations.of(context)!.hairCuttingStyling,
             'Makeup application',
             'Manicure and pedicure',
             'Facial treatments',

@@ -24,5 +24,8 @@
   "serviceProviders": "Prestataire de Services",
   "specialOffers": "Offres Spéciales",
   "searchForServices": "Rechercher des services...",
-  "details": "Détails"
+  "details": "Détails",
+  "welcomeTitle": "Bienvenue !",
+  "welcomeSubtitle": "Nous sommes là pour vous aider !",
+  "welcomeDescription": "Trouvez des prestataires de services de confiance dans votre région"
 }
