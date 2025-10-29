@@ -319,6 +319,7 @@ class CreateServiceRequestModel {
   final String province;
   final String? specialInstructions;
   final String? description;
+  final String? couponCode;
 
   const CreateServiceRequestModel({
     required this.category,
@@ -329,6 +330,7 @@ class CreateServiceRequestModel {
     required this.province,
     this.specialInstructions,
     this.description,
+    this.couponCode,
   });
 
   Map<String, dynamic> toJson() {
@@ -341,6 +343,7 @@ class CreateServiceRequestModel {
       'province': province,
       if (specialInstructions != null) 'specialInstructions': specialInstructions,
       if (description != null) 'description': description,
+      if (couponCode != null && couponCode!.isNotEmpty) 'couponCode': couponCode,
     };
   }
 }

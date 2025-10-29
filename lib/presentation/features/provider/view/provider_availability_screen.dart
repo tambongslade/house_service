@@ -37,25 +37,50 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
     'sunday',
   ];
 
-  final Map<String, String> _dayNames = {
-    'monday': 'Mon',
-    'tuesday': 'Tue',
-    'wednesday': 'Wed',
-    'thursday': 'Thu',
-    'friday': 'Fri',
-    'saturday': 'Sat',
-    'sunday': 'Sun',
-  };
+  // Helper methods to get localized day names
+  String _getDayShortName(BuildContext context, String day) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (day.toLowerCase()) {
+      case 'monday':
+        return l10n.mon;
+      case 'tuesday':
+        return l10n.tue;
+      case 'wednesday':
+        return l10n.wed;
+      case 'thursday':
+        return l10n.thu;
+      case 'friday':
+        return l10n.fri;
+      case 'saturday':
+        return l10n.sat;
+      case 'sunday':
+        return l10n.sun;
+      default:
+        return day;
+    }
+  }
 
-  final Map<String, String> _fullDayNames = {
-    'monday': 'Monday',
-    'tuesday': 'Tuesday',
-    'wednesday': 'Wednesday',
-    'thursday': 'Thursday',
-    'friday': 'Friday',
-    'saturday': 'Saturday',
-    'sunday': 'Sunday',
-  };
+  String _getDayFullName(BuildContext context, String day) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (day.toLowerCase()) {
+      case 'monday':
+        return l10n.monday;
+      case 'tuesday':
+        return l10n.tuesday;
+      case 'wednesday':
+        return l10n.wednesday;
+      case 'thursday':
+        return l10n.thursday;
+      case 'friday':
+        return l10n.friday;
+      case 'saturday':
+        return l10n.saturday;
+      case 'sunday':
+        return l10n.sunday;
+      default:
+        return day;
+    }
+  }
 
   @override
   void initState() {
@@ -219,9 +244,9 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Loading your schedule...',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.loadingYourSchedule,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: Color(0xFF64748B),
@@ -254,9 +279,9 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
         backgroundColor: Colors.transparent,
         elevation: 0,
         icon: const Icon(Icons.auto_awesome, color: Colors.white),
-        label: const Text(
-          'Quick Setup',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        label: Text(
+          AppLocalizations.of(context)!.quickSetup,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -271,9 +296,9 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
           children: [
             Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
             const SizedBox(height: 16),
-            const Text(
-              'Failed to Load Availability',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.failedToLoadAvailabilityTitle,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -284,7 +309,7 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _loadAvailability,
-              child: const Text('Retry'),
+              child: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),
@@ -646,7 +671,7 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
                         child: Column(
                           children: [
                             Text(
-                              _dayNames[day]!,
+                              _getDayShortName(context, day),
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -821,7 +846,7 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
                   ),
                   child: Center(
                     child: Text(
-                      _dayNames[day]!,
+                      _getDayShortName(context, day),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -839,7 +864,7 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _fullDayNames[day]!,
+                        _getDayFullName(context, day),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -1279,7 +1304,7 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
             content: Text(
               AppLocalizations.of(
                 context,
-              )!.copyScheduleConfirm(_fullDayNames[sourceDay]!),
+              )!.copyScheduleConfirm(_getDayFullName(context, sourceDay)),
             ),
             actions: [
               TextButton(
@@ -1547,9 +1572,13 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Delete Time Slot'),
+            title: Text(AppLocalizations.of(context)!.deleteTimeSlot),
             content: Text(
-              'Delete time slot ${slot['startTime']} - ${slot['endTime']} for ${_fullDayNames[day]}?',
+              AppLocalizations.of(context)!.deleteTimeSlotFor(
+                slot['startTime'],
+                slot['endTime'],
+                _getDayFullName(context, day),
+              ),
             ),
             actions: [
               TextButton(
@@ -1592,9 +1621,11 @@ class _ProviderAvailabilityScreenState extends State<ProviderAvailabilityScreen>
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Delete Entire Day'),
+            title: Text(AppLocalizations.of(context)!.deleteEntireDay),
             content: Text(
-              'Delete all availability for ${_fullDayNames[day]}?\n\nThis will remove all time slots for this day.',
+              AppLocalizations.of(context)!.deleteAllAvailabilityForDay(
+                _getDayFullName(context, day),
+              ),
             ),
             actions: [
               TextButton(

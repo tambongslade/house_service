@@ -40,7 +40,7 @@ class _ProviderMainScreenState extends State<ProviderMainScreen>
       AppLocalizations.of(context)!.myServices,
       AppLocalizations.of(context)!.sessions,
       AppLocalizations.of(context)!.availability,
-      'Availability Validation',
+      AppLocalizations.of(context)!.availabilityValidation,
       AppLocalizations.of(context)!.profile,
     ];
   }
@@ -136,10 +136,10 @@ class _ProviderMainScreenState extends State<ProviderMainScreen>
                     icon: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -150,26 +150,27 @@ class _ProviderMainScreenState extends State<ProviderMainScreen>
                       ),
                     ),
                     itemBuilder: (BuildContext context) {
+                      final l10n = AppLocalizations.of(context)!;
                       return [
-                        const PopupMenuItem<String>(
+                        PopupMenuItem<String>(
                           value: 'profile',
                           child: Row(
                             children: [
-                              Icon(Icons.person_outline, size: 20),
-                              SizedBox(width: 12),
-                              Text('My Profile'),
+                              const Icon(Icons.person_outline, size: 20),
+                              const SizedBox(width: 12),
+                              Text(l10n.myProfile),
                             ],
                           ),
                         ),
-                        const PopupMenuItem<String>(
+                        PopupMenuItem<String>(
                           value: 'logout',
                           child: Row(
                             children: [
-                              Icon(Icons.logout, size: 20, color: Colors.red),
-                              SizedBox(width: 12),
+                              const Icon(Icons.logout, size: 20, color: Colors.red),
+                              const SizedBox(width: 12),
                               Text(
-                                'Logout',
-                                style: TextStyle(color: Colors.red),
+                                l10n.logout,
+                                style: const TextStyle(color: Colors.red),
                               ),
                             ],
                           ),
@@ -195,7 +196,7 @@ class _ProviderMainScreenState extends State<ProviderMainScreen>
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF3B82F6).withOpacity(0.4),
+              color: const Color(0xFF3B82F6).withValues(alpha: 0.4),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -233,7 +234,7 @@ class _ProviderMainScreenState extends State<ProviderMainScreen>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             spreadRadius: 0,
             blurRadius: 20,
             offset: const Offset(0, -5),
@@ -310,7 +311,7 @@ class _ProviderMainScreenState extends State<ProviderMainScreen>
       decoration: BoxDecoration(
         color:
             isActive
-                ? const Color(0xFF3B82F6).withOpacity(0.1)
+                ? const Color(0xFF3B82F6).withValues(alpha: 0.1)
                 : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
       ),

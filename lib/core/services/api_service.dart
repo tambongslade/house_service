@@ -9,12 +9,13 @@ import '../models/auth_models.dart';
 import '../models/user_model.dart';
 import '../models/session_models.dart';
 import '../models/service_request_models.dart';
+import '../models/coupon_models.dart';
 
 class ApiService {
   // Local development base URL
   static String get baseUrl {
     // Cloudflare tunnel server
-    return 'https://interfaces-preference-jackets-bottle.trycloudflare.com/api';
+    return 'https://api.homeaideservice.com/api';
   }
 
   static const String apiVersion = 'v1';
@@ -2105,5 +2106,41 @@ class ApiService {
       (data) => data,
       requiresAuth: true,
     );
+  }
+
+  // ============== COUPON ENDPOINTS ==============
+
+  // Validate coupon code
+  Future<ApiResponse<CouponValidationResponse>> validateCoupon(
+    CouponValidationRequest request,
+  ) async {
+    debugPrint('API: Validating coupon ${request.code} for amount ${request.orderAmount}');
+    
+    try {
+      final response = await _makeRequest(
+        'POST',
+        '$apiVersion/coupons/validate',
+        request.toJson(),
+        (data) => data,
+        requiresAuth: true,
+      );
+
+      if (response.isSuccess && response.data != null) {
+        final couponResponse = CouponValidationResponse.fromJson(response.data!);
+        debugPrint('API: Coupon validation result - isValid: ${couponResponse.isValid}, discount: ${couponResponse.discountAmount}');
+        return ApiResponse<CouponValidationResponse>.success(couponResponse);
+      } else {
+        final errorMessage = response.error ?? 'Failed to validate coupon';
+        debugPrint('API: Coupon validation failed - $errorMessage');
+        return ApiResponse<CouponValidationResponse>.success(
+          CouponValidationResponse.error(errorMessage),
+        );
+      }
+    } catch (e) {
+      debugPrint('API: Coupon validation error - $e');
+      return ApiResponse<CouponValidationResponse>.success(
+        CouponValidationResponse.error('Network error: $e'),
+      );
+    }
   }
 }

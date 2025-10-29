@@ -62,7 +62,23 @@
   "confirmed": "Confirmed",
   "today": "Today",
   "tomorrow": "Tomorrow",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday",
+  "mon": "Mon",
+  "tue": "Tue",
+  "wed": "Wed",
+  "thu": "Thu",
+  "fri": "Fri",
+  "sat": "Sat",
+  "sun": "Sun",
   "earnings": "Earnings",
+  "locationNotSpecified": "Location not specified",
+  "twoThisMonth": "+2 this month",
   "recentActivity": "Recent Activity",
   "noRecentActivities": "No recent activities",
   "activitiesWillAppear": "Your activities will appear here",
@@ -112,12 +128,14 @@
   "withdrawalSuccess": "Withdrawal request submitted successfully!",
   "withdrawalFailed": "Failed to submit withdrawal request",
   "retry": "Retry",
+  "failedToLoadAvailability": "Failed to Load Availability",
   "loading": "Loading...",
   "error": "Error",
   "success": "Success",
   "myServices": "My Services",
   "sessions": "Sessions",
   "availability": "Availability",
+  "availabilityValidation": "Availability Validation",
   "profile": "Profile",
   "setupProviderProfile": "Setup Provider Profile",
   "editProfile": "Edit Profile",
@@ -365,6 +383,78 @@
   "failedToSetDefaultAvailability": "Failed to set default availability: {error}",
   "errorSettingDefaultAvailability": "Error setting default availability: {error}",
   "pleaseSelectAtLeastOneDay": "Please select at least one day",
+  "sourceDayHasNoAvailability": "Source day has no availability to copy",
+  "allAvailabilityClearedSuccess": "All availability cleared successfully!",
+  "failedToClearAvailability": "Failed to clear availability: {error}",
+  "@failedToClearAvailability": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNoAvailabilityData": "Error: No availability data found for this day",
+  "errorCannotFindAvailabilityId": "Error: Cannot find availability ID",
+  "deleteAllAvailabilityForDay": "Delete all availability for {day}?\\n\\nThis will remove all time slots for this day.",
+  "@deleteAllAvailabilityForDay": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteEntireDayButton": "Delete Day",
+  "timeSlotDeletedSuccess": "Time slot deleted successfully",
+  "failedToDeleteTimeSlot": "Failed to delete time slot: {error}",
+  "@failedToDeleteTimeSlot": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDeletingTimeSlot": "Error deleting time slot: {error}",
+  "@errorDeletingTimeSlot": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "dayAvailabilityDeletedSuccess": "Day availability deleted successfully",
+  "failedToDeleteDay": "Failed to delete day: {error}",
+  "@failedToDeleteDay": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDeletingDay": "Error deleting day: {error}",
+  "@errorDeletingDay": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "setViaQuickSetup": "Set via Quick Setup",
+  "quickSetupCompletedSuccess": "Quick setup completed successfully!",
+  "default95": "Default 9-5",
+  "deleteTimeSlotFor": "Delete time slot {start} - {end} for {day}?",
+  "@deleteTimeSlotFor": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
   "apply": "Apply",
   "selectDays": "Select Days",
   "quickSetupCompleted": "Quick setup completed successfully!",
@@ -434,5 +524,314 @@
   "examPreparation": "Exam preparation",
   "progressTrackingReports": "Progress tracking and reports",
   "studyMaterialsResources": "Study materials and resources",
-  "hairCuttingStyling": "Hair cutting and styling"
+  "hairCuttingStyling": "Hair cutting and styling",
+  "transactionHistory": "Transaction History",
+  "noTransactions": "No transactions yet",
+  "transactionHistoryEmpty": "Your transaction history will appear here",
+  "availableBalanceLabel": "Available Balance: {amount}",
+  "@availableBalanceLabel": {
+    "description": "Shows available balance with amount",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "10,000 FCFA"
+      }
+    }
+  },
+  "history": "History",
+  "requestService": "Request {service}",
+  "@requestService": {
+    "description": "Title for service request form",
+    "placeholders": {
+      "service": {
+        "type": "String",
+        "example": "Cleaning"
+      }
+    }
+  },
+  "serviceDetails": "Service Details",
+  "serviceDate": "Service Date *",
+  "selectDateForService": "Select date for service",
+  "selectDate": "Select date",
+  "startTime": "Start Time *",
+  "selectStartTime": "Select start time",
+  "selectTime": "Select time",
+  "durationLabel": "Duration: {duration} hours",
+  "@durationLabel": {
+    "description": "Shows duration in hours",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "4.0"
+      }
+    }
+  },
+  "minimumMaximumHours": "Minimum 0.5 hours, maximum 12 hours",
+  "location": "Location",
+  "province": "Province *",
+  "pleaseSelectProvince": "Please select a province",
+  "serviceLocation": "Service Location *",
+  "locationSelected": "Location selected",
+  "gettingLocation": "Getting location...",
+  "useCurrentLocation": "Use current location",
+  "selectOnMap": "Select on map",
+  "additionalInformation": "Additional Information",
+  "serviceDescription": "Service Description",
+  "brieflyDescribe": "Briefly describe what needs to be done",
+  "specialInstructions": "Special Instructions",
+  "anySpecialRequirements": "Any special requirements or notes",
+  "couponCodeOptional": "Coupon Code (Optional)",
+  "enterCouponCode": "Enter Coupon Code",
+  "enterCouponOptional": "Enter coupon code (optional)",
+  "validate": "Validate",
+  "enterCouponDiscount": "Enter a coupon code to get a discount on your service",
+  "estimatedCost": "Estimated Cost",
+  "originalAmount": "Original Amount:",
+  "discount": "Discount ({code}):",
+  "@discount": {
+    "description": "Discount with coupon code",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "SAVE20"
+      }
+    }
+  },
+  "finalAmount": "Final Amount:",
+  "total": "Total:",
+  "forHoursOfService": "For {duration} hours of service",
+  "@forHoursOfService": {
+    "description": "Shows hours of service",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "4.5"
+      }
+    }
+  },
+  "basePriceInfo": "Base price: {price} FCFA (4 hours)",
+  "@basePriceInfo": {
+    "description": "Base price information",
+    "placeholders": {
+      "price": {
+        "type": "int",
+        "example": "3000"
+      }
+    }
+  },
+  "overtimeInfo": "Overtime: {amount} FCFA ({hours} extra hours)",
+  "@overtimeInfo": {
+    "description": "Overtime charges",
+    "placeholders": {
+      "amount": {
+        "type": "int",
+        "example": "750"
+      },
+      "hours": {
+        "type": "String",
+        "example": "1.0"
+      }
+    }
+  },
+  "noOvertimeCharges": "No overtime charges",
+  "couponAppliedSuccess": "Coupon \"{code}\" applied successfully!",
+  "@couponAppliedSuccess": {
+    "description": "Coupon applied success message",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "SAVE20"
+      }
+    }
+  },
+  "submitRequest": "Submit Request",
+  "locationPermissionsDenied": "Location permissions are denied",
+  "locationPermissionsPermanentlyDenied": "Location permissions are permanently denied, we cannot request permissions.",
+  "currentLocationLabel": "Current Location ({lat}, {lng})",
+  "@currentLocationLabel": {
+    "description": "Current location with coordinates",
+    "placeholders": {
+      "lat": {
+        "type": "String",
+        "example": "4.0511"
+      },
+      "lng": {
+        "type": "String",
+        "example": "9.7679"
+      }
+    }
+  },
+  "currentLocationWithAddress": "Current Location: {address}",
+  "@currentLocationWithAddress": {
+    "description": "Current location with address",
+    "placeholders": {
+      "address": {
+        "type": "String",
+        "example": "123 Main St, Douala"
+      }
+    }
+  },
+  "currentLocationCaptured": "Current location captured successfully",
+  "failedToGetLocation": "Failed to get current location: {error}",
+  "@failedToGetLocation": {
+    "description": "Error getting location",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Permission denied"
+      }
+    }
+  },
+  "locationSelectedSuccess": "Location selected successfully",
+  "couponSaveAmount": "Coupon applied! You save {amount} FCFA",
+  "@couponSaveAmount": {
+    "description": "Coupon savings message",
+    "placeholders": {
+      "amount": {
+        "type": "int",
+        "example": "500"
+      }
+    }
+  },
+  "invalidCouponCode": "Invalid coupon code",
+  "failedToValidateCoupon": "Failed to validate coupon",
+  "errorValidatingCoupon": "Error validating coupon: {error}",
+  "@errorValidatingCoupon": {
+    "description": "Coupon validation error",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "requestSubmittedSuccessfully": "Request Submitted Successfully",
+  "requestId": "Request ID: {id}",
+  "@requestId": {
+    "description": "Request ID label",
+    "placeholders": {
+      "id": {
+        "type": "String",
+        "example": "REQ-12345"
+      }
+    }
+  },
+  "estimatedCostAmount": "Estimated Cost: {amount} FCFA",
+  "@estimatedCostAmount": {
+    "description": "Estimated cost with amount",
+    "placeholders": {
+      "amount": {
+        "type": "int",
+        "example": "3000"
+      }
+    }
+  },
+  "adminWillAssignProvider": "An admin will assign a provider to your request.",
+  "failedToSubmitRequest": "Failed to submit request",
+  "errorSubmitting": "Error: {error}",
+  "@errorSubmitting": {
+    "description": "Generic error message",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "myServiceRequests": "My Service Requests",
+  "all": "All",
+  "rejected": "Rejected",
+  "noServiceRequestsFound": "No service requests found",
+  "yourServiceRequestsWillAppear": "Your service requests will appear here",
+  "date": "Date",
+  "time": "Time",
+  "viewDetails": "View Details",
+  "trackProvider": "Track Provider",
+  "createdAt": "Created {date}",
+  "@createdAt": {
+    "description": "Created date label",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "today"
+      }
+    }
+  },
+  "requestDetailsTitle": "Request Details - {category}",
+  "@requestDetailsTitle": {
+    "description": "Request details dialog title",
+    "placeholders": {
+      "category": {
+        "type": "String",
+        "example": "Cleaning"
+      }
+    }
+  },
+  "hours": "hours",
+  "cost": "Cost",
+  "description": "Description",
+  "provider": "Provider",
+  "created": "Created",
+  "updated": "Updated",
+  "close": "Close",
+  "cancelRequest": "Cancel Request",
+  "cancelServiceRequest": "Cancel Service Request",
+  "cancelConfirmation": "Are you sure you want to cancel this service request?",
+  "reasonForCancellation": "Reason for cancellation",
+  "keepRequest": "Keep Request",
+  "cancelledByUser": "Cancelled by user",
+  "serviceRequestCancelledSuccess": "Service request cancelled successfully",
+  "failedToCancelRequest": "Failed to cancel request",
+  "errorCancellingRequest": "Error cancelling request: {error}",
+  "@errorCancellingRequest": {
+    "description": "Error cancelling request",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "unableToTrack": "Unable to track: Invalid session ID",
+  "failedToLoadServiceRequests": "Failed to load service requests",
+  "errorLoadingServiceRequests": "Error loading service requests: {error}",
+  "@errorLoadingServiceRequests": {
+    "description": "Error loading requests",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "todayLabel": "Today",
+  "tomorrowLabel": "Tomorrow",
+  "yesterdayLabel": "Yesterday",
+  "todayLowercase": "today",
+  "yesterdayLowercase": "yesterday",
+  "daysAgoLabel": "{days} days ago",
+  "@daysAgoLabel": {
+    "description": "Days ago label",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "invalidDate": "Invalid Date",
+  "dateNotSet": "Date not set",
+  "na": "N/A",
+  "cleaning": "Cleaning",
+  "plumbing": "Plumbing",
+  "electrical": "Electrical",
+  "painting": "Painting",
+  "gardening": "Gardening",
+  "carpentry": "Carpentry",
+  "cooking": "Cooking",
+  "tutoring": "Tutoring",
+  "beauty": "Beauty",
+  "maintenance": "Maintenance",
+  "pullDownToRefresh": "Pull down to refresh",
+  "duration": "Duration"
 }
