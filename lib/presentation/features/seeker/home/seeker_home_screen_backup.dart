@@ -438,7 +438,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
               height: MediaQuery.of(context).size.height * 0.2,
               width: MediaQuery.of(context).size.width * 0.9,
               decoration: BoxDecoration(
-                color: Color(0xFFF9933E), // More accurate orange color
+                color: Color.fromARGB(255, 80, 136, 225), // More accurate orange color
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Stack(
@@ -453,7 +453,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         // Fallback if image fails to load
-                        return Container(color: Colors.orange.shade300);
+                        return Container(color: const Color.fromARGB(255, 65, 136, 211));
                       },
                     ),
                   ),

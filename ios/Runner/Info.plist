@@ -47,6 +47,8 @@
 	<true/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>GMSApiKey</key>
+	<string>AIzaSyAHwXJxvDg9jK_nDrxz9hxd0_fQ1greZKo</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>House Service needs access to your location to show nearby service providers, enable GPS tracking during services, and provide accurate directions.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

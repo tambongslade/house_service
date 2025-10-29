@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../../../core/models/service_request_models.dart';
-import '../../../../core/services/api_service.dart';
+import '../../../../core/core_exports.dart';
 import '../map/seeker_map_screen.dart';
 
 class ServiceRequestFormScreen extends StatefulWidget {
@@ -32,9 +31,12 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
   ServiceRequestLocation? _selectedLocation;
   final _specialInstructionsController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _couponController = TextEditingController();
 
   bool _isSubmitting = false;
   bool _isLoadingLocation = false;
+  bool _isValidatingCoupon = false;
+  CouponInfo _couponInfo = CouponInfo.empty();
 
   final List<String> _cameroonProvinces = [
     'Adamawa',
@@ -53,6 +55,7 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
   void dispose() {
     _specialInstructionsController.dispose();
     _descriptionController.dispose();
+    _couponController.dispose();
     super.dispose();
   }
 
@@ -108,6 +111,13 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
               
               // Special Instructions
               _buildSpecialInstructionsField(),
+              const SizedBox(height: 24),
+              
+              _buildSectionHeader('Coupon Code (Optional)'),
+              const SizedBox(height: 16),
+              
+              // Coupon Code
+              _buildCouponField(),
               const SizedBox(height: 32),
               
               // Cost estimate
@@ -402,9 +412,96 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
     );
   }
 
+  Widget _buildCouponField() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.local_offer, color: Colors.orange),
+              const SizedBox(width: 8),
+              Text(
+                'Enter Coupon Code',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          
+          // Coupon input and validate button
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _couponController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter coupon code (optional)',
+                    prefixIcon: const Icon(Icons.confirmation_number),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  ),
+                  textCapitalization: TextCapitalization.characters,
+                  onChanged: (value) {
+                    // Clear applied coupon if user changes the code
+                    if (_couponInfo.isApplied && value != _couponInfo.couponCode) {
+                      setState(() {
+                        _couponInfo = CouponInfo.empty();
+                      });
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton(
+                onPressed: _couponController.text.trim().isNotEmpty && !_isValidatingCoupon 
+                    ? _validateCoupon : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange.shade600,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                ),
+                child: _isValidatingCoupon
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Text('Validate'),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 8),
+          Text(
+            'Enter a coupon code to get a discount on your service',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCostEstimate() {
     const basePrice = 3000;
-    final totalPrice = _duration <= 4.0 ? basePrice : basePrice + ((_duration - 4.0) * 2 * 375).round();
+    final originalPrice = _duration <= 4.0 ? basePrice : basePrice + ((_duration - 4.0) * 2 * 375).round();
+    final discount = _couponInfo.isApplied ? (_couponInfo.discountAmount ?? 0.0) : 0.0;
+    final finalPrice = _couponInfo.isApplied ? (_couponInfo.finalAmount ?? originalPrice.toDouble()) : originalPrice.toDouble();
     
     return Container(
       padding: const EdgeInsets.all(16),
@@ -430,13 +527,73 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            '$totalPrice FCFA',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.blue.shade800,
+          
+          // Original price
+          if (_couponInfo.isApplied) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Original Amount:',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                Text(
+                  '${originalPrice.round()} FCFA',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey.shade600,
+                    decoration: TextDecoration.lineThrough,
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Discount (${_couponInfo.couponCode}):',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.green.shade700,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  '-${discount.round()} FCFA',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.green.shade700,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const Divider(),
+            const SizedBox(height: 8),
+          ],
+          
+          // Final price
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _couponInfo.isApplied ? 'Final Amount:' : 'Total:',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade800,
+                ),
+              ),
+              Text(
+                '${finalPrice.round()} FCFA',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: _couponInfo.isApplied ? Colors.green.shade700 : Colors.blue.shade800,
+                ),
+              ),
+            ],
           ),
+          
           const SizedBox(height: 4),
           Text(
             'For ${_duration.toStringAsFixed(1)} hours of service',
@@ -451,6 +608,31 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
               color: Colors.blue.shade600,
             ),
           ),
+          
+          if (_couponInfo.isApplied) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green.shade700, size: 16),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Coupon "${_couponInfo.couponCode}" applied successfully!',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.green.shade700,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -582,7 +764,7 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
           }
         }
       } catch (e) {
-        print('Error getting address for current location: $e');
+        debugPrint('Error getting address for current location: $e');
         // Keep the coordinate address as fallback
       }
       
@@ -647,6 +829,91 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
     }
   }
 
+  Future<void> _validateCoupon() async {
+    final couponCode = _couponController.text.trim().toUpperCase();
+    if (couponCode.isEmpty) return;
+
+    setState(() {
+      _isValidatingCoupon = true;
+    });
+
+    try {
+      const basePrice = 3000;
+      final originalAmount = _duration <= 4.0 ? basePrice : basePrice + ((_duration - 4.0) * 2 * 375).round();
+      
+      final request = CouponValidationRequest(
+        code: couponCode,
+        orderAmount: originalAmount.toDouble(),
+      );
+
+      final response = await _apiService.validateCoupon(request);
+
+      if (mounted) {
+        if (response.isSuccess && response.data != null) {
+          final validationResult = response.data!;
+          
+          if (validationResult.isValid) {
+            setState(() {
+              _couponInfo = CouponInfo.applied(
+                couponCode: validationResult.couponCode,
+                discountAmount: validationResult.discountAmount,
+                finalAmount: validationResult.finalAmount,
+              );
+            });
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Coupon applied! You save ${validationResult.discountAmount.round()} FCFA'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          } else {
+            setState(() {
+              _couponInfo = CouponInfo.empty();
+            });
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(validationResult.errorMessage ?? 'Invalid coupon code'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        } else {
+          setState(() {
+            _couponInfo = CouponInfo.empty();
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.error ?? 'Failed to validate coupon'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _couponInfo = CouponInfo.empty();
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error validating coupon: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isValidatingCoupon = false;
+        });
+      }
+    }
+  }
+
   Future<void> _submitRequest() async {
     if (!_formKey.currentState!.validate() || !_canSubmit()) {
       return;
@@ -670,6 +937,7 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
         description: _descriptionController.text.trim().isNotEmpty 
             ? _descriptionController.text.trim() 
             : null,
+        couponCode: _couponInfo.isApplied ? _couponInfo.couponCode : null,
       );
 
       final response = await _apiService.createServiceRequest(requestData.toJson());

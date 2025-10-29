@@ -36,6 +36,7 @@ dependencies:
   google_maps_flutter: ^2.2.8
   image_picker: ^1.0.7
   geocoding: ^3.0.0
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +53,7 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/translations/
+    - .env
 
   # Add fonts to your application
   fonts:
