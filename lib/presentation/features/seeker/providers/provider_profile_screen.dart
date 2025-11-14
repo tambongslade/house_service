@@ -4,6 +4,8 @@ import 'package:house_service/l10n/app_localizations.dart';
 import 'package:house_service/core/state/app_state.dart';
 import 'package:house_service/core/models/provider_models.dart';
 import 'package:house_service/core/models/api_response.dart';
+import 'package:house_service/core/models/booking_models.dart';
+import 'package:house_service/core/services/api_service.dart';
 
 class ProviderProfileScreen extends StatefulWidget {
   final String providerId;
@@ -418,7 +420,10 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.3),
+            width: 1,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -1295,7 +1300,8 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
     String reviewerId = '';
 
     if (reviewer.isNotEmpty) {
-      reviewerName = reviewer['fullName'] ?? AppLocalizations.of(context)!.anonymous;
+      reviewerName =
+          reviewer['fullName'] ?? AppLocalizations.of(context)!.anonymous;
       reviewerId = reviewer['_id'] ?? reviewer['id'] ?? '';
     }
 
@@ -1309,11 +1315,14 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
       final isCurrentUserReview =
           reviewerId == currentUser.id ||
           directReviewerId == currentUser.id ||
-          (reviewerName == AppLocalizations.of(context)!.anonymous && reviewer.isEmpty);
+          (reviewerName == AppLocalizations.of(context)!.anonymous &&
+              reviewer.isEmpty);
 
       if (isCurrentUserReview) {
         reviewerName =
-            currentUser.fullName.isNotEmpty ? currentUser.fullName : AppLocalizations.of(context)!.you;
+            currentUser.fullName.isNotEmpty
+                ? currentUser.fullName
+                : AppLocalizations.of(context)!.you;
       }
     }
 
@@ -1619,7 +1628,9 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
       ),
       builder:
           (context) => BookingBottomSheet(
-            key: ValueKey('booking_${Localizations.localeOf(context).languageCode}'),
+            key: ValueKey(
+              'booking_${Localizations.localeOf(context).languageCode}',
+            ),
             provider: _profile!.provider,
             services: _profile!.services,
             availability: _profile!.availability,
@@ -1651,6 +1662,19 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   String? _selectedStartTime;
   String? _selectedEndTime;
 
+  // Payment details fields
+  final _phoneController = TextEditingController();
+  final _payerNameController = TextEditingController();
+  final _payerEmailController = TextEditingController();
+  String _paymentMedium = 'mobile money';
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _payerNameController.dispose();
+    _payerEmailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1738,6 +1762,12 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
             if (_selectedStartTime != null && _selectedEndTime != null) ...[
               const SizedBox(height: 24),
               _buildBookingSummary(textTheme),
+
+              // Payment Details Section
+              const SizedBox(height: 24),
+              _buildSectionHeader('Payment Details', textTheme),
+              const SizedBox(height: 12),
+              _buildPaymentDetailsFields(),
             ],
 
             const SizedBox(height: 30),
@@ -2199,6 +2229,99 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
     );
   }
 
+  Widget _buildPaymentDetailsFields() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Phone number field
+        TextFormField(
+          controller: _phoneController,
+          decoration: InputDecoration(
+            labelText: 'Phone Number *',
+            hintText: '237670000000',
+            prefixIcon: const Icon(Icons.phone, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+            helperText: 'Format: 237XXXXXXXXX',
+            helperStyle: const TextStyle(fontSize: 11),
+          ),
+          keyboardType: TextInputType.phone,
+          style: const TextStyle(fontSize: 14),
+        ),
+        const SizedBox(height: 12),
+
+        // Payment method dropdown
+        DropdownButtonFormField<String>(
+          value: _paymentMedium,
+          decoration: InputDecoration(
+            labelText: 'Payment Method *',
+            prefixIcon: const Icon(Icons.payment, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+          ),
+          style: const TextStyle(fontSize: 14, color: Colors.black87),
+          items: const [
+            DropdownMenuItem(
+              value: 'mobile money',
+              child: Text('Mobile Money (MTN/Orange)'),
+            ),
+            DropdownMenuItem(
+              value: 'orange money',
+              child: Text('Orange Money'),
+            ),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _paymentMedium = value!;
+            });
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Payer name (optional)
+        TextFormField(
+          controller: _payerNameController,
+          decoration: InputDecoration(
+            labelText: 'Payer Name (Optional)',
+            hintText: 'Enter payer name',
+            prefixIcon: const Icon(Icons.person_outline, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+          ),
+          textCapitalization: TextCapitalization.words,
+          style: const TextStyle(fontSize: 14),
+        ),
+        const SizedBox(height: 12),
+
+        // Payer email (optional)
+        TextFormField(
+          controller: _payerEmailController,
+          decoration: InputDecoration(
+            labelText: 'Email (Optional)',
+            hintText: 'For payment receipt',
+            prefixIcon: const Icon(Icons.email_outlined, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+          ),
+          keyboardType: TextInputType.emailAddress,
+          style: const TextStyle(fontSize: 14),
+        ),
+      ],
+    );
+  }
+
   List<String> _generateAvailableHours(TimeSlot slot) {
     final startHour = int.tryParse(slot.startTime.split(':')[0]) ?? 0;
     final endHour = int.tryParse(slot.endTime.split(':')[0]) ?? 0;
@@ -2236,24 +2359,30 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   }
 
   bool _canBook() {
+    // Validate phone number format
+    final phone = _phoneController.text.trim();
+    final isPhoneValid =
+        phone.isNotEmpty && RegExp(r'^237\d{9}$').hasMatch(phone);
+
     return _selectedService != null &&
         _selectedDay != null &&
         _selectedTimeSlot != null &&
         _selectedStartTime != null &&
-        _selectedEndTime != null;
+        _selectedEndTime != null &&
+        isPhoneValid;
   }
 
   DateTime _getNextDateForDayOfWeek(String dayOfWeek) {
     final now = DateTime.now();
     final targetWeekday = _getDayOfWeekNumber(dayOfWeek.toLowerCase());
     final currentWeekday = now.weekday;
-    
+
     // Calculate days to add to get to the next occurrence of the target day
     int daysToAdd = targetWeekday - currentWeekday;
     if (daysToAdd <= 0) {
       daysToAdd += 7; // Next week
     }
-    
+
     final targetDate = now.add(Duration(days: daysToAdd));
     return DateTime(targetDate.year, targetDate.month, targetDate.day);
   }
@@ -2286,77 +2415,78 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(40),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(40),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  shape: BoxShape.circle,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.blue.shade600,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.blue.shade600,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 24),
+                  Text(
+                    AppLocalizations.of(context)!.loading,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    AppLocalizations.of(context)!.processingBooking,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
-              Text(
-                AppLocalizations.of(context)!.loading,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade800,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                AppLocalizations.of(context)!.processingBooking,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey.shade600,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
 
     try {
       final duration = _calculateDuration();
-      
+
       // Convert selected day of week to next occurrence of that day
       final sessionDate = _getNextDateForDayOfWeek(_selectedDay!.dayOfWeek);
-      
+
       // DEBUG: Booking data:
       // Provider ID: ${widget.provider.id}
-      // Service ID: ${_selectedService!.id} 
+      // Service ID: ${_selectedService!.id}
       // Service Category: ${_selectedService!.category}
       // Selected Day: ${_selectedDay!.dayOfWeek}
       // Session Date: ${sessionDate.toIso8601String()}
@@ -2382,17 +2512,24 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
           Navigator.pop(context); // Close loading dialog
           // DEBUG: Availability check failed: ${availabilityResponse.error}
           // DEBUG: Availability response data: ${availabilityResponse.data}
-          
+
           // More specific error message based on the response
-          String errorMessage = AppLocalizations.of(context)!.providerNotAvailable;
+          String errorMessage =
+              AppLocalizations.of(context)!.providerNotAvailable;
           if (availabilityResponse.error?.contains('already booked') == true) {
-            errorMessage = 'This time slot is already booked. Please choose another time.';
-          } else if (availabilityResponse.error?.contains('outside working hours') == true) {
-            errorMessage = 'Selected time is outside provider\'s working hours.';
+            errorMessage =
+                'This time slot is already booked. Please choose another time.';
+          } else if (availabilityResponse.error?.contains(
+                'outside working hours',
+              ) ==
+              true) {
+            errorMessage =
+                'Selected time is outside provider\'s working hours.';
           } else if (availabilityResponse.error != null) {
-            errorMessage = '${AppLocalizations.of(context)!.providerNotAvailable}\n\nDetails: ${availabilityResponse.error}';
+            errorMessage =
+                '${AppLocalizations.of(context)!.providerNotAvailable}\n\nDetails: ${availabilityResponse.error}';
           }
-          
+
           _showErrorDialog(errorMessage);
         }
         return;
@@ -2414,11 +2551,11 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
       if (!pricingResponse.isSuccess || pricingResponse.data == null) {
         // Fallback to uniform pricing calculation
         // DEBUG: Using fallback pricing due to API error: ${pricingResponse.error}
-        
+
         const int basePriceValue = 3000; // Base price for 4 hours
         const double baseDuration = 4.0;
         const int overtimeRate = 750; // Per hour overtime
-        
+
         if (duration <= baseDuration) {
           totalAmount = basePriceValue;
           basePrice = basePriceValue;
@@ -2429,7 +2566,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
           totalAmount = basePriceValue + overtimePrice;
           basePrice = basePriceValue;
         }
-        
+
         pricing = {
           'totalPrice': totalAmount,
           'basePrice': basePrice,
@@ -2442,51 +2579,79 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
         overtimePrice = pricing['overtimePrice'] as int? ?? 0;
       }
 
-      // Step 3: Create session
-      final sessionData = {
-        'serviceId': _selectedService!.id,
-        'sessionDate': '${sessionDate.year}-${sessionDate.month.toString().padLeft(2, '0')}-${sessionDate.day.toString().padLeft(2, '0')}',
-        'startTime': _selectedStartTime!,
-        'duration': duration,
-        'notes': 'Session booked through mobile app',
-      };
-
-      print('DEBUG: Session data being sent: $sessionData');
-
-      final sessionResponse = await appState.apiService.createSession(
-        sessionData,
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          print('DEBUG: Session creation timed out');
-          return ApiResponse.error('Request timed out. Please try again.');
-        },
+      // Step 3: Initiate booking with payment
+      final paymentDetails = PaymentDetails(
+        phone: _phoneController.text.trim(),
+        medium: _paymentMedium,
+        name:
+            _payerNameController.text.trim().isNotEmpty
+                ? _payerNameController.text.trim()
+                : null,
+        email:
+            _payerEmailController.text.trim().isNotEmpty
+                ? _payerEmailController.text.trim()
+                : null,
       );
+
+      final bookingRequest = InitiateBookingRequest(
+        category: _selectedService!.category,
+        sessionDate:
+            '${sessionDate.year}-${sessionDate.month.toString().padLeft(2, '0')}-${sessionDate.day.toString().padLeft(2, '0')}',
+        startTime: _selectedStartTime!,
+        duration: duration.toDouble(),
+        serviceLocation: 'To be confirmed with provider',
+        paymentDetails: paymentDetails,
+        notes: 'Session booked through mobile app',
+      );
+
+      print(
+        'DEBUG: Booking request being sent: category=${bookingRequest.category}, date=${bookingRequest.sessionDate}, phone=${paymentDetails.phone}',
+      );
+
+      final bookingResponse = await appState.apiService
+          .initiateBooking(bookingRequest)
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              print('DEBUG: Booking initiation timed out');
+              return ApiResponse.error('Request timed out. Please try again.');
+            },
+          );
 
       if (mounted) {
         Navigator.pop(context); // Close loading dialog
       }
 
-      if (mounted && sessionResponse.isSuccess && sessionResponse.data != null) {
-        _showSuccessDialog(
-          sessionResponse.data!,
-          basePrice,
-          overtimePrice,
-          totalAmount,
-          duration.toDouble(),
+      if (mounted &&
+          bookingResponse.isSuccess &&
+          bookingResponse.data != null) {
+        // Show payment pending dialog
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder:
+              (context) => _PaymentPendingDialog(
+                bookingResponse: bookingResponse.data!,
+                apiService: appState.apiService,
+              ),
         );
       } else if (mounted) {
-        print('DEBUG: Session creation failed: ${sessionResponse.error}');
-        print('DEBUG: Session response data: ${sessionResponse.data}');
-        
+        print('DEBUG: Booking initiation failed: ${bookingResponse.error}');
+
         // More specific error message based on the response
-        String errorMessage = sessionResponse.error ?? 'Failed to create session. Please try again.';
-        if (sessionResponse.error?.contains('validation') == true) {
-          errorMessage = 'Booking validation failed. Please check your selection and try again.';
-        } else if (sessionResponse.error?.contains('conflict') == true) {
-          errorMessage = 'Time slot conflict detected. Please choose a different time.';
+        String errorMessage =
+            bookingResponse.error ??
+            'Failed to initiate booking. Please try again.';
+        if (bookingResponse.error?.contains('validation') == true) {
+          errorMessage =
+              'Booking validation failed. Please check your selection and try again.';
+        } else if (bookingResponse.error?.contains('conflict') == true) {
+          errorMessage =
+              'Time slot conflict detected. Please choose a different time.';
+        } else if (bookingResponse.error?.contains('coupon') == true) {
+          errorMessage = 'Invalid coupon code. Please check and try again.';
         }
-        
+
         _showErrorDialog(errorMessage);
       }
     } catch (e) {
@@ -2497,332 +2662,311 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
     }
   }
 
-  void _showSuccessDialog(
-    Map<String, dynamic> session,
-    int basePrice,
-    int overtimePrice,
-    int totalAmount,
-    double duration,
-  ) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Success Icon
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.check_circle_rounded,
-                  size: 48,
-                  color: Colors.green.shade500,
-                ),
-              ),
-              const SizedBox(height: 24),
-              
-              // Title
-              Text(
-                AppLocalizations.of(context)!.sessionBookedSuccess,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green.shade700,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              
-              // Booking Details
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.grey.shade200,
-                    width: 1,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildDetailRow(
-                      AppLocalizations.of(context)!.service,
-                      _selectedService!.title,
-                    ),
-                    _buildDetailRow('Provider', widget.provider.fullName),
-                    _buildDetailRow(
-                      AppLocalizations.of(context)!.day,
-                      _selectedDay!.dayOfWeek,
-                    ),
-                    _buildDetailRow(
-                      AppLocalizations.of(context)!.time,
-                      '$_selectedStartTime - $_selectedEndTime',
-                    ),
-                    _buildDetailRow(
-                      AppLocalizations.of(context)!.duration,
-                      '${duration}h',
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              // Pricing Details
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.blue.shade100,
-                    width: 1,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.sessionPricing,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue.shade800,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildDetailRow('Base (4h)', '$basePrice FCFA'),
-                    if (overtimePrice > 0)
-                      _buildDetailRow('Overtime', '$overtimePrice FCFA'),
-                    const Divider(),
-                    _buildDetailRow(
-                      AppLocalizations.of(context)!.totalCost,
-                      '$totalAmount FCFA',
-                      isTotal: true,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              // Session Info
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Colors.green.shade100,
-                    width: 1,
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    _buildDetailRow(
-                      AppLocalizations.of(context)!.sessionId,
-                      session['id']?.toString() ?? 'N/A',
-                      isSmall: true,
-                    ),
-                    _buildDetailRow(
-                      AppLocalizations.of(context)!.status,
-                      session['status']?.toString() ?? 'N/A',
-                      isSmall: true,
-                    ),
-                    _buildDetailRow(
-                      AppLocalizations.of(context)!.payment,
-                      session['paymentStatus']?.toString() ?? 'N/A',
-                      isSmall: true,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              
-              // Action Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade600,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 2,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.ok,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value, {bool isTotal = false, bool isSmall = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            '$label:',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-              fontSize: isSmall ? 12 : 14,
-              color: isTotal ? Colors.blue.shade800 : Colors.grey.shade700,
-            ),
-          ),
-          Flexible(
-            child: Text(
-              value,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: isTotal ? FontWeight.bold : FontWeight.w600,
-                fontSize: isSmall ? 12 : 14,
-                color: isTotal ? Colors.blue.shade800 : Colors.grey.shade900,
-              ),
-              textAlign: TextAlign.end,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Error Icon with Animation
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.error_outline_rounded,
-                  size: 48,
-                  color: Colors.red.shade500,
-                ),
-              ),
-              const SizedBox(height: 24),
-              
-              // Title
-              Text(
-                AppLocalizations.of(context)!.bookingFailed,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red.shade700,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              
-              // Error Message
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.red.shade100,
-                    width: 1,
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
                   ),
-                ),
-                child: Text(
-                  message,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.red.shade800,
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                ],
               ),
-              const SizedBox(height: 24),
-              
-              // Action Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade600,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Error Icon with Animation
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.error_outline_rounded,
+                      size: 48,
+                      color: Colors.red.shade500,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Title
+                  Text(
+                    AppLocalizations.of(context)!.bookingFailed,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red.shade700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Error Message
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.red.shade100, width: 1),
                     ),
-                    elevation: 2,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.ok,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                    child: Text(
+                      message,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.red.shade800,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
+                  const SizedBox(height: 24),
+
+                  // Action Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade600,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.ok,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
+  }
+}
+
+// Payment Pending Dialog Widget
+class _PaymentPendingDialog extends StatefulWidget {
+  final InitiateBookingResponse bookingResponse;
+  final ApiService apiService;
+
+  const _PaymentPendingDialog({
+    required this.bookingResponse,
+    required this.apiService,
+  });
+
+  @override
+  State<_PaymentPendingDialog> createState() => _PaymentPendingDialogState();
+}
+
+class _PaymentPendingDialogState extends State<_PaymentPendingDialog> {
+  String _statusMessage = '';
+  bool _isPolling = true;
+  int _remainingSeconds = 180; // 3 minutes
+
+  @override
+  void initState() {
+    super.initState();
+    _statusMessage = widget.bookingResponse.message;
+    _startPolling();
+    _startCountdown();
+  }
+
+  void _startCountdown() {
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted && _isPolling && _remainingSeconds > 0) {
+        setState(() {
+          _remainingSeconds--;
+        });
+        _startCountdown();
+      }
+    });
+  }
+
+  void _startPolling() async {
+    await for (final status in widget.apiService.pollBookingStatus(
+      widget.bookingResponse.bookingId,
+    )) {
+      if (!mounted) break;
+
+      setState(() {
+        _statusMessage = status.message;
+      });
+
+      if (status.isCompleted) {
+        setState(() {
+          _isPolling = false;
+        });
+        _showSuccessAndClose(status);
+        break;
+      } else if (status.isFailed) {
+        setState(() {
+          _isPolling = false;
+        });
+        _showErrorAndClose('Payment failed. Please try again.');
+        break;
+      } else if (status.isExpired) {
+        setState(() {
+          _isPolling = false;
+        });
+        _showErrorAndClose('Payment expired. Please try again.');
+        break;
+      }
+    }
+
+    // Check if polling timed out
+    if (mounted && _isPolling) {
+      setState(() {
+        _isPolling = false;
+      });
+      _showErrorAndClose('Payment timeout. Please check your payment status.');
+    }
+  }
+
+  void _showSuccessAndClose(BookingStatusResponse status) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Payment successful! Your session has been created.'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    Navigator.of(context).pop(); // Close payment dialog
+    Navigator.of(context).pop(); // Go back to previous screen
+  }
+
+  void _showErrorAndClose(String message) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+
+    Navigator.of(context).pop(); // Close dialog
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Row(
+        children: [
+          if (_isPolling)
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          const SizedBox(width: 12),
+          const Text('Payment Pending'),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(_statusMessage),
+          const SizedBox(height: 16),
+          const Divider(),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Amount to Pay:',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              Text(
+                '${widget.bookingResponse.amount.toStringAsFixed(0)} FCFA',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
               ),
             ],
           ),
-        ),
+          if (widget.bookingResponse.hasDiscount) ...[
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Original Amount:',
+                  style: TextStyle(decoration: TextDecoration.lineThrough),
+                ),
+                Text(
+                  '${widget.bookingResponse.originalAmount.toStringAsFixed(0)} FCFA',
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Discount:', style: TextStyle(color: Colors.green)),
+                Text(
+                  '-${widget.bookingResponse.discountAmount.toStringAsFixed(0)} FCFA',
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+          const SizedBox(height: 16),
+          const Divider(),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Time Remaining:'),
+              Text(
+                _formatTime(_remainingSeconds),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: _remainingSeconds < 60 ? Colors.red : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
+      actions: [
+        if (!_isPolling)
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+      ],
     );
   }
 }

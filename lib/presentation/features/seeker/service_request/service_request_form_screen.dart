@@ -248,6 +248,10 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
           onChanged: (value) {
             setState(() {
               _duration = value;
+              // Clear coupon when duration changes (needs revalidation for new amount)
+              if (_couponInfo.isApplied) {
+                _couponInfo = CouponInfo.empty();
+              }
             });
           },
         ),
@@ -445,20 +449,22 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
       controller: _phoneController,
       decoration: InputDecoration(
         labelText: 'Phone Number *',
-        hintText: '237670000000',
+        hintText: '670000000',
         prefixIcon: const Icon(Icons.phone),
+        prefixText: '+237 ',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        helperText: 'Format: 237XXXXXXXXX (Cameroon)',
+        helperText: 'Enter 9 digits (e.g., 670527426)',
       ),
       keyboardType: TextInputType.phone,
+      maxLength: 9,
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return 'Phone number is required';
         }
-        if (!RegExp(r'^237\d{9}$').hasMatch(value.trim())) {
-          return 'Invalid format. Use 237XXXXXXXXX';
+        if (!RegExp(r'^\d{9}$').hasMatch(value.trim())) {
+          return 'Must be exactly 9 digits';
         }
         return null;
       },
@@ -574,8 +580,8 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
                   ),
                   textCapitalization: TextCapitalization.characters,
                   onChanged: (value) {
-                    // Clear applied coupon if user changes the code
                     setState(() {
+                      // Clear coupon info if user modifies the code
                       if (_couponInfo.isApplied && value != _couponInfo.couponCode) {
                         _couponInfo = CouponInfo.empty();
                       }
@@ -585,8 +591,9 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
               ),
               const SizedBox(width: 12),
               ElevatedButton(
-                onPressed: _couponController.text.trim().isNotEmpty && !_isValidatingCoupon 
-                    ? _validateCoupon : null,
+                onPressed: _couponController.text.trim().isNotEmpty && !_isValidatingCoupon
+                    ? _validateCoupon
+                    : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange.shade600,
                   foregroundColor: Colors.white,
@@ -605,10 +612,10 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 8),
           Text(
-            'Enter a coupon code to get a discount on your service',
+            'Enter a coupon code and click Validate to see your discount',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Colors.grey.shade600,
             ),
@@ -619,11 +626,19 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
   }
 
   Widget _buildCostEstimate() {
-    const basePrice = 3000;
-    final originalPrice = _duration <= 4.0 ? basePrice : basePrice + ((_duration - 4.0) * 2 * 375).round();
+    // Note: Actual pricing is calculated by the backend (base price + overtime + coupon discount)
+    // This estimate uses backend-validated coupon info if available
+    const baseSessionPrice = 3000.0; // Flat rate for 0-4 hours
+    const overtimeRate = 1000.0; // Per hour after 4 hours
+
+    // Calculate price: 3000 FCFA for 0-4 hours, then +1000 FCFA per additional hour
+    final estimatedPrice = _duration <= 4.0
+        ? baseSessionPrice.toInt()
+        : (baseSessionPrice + ((_duration - 4.0) * overtimeRate)).toInt();
+
     final discount = _couponInfo.isApplied ? (_couponInfo.discountAmount ?? 0.0) : 0.0;
-    final finalPrice = _couponInfo.isApplied ? (_couponInfo.finalAmount ?? originalPrice.toDouble()) : originalPrice.toDouble();
-    
+    final finalPrice = _couponInfo.isApplied ? (_couponInfo.finalAmount ?? estimatedPrice.toDouble()) : estimatedPrice.toDouble();
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -648,8 +663,8 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
             ],
           ),
           const SizedBox(height: 8),
-          
-          // Original price
+
+          // Show original price if coupon applied
           if (_couponInfo.isApplied) ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -661,7 +676,7 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
                   ),
                 ),
                 Text(
-                  '${originalPrice.round()} FCFA',
+                  '${estimatedPrice} FCFA',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey.shade600,
                     decoration: TextDecoration.lineThrough,
@@ -693,20 +708,20 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
             const Divider(),
             const SizedBox(height: 8),
           ],
-          
+
           // Final price
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                _couponInfo.isApplied ? 'Final Amount:' : 'Total:',
+                _couponInfo.isApplied ? 'Final Amount:' : 'Estimated Total:',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.blue.shade800,
                 ),
               ),
               Text(
-                '${finalPrice.round()} FCFA',
+                '${_couponInfo.isApplied ? '' : '~'}${finalPrice.round()} FCFA',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: _couponInfo.isApplied ? Colors.green.shade700 : Colors.blue.shade800,
@@ -724,12 +739,12 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Base price: $basePrice FCFA (4 hours)\n${_duration > 4.0 ? 'Overtime: ${((_duration - 4.0) * 2 * 375).round()} FCFA (${(_duration - 4.0).toStringAsFixed(1)} extra hours)' : 'No overtime charges'}',
+            'Base session: ${baseSessionPrice.toInt()} FCFA (up to 4 hours)\nOvertime: +${overtimeRate.toInt()} FCFA per hour (after 4 hours)',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Colors.blue.shade600,
             ),
           ),
-          
+
           if (_couponInfo.isApplied) ...[
             const SizedBox(height: 8),
             Container(
@@ -743,11 +758,13 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
                 children: [
                   Icon(Icons.check_circle, color: Colors.green.shade700, size: 16),
                   const SizedBox(width: 6),
-                  Text(
-                    'Coupon "${_couponInfo.couponCode}" applied successfully!',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.green.shade700,
-                      fontWeight: FontWeight.w500,
+                  Expanded(
+                    child: Text(
+                      'Coupon "${_couponInfo.couponCode}" applied! You save ${discount.round()} FCFA',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.green.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -959,12 +976,18 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
     });
 
     try {
-      const basePrice = 3000;
-      final originalAmount = _duration <= 4.0 ? basePrice : basePrice + ((_duration - 4.0) * 2 * 375).round();
-      
+      // Calculate estimated amount based on duration (must match backend formula)
+      const baseSessionPrice = 3000.0; // Flat rate for 0-4 hours
+      const overtimeRate = 1000.0; // Per hour after 4 hours
+
+      // 3000 FCFA for 0-4 hours, then +1000 FCFA per additional hour
+      final estimatedAmount = _duration <= 4.0
+          ? baseSessionPrice
+          : (baseSessionPrice + ((_duration - 4.0) * overtimeRate));
+
       final request = CouponValidationRequest(
         code: couponCode,
-        orderAmount: originalAmount.toDouble(),
+        orderAmount: estimatedAmount,
       );
 
       final response = await _apiService.validateCoupon(request);
@@ -972,7 +995,7 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
       if (mounted) {
         if (response.isSuccess && response.data != null) {
           final validationResult = response.data!;
-          
+
           if (validationResult.isValid) {
             setState(() {
               _couponInfo = CouponInfo.applied(
@@ -1045,12 +1068,9 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
     });
 
     try {
-      // TODO: Replace 'service_id_placeholder' with actual service ID
-      // You need to pass the service ID from the previous screen or get it from the category
-
       // Create payment details
       final paymentDetails = PaymentDetails(
-        phone: _phoneController.text.trim(),
+        phone: '237${_phoneController.text.trim()}', // Add 237 prefix
         medium: _paymentMedium,
         name: _payerNameController.text.trim().isNotEmpty
             ? _payerNameController.text.trim()
@@ -1060,12 +1080,14 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
             : null,
       );
 
-      // Create booking request
+      // Create booking request using category (admin will assign provider later)
       final bookingRequest = InitiateBookingRequest(
-        serviceId: 'service_id_placeholder', // TODO: Get actual service ID
+        category: widget.category, // Use category, not serviceId
         sessionDate: '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}',
         startTime: '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}',
         duration: _duration,
+        serviceLocation: _selectedLocation!.address ??
+            '${_selectedLocation!.latitude.toStringAsFixed(6)}, ${_selectedLocation!.longitude.toStringAsFixed(6)}',
         paymentDetails: paymentDetails,
         notes: _specialInstructionsController.text.trim().isNotEmpty
             ? _specialInstructionsController.text.trim()

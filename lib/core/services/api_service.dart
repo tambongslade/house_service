@@ -2154,7 +2154,7 @@ class ApiService {
   Future<ApiResponse<InitiateBookingResponse>> initiateBooking(
     InitiateBookingRequest request,
   ) async {
-    debugPrint('API: Initiating booking for service ${request.serviceId}');
+    debugPrint('API: Initiating booking for category ${request.category}');
     debugPrint('API: Session date: ${request.sessionDate}, time: ${request.startTime}, duration: ${request.duration}h');
     debugPrint('API: Phone: ${request.paymentDetails.phone}, Medium: ${request.paymentDetails.medium}');
     if (request.couponCode != null) {

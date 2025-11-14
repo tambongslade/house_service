@@ -9,7 +9,9 @@
       "Bash(flutter build:*)",
       "Read(//Users/user/Desktop/**)",
       "Bash(find:*)",
-      "Read(//Users/user/Documents/has/**)"
+      "Read(//Users/user/Documents/has/**)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

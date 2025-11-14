@@ -302,6 +302,8 @@ enum PaymentStatus {
   }
 }
 
+// Local ServiceModel and UserModel for BookingModel
+// These are hidden from export to avoid conflicts
 class ServiceModel {
   final String id;
   final String title;
@@ -420,19 +422,21 @@ class PaymentDetails {
 
 /// Request model for initiating a booking
 class InitiateBookingRequest {
-  final String serviceId;
+  final String category;
   final String sessionDate;
   final String startTime;
   final double duration;
+  final String serviceLocation;
   final String? notes;
   final PaymentDetails paymentDetails;
   final String? couponCode;
 
   const InitiateBookingRequest({
-    required this.serviceId,
+    required this.category,
     required this.sessionDate,
     required this.startTime,
     required this.duration,
+    required this.serviceLocation,
     required this.paymentDetails,
     this.notes,
     this.couponCode,
@@ -440,10 +444,11 @@ class InitiateBookingRequest {
 
   Map<String, dynamic> toJson() {
     return {
-      'serviceId': serviceId,
+      'category': category,
       'sessionDate': sessionDate,
       'startTime': startTime,
       'duration': duration,
+      'serviceLocation': serviceLocation,
       if (notes != null) 'notes': notes,
       'paymentDetails': paymentDetails.toJson(),
       if (couponCode != null) 'couponCode': couponCode,

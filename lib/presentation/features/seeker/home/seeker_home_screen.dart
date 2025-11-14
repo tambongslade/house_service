@@ -702,6 +702,26 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
         return 'Beauty';
       case 'maintenance':
         return 'Maintenance';
+      case 'chauffeur':
+        return 'Chauffeur';
+      case 'babysitting':
+        return 'Babysitting';
+      case 'coursier':
+        return 'Coursier';
+      case 'manutention':
+        return 'Manutention';
+      case 'jardinage':
+        return 'Jardinage';
+      case 'aide soignant':
+        return 'Aide Soignant';
+      case 'auxiliaire de vie':
+        return 'Auxiliaire de Vie';
+      case 'lavage domicile':
+        return 'Lavage Domicile';
+      case 'mensonerie':
+        return 'Mensonerie';
+      case 'hotellerie':
+        return 'Hotellerie';
       case 'other':
         return 'Other';
       default:
