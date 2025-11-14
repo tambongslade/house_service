@@ -170,7 +170,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tomorrow => 'Tomorrow';
 
   @override
+  String get monday => 'Monday';
+
+  @override
+  String get tuesday => 'Tuesday';
+
+  @override
+  String get wednesday => 'Wednesday';
+
+  @override
+  String get thursday => 'Thursday';
+
+  @override
+  String get friday => 'Friday';
+
+  @override
+  String get saturday => 'Saturday';
+
+  @override
+  String get sunday => 'Sunday';
+
+  @override
+  String get mon => 'Mon';
+
+  @override
+  String get tue => 'Tue';
+
+  @override
+  String get wed => 'Wed';
+
+  @override
+  String get thu => 'Thu';
+
+  @override
+  String get fri => 'Fri';
+
+  @override
+  String get sat => 'Sat';
+
+  @override
+  String get sun => 'Sun';
+
+  @override
   String get earnings => 'Earnings';
+
+  @override
+  String get locationNotSpecified => 'Location not specified';
+
+  @override
+  String get twoThisMonth => '+2 this month';
 
   @override
   String get recentActivity => 'Recent Activity';
@@ -261,6 +309,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get availability => 'Availability';
+
+  @override
+  String get availabilityValidation => 'Availability Validation';
 
   @override
   String get profile => 'Profile';
@@ -560,7 +611,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get startTime => 'Start Time:';
+  String get startTime => 'Start Time *';
 
   @override
   String get endTime => 'End Time:';
@@ -575,10 +626,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get day => 'Day:';
 
   @override
-  String get time => 'Time:';
+  String get time => 'Time';
 
   @override
-  String get duration => 'Duration:';
+  String get duration => 'Duration';
 
   @override
   String get sessionPricing => 'Session Pricing:';
@@ -953,6 +1004,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseSelectAtLeastOneDay => 'Please select at least one day';
 
   @override
+  String get sourceDayHasNoAvailability => 'Source day has no availability to copy';
+
+  @override
+  String get allAvailabilityClearedSuccess => 'All availability cleared successfully!';
+
+  @override
+  String failedToClearAvailability(String error) {
+    return 'Failed to clear availability: $error';
+  }
+
+  @override
+  String get errorNoAvailabilityData => 'Error: No availability data found for this day';
+
+  @override
+  String get errorCannotFindAvailabilityId => 'Error: Cannot find availability ID';
+
+  @override
+  String deleteAllAvailabilityForDay(String day) {
+    return 'Delete all availability for $day?\\n\\nThis will remove all time slots for this day.';
+  }
+
+  @override
+  String get deleteEntireDayButton => 'Delete Day';
+
+  @override
+  String get timeSlotDeletedSuccess => 'Time slot deleted successfully';
+
+  @override
+  String failedToDeleteTimeSlot(String error) {
+    return 'Failed to delete time slot: $error';
+  }
+
+  @override
+  String errorDeletingTimeSlot(String error) {
+    return 'Error deleting time slot: $error';
+  }
+
+  @override
+  String get dayAvailabilityDeletedSuccess => 'Day availability deleted successfully';
+
+  @override
+  String failedToDeleteDay(String error) {
+    return 'Failed to delete day: $error';
+  }
+
+  @override
+  String errorDeletingDay(String error) {
+    return 'Error deleting day: $error';
+  }
+
+  @override
+  String get setViaQuickSetup => 'Set via Quick Setup';
+
+  @override
+  String get quickSetupCompletedSuccess => 'Quick setup completed successfully!';
+
+  @override
+  String get default95 => 'Default 9-5';
+
+  @override
+  String deleteTimeSlotFor(String start, String end, String day) {
+    return 'Delete time slot $start - $end for $day?';
+  }
+
+  @override
   String get apply => 'Apply';
 
   @override
@@ -1160,4 +1276,370 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hairCuttingStyling => 'Hair cutting and styling';
+
+  @override
+  String get transactionHistory => 'Transaction History';
+
+  @override
+  String get noTransactions => 'No transactions yet';
+
+  @override
+  String get transactionHistoryEmpty => 'Your transaction history will appear here';
+
+  @override
+  String availableBalanceLabel(String amount) {
+    return 'Available Balance: $amount';
+  }
+
+  @override
+  String get history => 'History';
+
+  @override
+  String requestService(String service) {
+    return 'Request $service';
+  }
+
+  @override
+  String get serviceDetails => 'Service Details';
+
+  @override
+  String get serviceDate => 'Service Date *';
+
+  @override
+  String get selectDateForService => 'Select date for service';
+
+  @override
+  String get selectDate => 'Select date';
+
+  @override
+  String get selectStartTime => 'Select start time';
+
+  @override
+  String get selectTime => 'Select time';
+
+  @override
+  String durationLabel(String duration) {
+    return 'Duration: $duration hours';
+  }
+
+  @override
+  String get minimumMaximumHours => 'Minimum 0.5 hours, maximum 12 hours';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get province => 'Province *';
+
+  @override
+  String get pleaseSelectProvince => 'Please select a province';
+
+  @override
+  String get serviceLocation => 'Service Location *';
+
+  @override
+  String get locationSelected => 'Location selected';
+
+  @override
+  String get gettingLocation => 'Getting location...';
+
+  @override
+  String get useCurrentLocation => 'Use current location';
+
+  @override
+  String get selectOnMap => 'Select on map';
+
+  @override
+  String get additionalInformation => 'Additional Information';
+
+  @override
+  String get serviceDescription => 'Service Description';
+
+  @override
+  String get brieflyDescribe => 'Briefly describe what needs to be done';
+
+  @override
+  String get specialInstructions => 'Special Instructions';
+
+  @override
+  String get anySpecialRequirements => 'Any special requirements or notes';
+
+  @override
+  String get couponCodeOptional => 'Coupon Code (Optional)';
+
+  @override
+  String get enterCouponCode => 'Enter Coupon Code';
+
+  @override
+  String get enterCouponOptional => 'Enter coupon code (optional)';
+
+  @override
+  String get validate => 'Validate';
+
+  @override
+  String get enterCouponDiscount => 'Enter a coupon code to get a discount on your service';
+
+  @override
+  String get estimatedCost => 'Estimated Cost';
+
+  @override
+  String get originalAmount => 'Original Amount:';
+
+  @override
+  String discount(String code) {
+    return 'Discount ($code):';
+  }
+
+  @override
+  String get finalAmount => 'Final Amount:';
+
+  @override
+  String get total => 'Total:';
+
+  @override
+  String forHoursOfService(String duration) {
+    return 'For $duration hours of service';
+  }
+
+  @override
+  String basePriceInfo(int price) {
+    return 'Base price: $price FCFA (4 hours)';
+  }
+
+  @override
+  String overtimeInfo(int amount, String hours) {
+    return 'Overtime: $amount FCFA ($hours extra hours)';
+  }
+
+  @override
+  String get noOvertimeCharges => 'No overtime charges';
+
+  @override
+  String couponAppliedSuccess(String code) {
+    return 'Coupon \"$code\" applied successfully!';
+  }
+
+  @override
+  String get submitRequest => 'Submit Request';
+
+  @override
+  String get locationPermissionsDenied => 'Location permissions are denied';
+
+  @override
+  String get locationPermissionsPermanentlyDenied => 'Location permissions are permanently denied, we cannot request permissions.';
+
+  @override
+  String currentLocationLabel(String lat, String lng) {
+    return 'Current Location ($lat, $lng)';
+  }
+
+  @override
+  String currentLocationWithAddress(String address) {
+    return 'Current Location: $address';
+  }
+
+  @override
+  String get currentLocationCaptured => 'Current location captured successfully';
+
+  @override
+  String failedToGetLocation(String error) {
+    return 'Failed to get current location: $error';
+  }
+
+  @override
+  String get locationSelectedSuccess => 'Location selected successfully';
+
+  @override
+  String couponSaveAmount(int amount) {
+    return 'Coupon applied! You save $amount FCFA';
+  }
+
+  @override
+  String get invalidCouponCode => 'Invalid coupon code';
+
+  @override
+  String get failedToValidateCoupon => 'Failed to validate coupon';
+
+  @override
+  String errorValidatingCoupon(String error) {
+    return 'Error validating coupon: $error';
+  }
+
+  @override
+  String get requestSubmittedSuccessfully => 'Request Submitted Successfully';
+
+  @override
+  String requestId(String id) {
+    return 'Request ID: $id';
+  }
+
+  @override
+  String estimatedCostAmount(int amount) {
+    return 'Estimated Cost: $amount FCFA';
+  }
+
+  @override
+  String get adminWillAssignProvider => 'An admin will assign a provider to your request.';
+
+  @override
+  String get failedToSubmitRequest => 'Failed to submit request';
+
+  @override
+  String errorSubmitting(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get myServiceRequests => 'My Service Requests';
+
+  @override
+  String get rejected => 'Rejected';
+
+  @override
+  String get noServiceRequestsFound => 'No service requests found';
+
+  @override
+  String get yourServiceRequestsWillAppear => 'Your service requests will appear here';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String get trackProvider => 'Track Provider';
+
+  @override
+  String createdAt(String date) {
+    return 'Created $date';
+  }
+
+  @override
+  String requestDetailsTitle(String category) {
+    return 'Request Details - $category';
+  }
+
+  @override
+  String get hours => 'hours';
+
+  @override
+  String get cost => 'Cost';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get provider => 'Provider';
+
+  @override
+  String get created => 'Created';
+
+  @override
+  String get updated => 'Updated';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get cancelRequest => 'Cancel Request';
+
+  @override
+  String get cancelServiceRequest => 'Cancel Service Request';
+
+  @override
+  String get cancelConfirmation => 'Are you sure you want to cancel this service request?';
+
+  @override
+  String get reasonForCancellation => 'Reason for cancellation';
+
+  @override
+  String get keepRequest => 'Keep Request';
+
+  @override
+  String get cancelledByUser => 'Cancelled by user';
+
+  @override
+  String get serviceRequestCancelledSuccess => 'Service request cancelled successfully';
+
+  @override
+  String get failedToCancelRequest => 'Failed to cancel request';
+
+  @override
+  String errorCancellingRequest(String error) {
+    return 'Error cancelling request: $error';
+  }
+
+  @override
+  String get unableToTrack => 'Unable to track: Invalid session ID';
+
+  @override
+  String get failedToLoadServiceRequests => 'Failed to load service requests';
+
+  @override
+  String errorLoadingServiceRequests(String error) {
+    return 'Error loading service requests: $error';
+  }
+
+  @override
+  String get todayLabel => 'Today';
+
+  @override
+  String get tomorrowLabel => 'Tomorrow';
+
+  @override
+  String get yesterdayLabel => 'Yesterday';
+
+  @override
+  String get todayLowercase => 'today';
+
+  @override
+  String get yesterdayLowercase => 'yesterday';
+
+  @override
+  String daysAgoLabel(int days) {
+    return '$days days ago';
+  }
+
+  @override
+  String get invalidDate => 'Invalid Date';
+
+  @override
+  String get dateNotSet => 'Date not set';
+
+  @override
+  String get na => 'N/A';
+
+  @override
+  String get cleaning => 'Cleaning';
+
+  @override
+  String get plumbing => 'Plumbing';
+
+  @override
+  String get electrical => 'Electrical';
+
+  @override
+  String get painting => 'Painting';
+
+  @override
+  String get gardening => 'Gardening';
+
+  @override
+  String get carpentry => 'Carpentry';
+
+  @override
+  String get cooking => 'Cooking';
+
+  @override
+  String get tutoring => 'Tutoring';
+
+  @override
+  String get beauty => 'Beauty';
+
+  @override
+  String get maintenance => 'Maintenance';
+
+  @override
+  String get pullDownToRefresh => 'Pull down to refresh';
 }

@@ -195,7 +195,7 @@ class _ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                           const Icon(Icons.star, color: Colors.amber, size: 16),
                           const SizedBox(width: 4),
                           Text(
-                            '${provider.averageRating.toStringAsFixed(1)} (${provider.totalReviews} reviews)',
+                            '${provider.averageRating.toStringAsFixed(1)} (${provider.totalReviews} ${AppLocalizations.of(context)!.reviews})',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: Colors.white.withValues(alpha: 0.9),
                             ),
@@ -459,7 +459,7 @@ class _ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
           Expanded(
             child: _buildWalletActionCard(
               context,
-              'History',
+              AppLocalizations.of(context)!.history,
               Icons.history,
               Colors.blue,
               () => _showTransactionHistory(context, dashboardState),
@@ -854,7 +854,7 @@ class _ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Available Balance: ${dashboardState.formatCurrency(availableBalance)}',
+                    AppLocalizations.of(context)!.availableBalanceLabel(dashboardState.formatCurrency(availableBalance)),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Colors.green,
@@ -879,7 +879,7 @@ class _ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: selectedMethod,
+                    initialValue: selectedMethod,
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context)!.withdrawalMethod,
                       border: OutlineInputBorder(
@@ -1061,7 +1061,7 @@ class _ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                       Icon(Icons.history, color: theme.primaryColor),
                       const SizedBox(width: 12),
                       Text(
-                        'Transaction History',
+                        AppLocalizations.of(context)!.transactionHistory,
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -1089,7 +1089,7 @@ class _ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    'No transactions yet',
+                                    AppLocalizations.of(context)!.noTransactions,
                                     style: theme.textTheme.titleMedium
                                         ?.copyWith(
                                           color: Colors.grey[600],
@@ -1098,7 +1098,7 @@ class _ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Your transaction history will appear here',
+                                    AppLocalizations.of(context)!.transactionHistoryEmpty,
                                     style: theme.textTheme.bodyMedium?.copyWith(
                                       color: Colors.grey[500],
                                     ),

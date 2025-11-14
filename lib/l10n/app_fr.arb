@@ -62,7 +62,23 @@
   "confirmed": "Confirmé",
   "today": "Aujourd'hui",
   "tomorrow": "Demain",
+  "monday": "Lundi",
+  "tuesday": "Mardi",
+  "wednesday": "Mercredi",
+  "thursday": "Jeudi",
+  "friday": "Vendredi",
+  "saturday": "Samedi",
+  "sunday": "Dimanche",
+  "mon": "Lun",
+  "tue": "Mar",
+  "wed": "Mer",
+  "thu": "Jeu",
+  "fri": "Ven",
+  "sat": "Sam",
+  "sun": "Dim",
   "earnings": "Revenus",
+  "locationNotSpecified": "Emplacement non spécifié",
+  "twoThisMonth": "+2 ce mois-ci",
   "recentActivity": "Activité Récente",
   "noRecentActivities": "Aucune activité récente",
   "activitiesWillAppear": "Vos activités apparaîtront ici",
@@ -112,12 +128,14 @@
   "withdrawalSuccess": "Demande de retrait soumise avec succès !",
   "withdrawalFailed": "Échec de la soumission de la demande de retrait",
   "retry": "Réessayer",
+  "failedToLoadAvailability": "Échec du Chargement de la Disponibilité",
   "loading": "Chargement...",
   "error": "Erreur",
   "success": "Succès",
   "myServices": "Mes Services",
   "sessions": "Sessions",
   "availability": "Disponibilité",
+  "availabilityValidation": "Validation de Disponibilité",
   "profile": "Profil",
   "setupProviderProfile": "Configurer le Profil Prestataire",
   "editProfile": "Modifier le Profil",
@@ -365,6 +383,78 @@
   "failedToSetDefaultAvailability": "Échec de la définition de la disponibilité par défaut : {error}",
   "errorSettingDefaultAvailability": "Erreur lors de la définition de la disponibilité par défaut : {error}",
   "pleaseSelectAtLeastOneDay": "Veuillez sélectionner au moins un jour",
+  "sourceDayHasNoAvailability": "Le jour source n'a aucune disponibilité à copier",
+  "allAvailabilityClearedSuccess": "Toutes les disponibilités ont été effacées avec succès !",
+  "failedToClearAvailability": "Échec de l'effacement de la disponibilité : {error}",
+  "@failedToClearAvailability": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNoAvailabilityData": "Erreur : Aucune donnée de disponibilité trouvée pour ce jour",
+  "errorCannotFindAvailabilityId": "Erreur : Impossible de trouver l'ID de disponibilité",
+  "deleteAllAvailabilityForDay": "Supprimer toute la disponibilité pour {day} ?\\n\\nCela supprimera tous les créneaux horaires pour ce jour.",
+  "@deleteAllAvailabilityForDay": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteEntireDayButton": "Supprimer le Jour",
+  "timeSlotDeletedSuccess": "Créneau horaire supprimé avec succès",
+  "failedToDeleteTimeSlot": "Échec de la suppression du créneau horaire : {error}",
+  "@failedToDeleteTimeSlot": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDeletingTimeSlot": "Erreur lors de la suppression du créneau horaire : {error}",
+  "@errorDeletingTimeSlot": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "dayAvailabilityDeletedSuccess": "Disponibilité du jour supprimée avec succès",
+  "failedToDeleteDay": "Échec de la suppression du jour : {error}",
+  "@failedToDeleteDay": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDeletingDay": "Erreur lors de la suppression du jour : {error}",
+  "@errorDeletingDay": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "setViaQuickSetup": "Défini via Configuration Rapide",
+  "quickSetupCompletedSuccess": "Configuration rapide terminée avec succès !",
+  "default95": "Par Défaut 9-17h",
+  "deleteTimeSlotFor": "Supprimer le créneau horaire {start} - {end} pour {day} ?",
+  "@deleteTimeSlotFor": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
   "apply": "Appliquer",
   "selectDays": "Sélectionner les Jours",
   "quickSetupCompleted": "Configuration rapide terminée avec succès !",
@@ -434,5 +524,314 @@
   "examPreparation": "Préparation aux examens",
   "progressTrackingReports": "Suivi des progrès et rapports",
   "studyMaterialsResources": "Matériaux et ressources d'étude",
-  "hairCuttingStyling": "Coupe et coiffage"
+  "hairCuttingStyling": "Coupe et coiffage",
+  "transactionHistory": "Historique des Transactions",
+  "noTransactions": "Aucune transaction pour le moment",
+  "transactionHistoryEmpty": "Votre historique de transactions apparaîtra ici",
+  "availableBalanceLabel": "Solde Disponible : {amount}",
+  "@availableBalanceLabel": {
+    "description": "Affiche le solde disponible avec le montant",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "10 000 FCFA"
+      }
+    }
+  },
+  "history": "Historique",
+  "requestService": "Demander {service}",
+  "@requestService": {
+    "description": "Titre du formulaire de demande de service",
+    "placeholders": {
+      "service": {
+        "type": "String",
+        "example": "Nettoyage"
+      }
+    }
+  },
+  "serviceDetails": "Détails du Service",
+  "serviceDate": "Date du Service *",
+  "selectDateForService": "Sélectionnez la date du service",
+  "selectDate": "Sélectionner la date",
+  "startTime": "Heure de Début *",
+  "selectStartTime": "Sélectionnez l'heure de début",
+  "selectTime": "Sélectionner l'heure",
+  "durationLabel": "Durée : {duration} heures",
+  "@durationLabel": {
+    "description": "Affiche la durée en heures",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "4.0"
+      }
+    }
+  },
+  "minimumMaximumHours": "Minimum 0,5 heure, maximum 12 heures",
+  "location": "Emplacement",
+  "province": "Province *",
+  "pleaseSelectProvince": "Veuillez sélectionner une province",
+  "serviceLocation": "Lieu du Service *",
+  "locationSelected": "Emplacement sélectionné",
+  "gettingLocation": "Obtention de l'emplacement...",
+  "useCurrentLocation": "Utiliser l'emplacement actuel",
+  "selectOnMap": "Sélectionner sur la carte",
+  "additionalInformation": "Informations Supplémentaires",
+  "serviceDescription": "Description du Service",
+  "brieflyDescribe": "Décrivez brièvement ce qui doit être fait",
+  "specialInstructions": "Instructions Spéciales",
+  "anySpecialRequirements": "Toute exigence ou note spéciale",
+  "couponCodeOptional": "Code Promo (Optionnel)",
+  "enterCouponCode": "Entrez le Code Promo",
+  "enterCouponOptional": "Entrez le code promo (optionnel)",
+  "validate": "Valider",
+  "enterCouponDiscount": "Entrez un code promo pour obtenir une réduction sur votre service",
+  "estimatedCost": "Coût Estimé",
+  "originalAmount": "Montant Original :",
+  "discount": "Réduction ({code}) :",
+  "@discount": {
+    "description": "Réduction avec code promo",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "SAVE20"
+      }
+    }
+  },
+  "finalAmount": "Montant Final :",
+  "total": "Total :",
+  "forHoursOfService": "Pour {duration} heures de service",
+  "@forHoursOfService": {
+    "description": "Affiche les heures de service",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "4.5"
+      }
+    }
+  },
+  "basePriceInfo": "Prix de base : {price} FCFA (4 heures)",
+  "@basePriceInfo": {
+    "description": "Information sur le prix de base",
+    "placeholders": {
+      "price": {
+        "type": "int",
+        "example": "3000"
+      }
+    }
+  },
+  "overtimeInfo": "Heures supplémentaires : {amount} FCFA ({hours} heures en plus)",
+  "@overtimeInfo": {
+    "description": "Frais d'heures supplémentaires",
+    "placeholders": {
+      "amount": {
+        "type": "int",
+        "example": "750"
+      },
+      "hours": {
+        "type": "String",
+        "example": "1.0"
+      }
+    }
+  },
+  "noOvertimeCharges": "Pas de frais d'heures supplémentaires",
+  "couponAppliedSuccess": "Code promo \"{code}\" appliqué avec succès !",
+  "@couponAppliedSuccess": {
+    "description": "Message de succès d'application du coupon",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "SAVE20"
+      }
+    }
+  },
+  "submitRequest": "Soumettre la Demande",
+  "locationPermissionsDenied": "Les autorisations de localisation sont refusées",
+  "locationPermissionsPermanentlyDenied": "Les autorisations de localisation sont définitivement refusées, nous ne pouvons pas demander d'autorisations.",
+  "currentLocationLabel": "Emplacement Actuel ({lat}, {lng})",
+  "@currentLocationLabel": {
+    "description": "Emplacement actuel avec coordonnées",
+    "placeholders": {
+      "lat": {
+        "type": "String",
+        "example": "4.0511"
+      },
+      "lng": {
+        "type": "String",
+        "example": "9.7679"
+      }
+    }
+  },
+  "currentLocationWithAddress": "Emplacement Actuel : {address}",
+  "@currentLocationWithAddress": {
+    "description": "Emplacement actuel avec adresse",
+    "placeholders": {
+      "address": {
+        "type": "String",
+        "example": "123 Rue Principale, Douala"
+      }
+    }
+  },
+  "currentLocationCaptured": "Emplacement actuel capturé avec succès",
+  "failedToGetLocation": "Échec de l'obtention de l'emplacement actuel : {error}",
+  "@failedToGetLocation": {
+    "description": "Erreur d'obtention de l'emplacement",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Permission refusée"
+      }
+    }
+  },
+  "locationSelectedSuccess": "Emplacement sélectionné avec succès",
+  "couponSaveAmount": "Code promo appliqué ! Vous économisez {amount} FCFA",
+  "@couponSaveAmount": {
+    "description": "Message d'économies du coupon",
+    "placeholders": {
+      "amount": {
+        "type": "int",
+        "example": "500"
+      }
+    }
+  },
+  "invalidCouponCode": "Code promo invalide",
+  "failedToValidateCoupon": "Échec de la validation du code promo",
+  "errorValidatingCoupon": "Erreur lors de la validation du code promo : {error}",
+  "@errorValidatingCoupon": {
+    "description": "Erreur de validation du coupon",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Erreur réseau"
+      }
+    }
+  },
+  "requestSubmittedSuccessfully": "Demande Soumise avec Succès",
+  "requestId": "ID de Demande : {id}",
+  "@requestId": {
+    "description": "Étiquette d'ID de demande",
+    "placeholders": {
+      "id": {
+        "type": "String",
+        "example": "REQ-12345"
+      }
+    }
+  },
+  "estimatedCostAmount": "Coût Estimé : {amount} FCFA",
+  "@estimatedCostAmount": {
+    "description": "Coût estimé avec montant",
+    "placeholders": {
+      "amount": {
+        "type": "int",
+        "example": "3000"
+      }
+    }
+  },
+  "adminWillAssignProvider": "Un administrateur assignera un prestataire à votre demande.",
+  "failedToSubmitRequest": "Échec de la soumission de la demande",
+  "errorSubmitting": "Erreur : {error}",
+  "@errorSubmitting": {
+    "description": "Message d'erreur générique",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Erreur réseau"
+      }
+    }
+  },
+  "myServiceRequests": "Mes Demandes de Service",
+  "all": "Tout",
+  "rejected": "Rejeté",
+  "noServiceRequestsFound": "Aucune demande de service trouvée",
+  "yourServiceRequestsWillAppear": "Vos demandes de service apparaîtront ici",
+  "date": "Date",
+  "time": "Heure",
+  "viewDetails": "Voir les Détails",
+  "trackProvider": "Suivre le Prestataire",
+  "createdAt": "Créé {date}",
+  "@createdAt": {
+    "description": "Étiquette de date de création",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "aujourd'hui"
+      }
+    }
+  },
+  "requestDetailsTitle": "Détails de la Demande - {category}",
+  "@requestDetailsTitle": {
+    "description": "Titre du dialogue des détails de la demande",
+    "placeholders": {
+      "category": {
+        "type": "String",
+        "example": "Nettoyage"
+      }
+    }
+  },
+  "hours": "heures",
+  "cost": "Coût",
+  "description": "Description",
+  "provider": "Prestataire",
+  "created": "Créé",
+  "updated": "Mis à Jour",
+  "close": "Fermer",
+  "cancelRequest": "Annuler la Demande",
+  "cancelServiceRequest": "Annuler la Demande de Service",
+  "cancelConfirmation": "Êtes-vous sûr de vouloir annuler cette demande de service ?",
+  "reasonForCancellation": "Raison de l'annulation",
+  "keepRequest": "Conserver la Demande",
+  "cancelledByUser": "Annulé par l'utilisateur",
+  "serviceRequestCancelledSuccess": "Demande de service annulée avec succès",
+  "failedToCancelRequest": "Échec de l'annulation de la demande",
+  "errorCancellingRequest": "Erreur lors de l'annulation de la demande : {error}",
+  "@errorCancellingRequest": {
+    "description": "Erreur d'annulation de la demande",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Erreur réseau"
+      }
+    }
+  },
+  "unableToTrack": "Impossible de suivre : ID de session invalide",
+  "failedToLoadServiceRequests": "Échec du chargement des demandes de service",
+  "errorLoadingServiceRequests": "Erreur lors du chargement des demandes de service : {error}",
+  "@errorLoadingServiceRequests": {
+    "description": "Erreur de chargement des demandes",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Erreur réseau"
+      }
+    }
+  },
+  "todayLabel": "Aujourd'hui",
+  "tomorrowLabel": "Demain",
+  "yesterdayLabel": "Hier",
+  "todayLowercase": "aujourd'hui",
+  "yesterdayLowercase": "hier",
+  "daysAgoLabel": "il y a {days} jours",
+  "@daysAgoLabel": {
+    "description": "Étiquette de jours écoulés",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "invalidDate": "Date Invalide",
+  "dateNotSet": "Date non définie",
+  "na": "N/A",
+  "cleaning": "Nettoyage",
+  "plumbing": "Plomberie",
+  "electrical": "Électricité",
+  "painting": "Peinture",
+  "gardening": "Jardinage",
+  "carpentry": "Menuiserie",
+  "cooking": "Cuisine",
+  "tutoring": "Tutorat",
+  "beauty": "Beauté",
+  "maintenance": "Maintenance",
+  "pullDownToRefresh": "Tirez vers le bas pour actualiser",
+  "duration": "Durée"
 }

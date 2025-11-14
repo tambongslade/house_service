@@ -51,7 +51,7 @@ class CouponValidationResponse {
   }
 
   bool get hasDiscount => isValid && discountAmount > 0;
-  
+
   double get discountPercentage {
     if (!hasDiscount || finalAmount == 0) return 0.0;
     final originalAmount = finalAmount + discountAmount;

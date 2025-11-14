@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/state/provider_dashboard_state.dart';
 import '../../../../core/state/app_state.dart';
+import '../../../../l10n/app_localizations.dart';
 
 // Dashboard content without AppBar (to avoid double AppBars)
 class ProviderDashboardContent extends StatefulWidget {
@@ -68,6 +69,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
           }
 
           if (dashboardState.dashboardError != null) {
+            final l10n = AppLocalizations.of(context)!;
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -78,7 +80,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => dashboardState.loadDashboardSummary(),
-                    child: const Text('Retry'),
+                    child: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -88,6 +90,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
           final provider = dashboardState.providerInfo;
           final statistics = dashboardState.statistics;
           final nextBooking = dashboardState.nextBooking;
+          final l10n = AppLocalizations.of(context)!;
 
           final content = RefreshIndicator(
             onRefresh: () => dashboardState.refreshDashboard(),
@@ -98,27 +101,27 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                 children: [
                   // Welcome Message
                   if (provider != null)
-                    _buildWelcomeMessage(provider.fullName),
+                    _buildWelcomeMessage(provider.fullName, l10n),
                   const SizedBox(height: 24),
 
                   // Wallet/Balance Card
                   if (provider != null)
-                    _buildWalletCard(dashboardState),
+                    _buildWalletCard(dashboardState, l10n),
                   const SizedBox(height: 32),
 
                   // Overview Section
                   if (statistics != null)
-                    _buildOverviewSection(statistics),
+                    _buildOverviewSection(statistics, l10n),
                   const SizedBox(height: 32),
 
                   // Next Booking Section
                   if (nextBooking != null) ...[
-                    _buildNextBookingSection(nextBooking, dashboardState),
+                    _buildNextBookingSection(nextBooking, dashboardState, l10n),
                     const SizedBox(height: 32),
                   ],
 
                   // Recent Activity
-                  _buildActivitySection(dashboardState),
+                  _buildActivitySection(dashboardState, l10n),
                 ],
               ),
             ),
@@ -141,7 +144,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
     );
   }
 
-  Widget _buildWelcomeMessage(String providerName) {
+  Widget _buildWelcomeMessage(String providerName, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -150,7 +153,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
         border: Border.all(color: Colors.grey[100]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -180,7 +183,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Welcome back, $providerName!',
+                  l10n.welcomeBack(providerName),
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -189,7 +192,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Ready to manage your services today?',
+                  l10n.readyToManage,
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[600],
@@ -203,7 +206,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
     );
   }
 
-  Widget _buildWalletCard(ProviderDashboardState dashboardState) {
+  Widget _buildWalletCard(ProviderDashboardState dashboardState, AppLocalizations l10n) {
     final provider = dashboardState.providerInfo!;
     final availableBalance = provider.availableBalance;
     final pendingBalance = provider.pendingBalance;
@@ -221,7 +224,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF667EEA).withOpacity(0.3),
+            color: const Color(0xFF667EEA).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -237,10 +240,10 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Wallet Balance',
+                    l10n.walletBalance,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -263,10 +266,10 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -282,10 +285,10 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -298,10 +301,10 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Pending',
+                          l10n.pending,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.7),
+                            color: Colors.white.withValues(alpha: 0.7),
                           ),
                         ),
                         Text(
@@ -318,10 +321,10 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          'Total Earned',
+                          l10n.totalEarned,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.7),
+                            color: Colors.white.withValues(alpha: 0.7),
                           ),
                         ),
                         Text(
@@ -340,7 +343,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => _showWithdrawalDialog(context, dashboardState),
+                    onPressed: () => _showWithdrawalDialog(context, dashboardState, l10n),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF667EEA),
@@ -355,9 +358,9 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                       children: [
                         const Icon(Icons.account_balance, size: 20),
                         const SizedBox(width: 8),
-                        const Text(
-                          'Withdraw Money',
-                          style: TextStyle(
+                        Text(
+                          l10n.withdrawMoney,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
@@ -374,13 +377,13 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
     );
   }
 
-  Widget _buildOverviewSection(dynamic statistics) {
+  Widget _buildOverviewSection(dynamic statistics, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Overview',
-          style: TextStyle(
+        Text(
+          l10n.overview,
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Color(0xFF1E293B),
@@ -391,18 +394,18 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
           children: [
             Expanded(
               child: _buildStatCard(
-                title: 'Active Services',
+                title: l10n.activeServices,
                 value: '${statistics.activeServices ?? 0}',
                 icon: Icons.work_outline,
                 color: const Color(0xFF3B82F6),
-                change: '+2 this month',
+                change: l10n.twoThisMonth,
                 isPositive: true,
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _buildStatCard(
-                title: 'This Week',
+                title: l10n.thisWeek,
                 value: '${statistics.thisWeekBookings ?? 0}',
                 icon: Icons.calendar_today_outlined,
                 color: const Color(0xFF10B981),
@@ -417,22 +420,22 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
           children: [
             Expanded(
               child: _buildStatCard(
-                title: 'This Month',
+                title: l10n.thisMonth,
                 value: '${statistics.thisMonthBookings ?? 0}',
                 icon: Icons.book_online,
                 color: const Color(0xFF8B5CF6),
-                change: 'bookings',
+                change: l10n.bookings,
                 isPositive: true,
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _buildStatCard(
-                title: 'Completed',
+                title: l10n.completed,
                 value: '${statistics.completedBookings ?? 0}',
                 icon: Icons.check_circle_outline,
                 color: const Color(0xFF10B981),
-                change: 'total jobs',
+                change: l10n.totalJobs,
                 isPositive: true,
               ),
             ),
@@ -459,7 +462,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
         border: Border.all(color: Colors.grey[100]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -474,7 +477,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, size: 20, color: color),
@@ -534,16 +537,16 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
     );
   }
 
-  Widget _buildNextBookingSection(dynamic nextBooking, ProviderDashboardState dashboardState) {
+  Widget _buildNextBookingSection(dynamic nextBooking, ProviderDashboardState dashboardState, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Next Booking',
-              style: TextStyle(
+            Text(
+              l10n.nextBooking,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1E293B),
@@ -554,7 +557,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                 // Navigate to bookings screen
               },
               icon: const Icon(Icons.arrow_forward, size: 16),
-              label: const Text('View All'),
+              label: Text(l10n.viewAll),
               style: TextButton.styleFrom(
                 foregroundColor: const Color(0xFF3B82F6),
               ),
@@ -571,7 +574,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
             border: Border.all(color: Colors.grey[100]!),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -585,7 +588,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3B82F6).withOpacity(0.1),
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -600,7 +603,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          nextBooking.serviceTitle ?? 'Service',
+                          nextBooking.serviceTitle ?? l10n.service,
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -609,7 +612,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'with ${nextBooking.seekerName ?? 'Customer'}',
+                          '${l10n.withText} ${nextBooking.seekerName ?? l10n.customer}',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],
@@ -621,12 +624,12 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF10B981).withOpacity(0.1),
+                      color: const Color(0xFF10B981).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
-                      'Confirmed',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.confirmed,
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF10B981),
@@ -653,7 +656,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                               Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
                               const SizedBox(width: 8),
                               Text(
-                                _formatBookingDate(nextBooking.bookingDate.toIso8601String()),
+                                _formatBookingDate(nextBooking.bookingDate.toIso8601String(), l10n),
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -682,7 +685,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  nextBooking.serviceLocation ?? 'Location not specified',
+                                  nextBooking.serviceLocation ?? l10n.locationNotSpecified,
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -700,9 +703,9 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Text(
-                          'Earnings',
-                          style: TextStyle(
+                        Text(
+                          l10n.earnings,
+                          style: const TextStyle(
                             fontSize: 12,
                             color: Colors.grey,
                           ),
@@ -727,16 +730,16 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
     );
   }
 
-  Widget _buildActivitySection(ProviderDashboardState dashboardState) {
+  Widget _buildActivitySection(ProviderDashboardState dashboardState, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Recent Activity',
-              style: TextStyle(
+            Text(
+              l10n.recentActivity,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1E293B),
@@ -744,9 +747,9 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
             ),
             TextButton(
               onPressed: () {},
-              child: const Text(
-                'View All',
-                style: TextStyle(
+              child: Text(
+                l10n.viewAll,
+                style: const TextStyle(
                   color: Color(0xFF3B82F6),
                   fontWeight: FontWeight.w600,
                 ),
@@ -755,12 +758,12 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
           ],
         ),
         const SizedBox(height: 16),
-        _buildRecentActivity(dashboardState),
+        _buildRecentActivity(dashboardState, l10n),
       ],
     );
   }
 
-  Widget _buildRecentActivity(ProviderDashboardState dashboardState) {
+  Widget _buildRecentActivity(ProviderDashboardState dashboardState, AppLocalizations l10n) {
     if (!dashboardState.hasRecentActivity) {
       return Container(
         decoration: BoxDecoration(
@@ -769,7 +772,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
           border: Border.all(color: Colors.grey[100]!),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -782,7 +785,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
               Icon(Icons.history, size: 48, color: Colors.grey[400]),
               const SizedBox(height: 12),
               Text(
-                'No recent activities',
+                l10n.noRecentActivities,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -791,7 +794,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
               ),
               const SizedBox(height: 4),
               Text(
-                'Your activities will appear here',
+                l10n.activitiesWillAppear,
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[500],
@@ -810,7 +813,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
         border: Border.all(color: Colors.grey[100]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -878,7 +881,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, size: 20, color: color),
@@ -935,27 +938,27 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
     );
   }
 
-  String _formatBookingDate(String? dateStr) {
-    if (dateStr == null) return 'Date not set';
+  String _formatBookingDate(String? dateStr, AppLocalizations l10n) {
+    if (dateStr == null) return l10n.dateNotSet;
     try {
       final date = DateTime.parse(dateStr);
       final now = DateTime.now();
       final tomorrow = DateTime(now.year, now.month, now.day + 1);
       final bookingDay = DateTime(date.year, date.month, date.day);
-      
+
       if (bookingDay == DateTime(now.year, now.month, now.day)) {
-        return 'Today';
+        return l10n.today;
       } else if (bookingDay == tomorrow) {
-        return 'Tomorrow';
+        return l10n.tomorrow;
       } else {
         return '${date.day}/${date.month}/${date.year}';
       }
     } catch (e) {
-      return 'Invalid date';
+      return l10n.invalidDate;
     }
   }
 
-  void _showWithdrawalDialog(BuildContext context, ProviderDashboardState dashboardState) {
+  void _showWithdrawalDialog(BuildContext context, ProviderDashboardState dashboardState, AppLocalizations l10n) {
     final amountController = TextEditingController();
     String selectedMethod = 'bank_transfer';
     final availableBalance = dashboardState.providerInfo?.availableBalance ?? 0;
@@ -976,7 +979,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF3B82F6).withOpacity(0.1),
+                        color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
@@ -986,10 +989,10 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                       ),
                     ),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Withdraw Money',
-                        style: TextStyle(
+                        l10n.withdrawMoney,
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1011,9 +1014,9 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Available Balance',
-                        style: TextStyle(
+                      Text(
+                        l10n.availableBalance,
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
@@ -1034,8 +1037,8 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                   controller: amountController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: 'Amount to withdraw',
-                    hintText: 'Enter amount in FCFA',
+                    labelText: l10n.amountToWithdraw,
+                    hintText: l10n.enterAmountHint,
                     prefixIcon: const Icon(Icons.money),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -1046,19 +1049,19 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                 DropdownButtonFormField<String>(
                   value: selectedMethod,
                   decoration: InputDecoration(
-                    labelText: 'Withdrawal Method',
+                    labelText: l10n.withdrawalMethod,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  items: const [
+                  items: [
                     DropdownMenuItem(
                       value: 'bank_transfer',
-                      child: Text('Bank Transfer'),
+                      child: Text(l10n.bankTransfer),
                     ),
                     DropdownMenuItem(
                       value: 'mobile_money',
-                      child: Text('Mobile Money'),
+                      child: Text(l10n.mobileMoney),
                     ),
                   ],
                   onChanged: (value) {
@@ -1068,9 +1071,9 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                   },
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Minimum withdrawal: 5,000 FCFA',
-                  style: TextStyle(
+                Text(
+                  l10n.minimumWithdrawal,
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
                   ),
@@ -1091,7 +1094,7 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                     Expanded(
                       child: TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Cancel'),
+                        child: Text(l10n.cancel),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -1122,9 +1125,9 @@ class _ProviderDashboardContentState extends State<ProviderDashboardContent>
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text(
-                                'Withdraw',
-                                style: TextStyle(
+                            : Text(
+                                l10n.withdraw,
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,
                                 ),

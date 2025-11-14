@@ -6,10 +6,11 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/api_response.dart';
 import '../models/auth_models.dart';
-import '../models/user_model.dart';
+import '../models/user_model.dart' as user_models;
 import '../models/session_models.dart';
 import '../models/service_request_models.dart';
 import '../models/coupon_models.dart';
+import '../models/booking_models.dart';
 
 class ApiService {
   // Local development base URL
@@ -507,7 +508,7 @@ class ApiService {
   }
 
   // User endpoints
-  Future<ApiResponse<UserModel>> getProfile() async {
+  Future<ApiResponse<user_models.UserModel>> getProfile() async {
     debugPrint('API: Getting user profile');
     debugPrint(
       'API: Profile endpoint: ${Uri.parse('$baseUrl/$apiVersion/auth/profile')}',
@@ -516,7 +517,7 @@ class ApiService {
       'GET',
       'auth/profile',
       null,
-      (data) => UserModel.fromJson(data),
+      (data) => user_models.UserModel.fromJson(data),
       requiresAuth: true,
     );
   }
@@ -659,14 +660,14 @@ class ApiService {
     return <Map<String, dynamic>>[];
   }
 
-  Future<ApiResponse<UserModel>> updateProfile(
+  Future<ApiResponse<user_models.UserModel>> updateProfile(
     Map<String, dynamic> profileData,
   ) async {
     return _makeRequest(
       'PUT',
       'user/profile',
       profileData,
-      (data) => UserModel.fromJson(data),
+      (data) => user_models.UserModel.fromJson(data),
     );
   }
 
@@ -2115,11 +2116,11 @@ class ApiService {
     CouponValidationRequest request,
   ) async {
     debugPrint('API: Validating coupon ${request.code} for amount ${request.orderAmount}');
-    
+
     try {
       final response = await _makeRequest(
         'POST',
-        '$apiVersion/coupons/validate',
+        'coupons/validate',
         request.toJson(),
         (data) => data,
         requiresAuth: true,
@@ -2141,6 +2142,126 @@ class ApiService {
       return ApiResponse<CouponValidationResponse>.success(
         CouponValidationResponse.error('Network error: $e'),
       );
+    }
+  }
+
+  // ============================================================================
+  // NEW BOOKING ENDPOINTS (Payment Flow)
+  // ============================================================================
+
+  /// Initiate a booking with payment
+  /// POST /api/v1/bookings/initiate
+  Future<ApiResponse<InitiateBookingResponse>> initiateBooking(
+    InitiateBookingRequest request,
+  ) async {
+    debugPrint('API: Initiating booking for service ${request.serviceId}');
+    debugPrint('API: Session date: ${request.sessionDate}, time: ${request.startTime}, duration: ${request.duration}h');
+    debugPrint('API: Phone: ${request.paymentDetails.phone}, Medium: ${request.paymentDetails.medium}');
+    if (request.couponCode != null) {
+      debugPrint('API: Applying coupon: ${request.couponCode}');
+    }
+
+    try {
+      final response = await _makeRequest(
+        'POST',
+        'bookings/initiate',
+        request.toJson(),
+        (data) => InitiateBookingResponse.fromJson(data),
+        requiresAuth: true,
+      );
+
+      if (response.isSuccess && response.data != null) {
+        debugPrint('API: Booking initiated successfully - ID: ${response.data!.bookingId}');
+        debugPrint('API: Amount: ${response.data!.amount} FCFA, Original: ${response.data!.originalAmount} FCFA');
+        if (response.data!.hasDiscount) {
+          debugPrint('API: Discount applied: ${response.data!.discountAmount} FCFA');
+        }
+        debugPrint('API: ${response.data!.message}');
+      } else {
+        debugPrint('API: Booking initiation failed - ${response.error}');
+      }
+
+      return response;
+    } catch (e) {
+      debugPrint('API: Booking initiation error - $e');
+      return ApiResponse.error('Failed to initiate booking: $e');
+    }
+  }
+
+  /// Check booking status (for polling)
+  /// GET /api/v1/bookings/status/:bookingId
+  Future<ApiResponse<BookingStatusResponse>> checkBookingStatus(
+    String bookingId,
+  ) async {
+    debugPrint('API: Checking booking status for $bookingId');
+
+    try {
+      final response = await _makeRequest(
+        'GET',
+        'bookings/status/$bookingId',
+        null,
+        (data) => BookingStatusResponse.fromJson(data),
+        requiresAuth: true,
+      );
+
+      if (response.isSuccess && response.data != null) {
+        final status = response.data!;
+        debugPrint('API: Booking status: ${status.status.displayName}, Payment: ${status.paymentStatus}');
+
+        if (status.isCompleted && status.session != null) {
+          debugPrint('API: Session created - ID: ${status.sessionId}');
+          debugPrint('API: Service: ${status.session!.serviceName}, Provider: ${status.session!.provider.name}');
+        } else if (status.isFailed) {
+          debugPrint('API: Payment failed');
+        } else if (status.isExpired) {
+          debugPrint('API: Payment expired');
+        }
+      }
+
+      return response;
+    } catch (e) {
+      debugPrint('API: Booking status check error - $e');
+      return ApiResponse.error('Failed to check booking status: $e');
+    }
+  }
+
+  /// Poll booking status with automatic retry
+  /// Polls every 3 seconds for up to 3 minutes (60 attempts)
+  Stream<BookingStatusResponse> pollBookingStatus(
+    String bookingId, {
+    int maxAttempts = 60,
+    Duration interval = const Duration(seconds: 3),
+  }) async* {
+    debugPrint('API: Starting booking status polling for $bookingId');
+    int attempts = 0;
+
+    while (attempts < maxAttempts) {
+      attempts++;
+      debugPrint('API: Polling attempt $attempts/$maxAttempts');
+
+      final response = await checkBookingStatus(bookingId);
+
+      if (response.isSuccess && response.data != null) {
+        final status = response.data!;
+        yield status;
+
+        // Stop polling if payment is complete, failed, or expired
+        if (status.isCompleted || status.isFailed || status.isExpired) {
+          debugPrint('API: Polling stopped - final status: ${status.status.displayName}');
+          break;
+        }
+      } else {
+        debugPrint('API: Polling error (will retry): ${response.error}');
+      }
+
+      // Wait before next poll (except on last attempt or final status)
+      if (attempts < maxAttempts) {
+        await Future.delayed(interval);
+      }
+    }
+
+    if (attempts >= maxAttempts) {
+      debugPrint('API: Polling timeout after $maxAttempts attempts');
     }
   }
 }

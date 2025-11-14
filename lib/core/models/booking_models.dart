@@ -380,3 +380,270 @@ class UserModel {
     );
   }
 }
+
+// ============================================================================
+// NEW BOOKING API MODELS (for /api/v1/bookings/initiate endpoint)
+// ============================================================================
+
+/// Payment details for booking initiation
+class PaymentDetails {
+  final String phone;
+  final String medium;
+  final String? name;
+  final String? email;
+
+  const PaymentDetails({
+    required this.phone,
+    required this.medium,
+    this.name,
+    this.email,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'phone': phone,
+      'medium': medium,
+      if (name != null) 'name': name,
+      if (email != null) 'email': email,
+    };
+  }
+
+  factory PaymentDetails.fromJson(Map<String, dynamic> json) {
+    return PaymentDetails(
+      phone: json['phone'] as String,
+      medium: json['medium'] as String,
+      name: json['name'] as String?,
+      email: json['email'] as String?,
+    );
+  }
+}
+
+/// Request model for initiating a booking
+class InitiateBookingRequest {
+  final String serviceId;
+  final String sessionDate;
+  final String startTime;
+  final double duration;
+  final String? notes;
+  final PaymentDetails paymentDetails;
+  final String? couponCode;
+
+  const InitiateBookingRequest({
+    required this.serviceId,
+    required this.sessionDate,
+    required this.startTime,
+    required this.duration,
+    required this.paymentDetails,
+    this.notes,
+    this.couponCode,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'serviceId': serviceId,
+      'sessionDate': sessionDate,
+      'startTime': startTime,
+      'duration': duration,
+      if (notes != null) 'notes': notes,
+      'paymentDetails': paymentDetails.toJson(),
+      if (couponCode != null) 'couponCode': couponCode,
+    };
+  }
+}
+
+/// Response model for initiated booking
+class InitiateBookingResponse {
+  final String bookingId;
+  final String paymentId;
+  final String transId;
+  final double amount;
+  final double originalAmount;
+  final double discountAmount;
+  final String status;
+  final String message;
+  final DateTime expiresAt;
+  final String? couponCode;
+
+  const InitiateBookingResponse({
+    required this.bookingId,
+    required this.paymentId,
+    required this.transId,
+    required this.amount,
+    required this.originalAmount,
+    required this.discountAmount,
+    required this.status,
+    required this.message,
+    required this.expiresAt,
+    this.couponCode,
+  });
+
+  factory InitiateBookingResponse.fromJson(Map<String, dynamic> json) {
+    return InitiateBookingResponse(
+      bookingId: json['bookingId'] as String,
+      paymentId: json['paymentId'] as String,
+      transId: json['transId'] as String,
+      amount: (json['amount'] as num).toDouble(),
+      originalAmount: (json['originalAmount'] as num).toDouble(),
+      discountAmount: (json['discountAmount'] as num).toDouble(),
+      status: json['status'] as String,
+      message: json['message'] as String,
+      expiresAt: DateTime.parse(json['expiresAt'] as String),
+      couponCode: json['couponCode'] as String?,
+    );
+  }
+
+  bool get hasDiscount => discountAmount > 0;
+}
+
+/// Booking status for payment flow
+enum InitiateBookingStatus {
+  paymentPending,
+  completed,
+  failed,
+  expired;
+
+  static InitiateBookingStatus fromString(String status) {
+    switch (status.toLowerCase()) {
+      case 'payment_pending':
+        return InitiateBookingStatus.paymentPending;
+      case 'completed':
+        return InitiateBookingStatus.completed;
+      case 'failed':
+        return InitiateBookingStatus.failed;
+      case 'expired':
+        return InitiateBookingStatus.expired;
+      default:
+        return InitiateBookingStatus.paymentPending;
+    }
+  }
+
+  String get displayName {
+    switch (this) {
+      case InitiateBookingStatus.paymentPending:
+        return 'Payment Pending';
+      case InitiateBookingStatus.completed:
+        return 'Completed';
+      case InitiateBookingStatus.failed:
+        return 'Failed';
+      case InitiateBookingStatus.expired:
+        return 'Expired';
+    }
+  }
+}
+
+/// Payment status for payment flow
+enum InitiatePaymentStatus {
+  processing,
+  successful,
+  failed,
+  expired;
+
+  static InitiatePaymentStatus fromString(String status) {
+    switch (status.toLowerCase()) {
+      case 'processing':
+        return InitiatePaymentStatus.processing;
+      case 'successful':
+        return InitiatePaymentStatus.successful;
+      case 'failed':
+        return InitiatePaymentStatus.failed;
+      case 'expired':
+        return InitiatePaymentStatus.expired;
+      default:
+        return InitiatePaymentStatus.processing;
+    }
+  }
+}
+
+/// Provider info in booking status
+class BookingStatusProvider {
+  final String id;
+  final String name;
+
+  const BookingStatusProvider({
+    required this.id,
+    required this.name,
+  });
+
+  factory BookingStatusProvider.fromJson(Map<String, dynamic> json) {
+    return BookingStatusProvider(
+      id: json['id'] as String,
+      name: json['name'] as String,
+    );
+  }
+}
+
+/// Session info in booking status
+class BookingStatusSession {
+  final String id;
+  final String serviceName;
+  final String sessionDate;
+  final String startTime;
+  final String endTime;
+  final double totalAmount;
+  final String status;
+  final BookingStatusProvider provider;
+
+  const BookingStatusSession({
+    required this.id,
+    required this.serviceName,
+    required this.sessionDate,
+    required this.startTime,
+    required this.endTime,
+    required this.totalAmount,
+    required this.status,
+    required this.provider,
+  });
+
+  factory BookingStatusSession.fromJson(Map<String, dynamic> json) {
+    return BookingStatusSession(
+      id: json['id'] as String,
+      serviceName: json['serviceName'] as String,
+      sessionDate: json['sessionDate'] as String,
+      startTime: json['startTime'] as String,
+      endTime: json['endTime'] as String,
+      totalAmount: (json['totalAmount'] as num).toDouble(),
+      status: json['status'] as String,
+      provider: BookingStatusProvider.fromJson(json['provider'] as Map<String, dynamic>),
+    );
+  }
+}
+
+/// Response model for booking status check
+class BookingStatusResponse {
+  final String bookingId;
+  final String paymentId;
+  final InitiateBookingStatus status;
+  final InitiatePaymentStatus paymentStatus;
+  final String message;
+  final String? sessionId;
+  final BookingStatusSession? session;
+
+  const BookingStatusResponse({
+    required this.bookingId,
+    required this.paymentId,
+    required this.status,
+    required this.paymentStatus,
+    required this.message,
+    this.sessionId,
+    this.session,
+  });
+
+  factory BookingStatusResponse.fromJson(Map<String, dynamic> json) {
+    return BookingStatusResponse(
+      bookingId: json['bookingId'] as String,
+      paymentId: json['paymentId'] as String,
+      status: InitiateBookingStatus.fromString(json['status'] as String),
+      paymentStatus: InitiatePaymentStatus.fromString(json['paymentStatus'] as String),
+      message: json['message'] as String,
+      sessionId: json['sessionId'] as String?,
+      session: json['session'] != null
+          ? BookingStatusSession.fromJson(json['session'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+
+  bool get isCompleted => status == InitiateBookingStatus.completed;
+  bool get isFailed => status == InitiateBookingStatus.failed;
+  bool get isExpired => status == InitiateBookingStatus.expired;
+  bool get isPending => status == InitiateBookingStatus.paymentPending;
+}

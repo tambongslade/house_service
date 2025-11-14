@@ -170,7 +170,55 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tomorrow => 'Demain';
 
   @override
+  String get monday => 'Lundi';
+
+  @override
+  String get tuesday => 'Mardi';
+
+  @override
+  String get wednesday => 'Mercredi';
+
+  @override
+  String get thursday => 'Jeudi';
+
+  @override
+  String get friday => 'Vendredi';
+
+  @override
+  String get saturday => 'Samedi';
+
+  @override
+  String get sunday => 'Dimanche';
+
+  @override
+  String get mon => 'Lun';
+
+  @override
+  String get tue => 'Mar';
+
+  @override
+  String get wed => 'Mer';
+
+  @override
+  String get thu => 'Jeu';
+
+  @override
+  String get fri => 'Ven';
+
+  @override
+  String get sat => 'Sam';
+
+  @override
+  String get sun => 'Dim';
+
+  @override
   String get earnings => 'Revenus';
+
+  @override
+  String get locationNotSpecified => 'Emplacement non spécifié';
+
+  @override
+  String get twoThisMonth => '+2 ce mois-ci';
 
   @override
   String get recentActivity => 'Activité Récente';
@@ -261,6 +309,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get availability => 'Disponibilité';
+
+  @override
+  String get availabilityValidation => 'Validation de Disponibilité';
 
   @override
   String get profile => 'Profil';
@@ -560,7 +611,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get startTime => 'Heure de Début :';
+  String get startTime => 'Heure de Début *';
 
   @override
   String get endTime => 'Heure de Fin :';
@@ -575,10 +626,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get day => 'Jour :';
 
   @override
-  String get time => 'Heure :';
+  String get time => 'Heure';
 
   @override
-  String get duration => 'Durée :';
+  String get duration => 'Durée';
 
   @override
   String get sessionPricing => 'Tarification de la Session :';
@@ -741,7 +792,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get all => 'Tous';
+  String get all => 'Tout';
 
   @override
   String get map => 'Carte';
@@ -953,6 +1004,71 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pleaseSelectAtLeastOneDay => 'Veuillez sélectionner au moins un jour';
 
   @override
+  String get sourceDayHasNoAvailability => 'Le jour source n\'a aucune disponibilité à copier';
+
+  @override
+  String get allAvailabilityClearedSuccess => 'Toutes les disponibilités ont été effacées avec succès !';
+
+  @override
+  String failedToClearAvailability(String error) {
+    return 'Échec de l\'effacement de la disponibilité : $error';
+  }
+
+  @override
+  String get errorNoAvailabilityData => 'Erreur : Aucune donnée de disponibilité trouvée pour ce jour';
+
+  @override
+  String get errorCannotFindAvailabilityId => 'Erreur : Impossible de trouver l\'ID de disponibilité';
+
+  @override
+  String deleteAllAvailabilityForDay(String day) {
+    return 'Supprimer toute la disponibilité pour $day ?\\n\\nCela supprimera tous les créneaux horaires pour ce jour.';
+  }
+
+  @override
+  String get deleteEntireDayButton => 'Supprimer le Jour';
+
+  @override
+  String get timeSlotDeletedSuccess => 'Créneau horaire supprimé avec succès';
+
+  @override
+  String failedToDeleteTimeSlot(String error) {
+    return 'Échec de la suppression du créneau horaire : $error';
+  }
+
+  @override
+  String errorDeletingTimeSlot(String error) {
+    return 'Erreur lors de la suppression du créneau horaire : $error';
+  }
+
+  @override
+  String get dayAvailabilityDeletedSuccess => 'Disponibilité du jour supprimée avec succès';
+
+  @override
+  String failedToDeleteDay(String error) {
+    return 'Échec de la suppression du jour : $error';
+  }
+
+  @override
+  String errorDeletingDay(String error) {
+    return 'Erreur lors de la suppression du jour : $error';
+  }
+
+  @override
+  String get setViaQuickSetup => 'Défini via Configuration Rapide';
+
+  @override
+  String get quickSetupCompletedSuccess => 'Configuration rapide terminée avec succès !';
+
+  @override
+  String get default95 => 'Par Défaut 9-17h';
+
+  @override
+  String deleteTimeSlotFor(String start, String end, String day) {
+    return 'Supprimer le créneau horaire $start - $end pour $day ?';
+  }
+
+  @override
   String get apply => 'Appliquer';
 
   @override
@@ -1160,4 +1276,370 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get hairCuttingStyling => 'Coupe et coiffage';
+
+  @override
+  String get transactionHistory => 'Historique des Transactions';
+
+  @override
+  String get noTransactions => 'Aucune transaction pour le moment';
+
+  @override
+  String get transactionHistoryEmpty => 'Votre historique de transactions apparaîtra ici';
+
+  @override
+  String availableBalanceLabel(String amount) {
+    return 'Solde Disponible : $amount';
+  }
+
+  @override
+  String get history => 'Historique';
+
+  @override
+  String requestService(String service) {
+    return 'Demander $service';
+  }
+
+  @override
+  String get serviceDetails => 'Détails du Service';
+
+  @override
+  String get serviceDate => 'Date du Service *';
+
+  @override
+  String get selectDateForService => 'Sélectionnez la date du service';
+
+  @override
+  String get selectDate => 'Sélectionner la date';
+
+  @override
+  String get selectStartTime => 'Sélectionnez l\'heure de début';
+
+  @override
+  String get selectTime => 'Sélectionner l\'heure';
+
+  @override
+  String durationLabel(String duration) {
+    return 'Durée : $duration heures';
+  }
+
+  @override
+  String get minimumMaximumHours => 'Minimum 0,5 heure, maximum 12 heures';
+
+  @override
+  String get location => 'Emplacement';
+
+  @override
+  String get province => 'Province *';
+
+  @override
+  String get pleaseSelectProvince => 'Veuillez sélectionner une province';
+
+  @override
+  String get serviceLocation => 'Lieu du Service *';
+
+  @override
+  String get locationSelected => 'Emplacement sélectionné';
+
+  @override
+  String get gettingLocation => 'Obtention de l\'emplacement...';
+
+  @override
+  String get useCurrentLocation => 'Utiliser l\'emplacement actuel';
+
+  @override
+  String get selectOnMap => 'Sélectionner sur la carte';
+
+  @override
+  String get additionalInformation => 'Informations Supplémentaires';
+
+  @override
+  String get serviceDescription => 'Description du Service';
+
+  @override
+  String get brieflyDescribe => 'Décrivez brièvement ce qui doit être fait';
+
+  @override
+  String get specialInstructions => 'Instructions Spéciales';
+
+  @override
+  String get anySpecialRequirements => 'Toute exigence ou note spéciale';
+
+  @override
+  String get couponCodeOptional => 'Code Promo (Optionnel)';
+
+  @override
+  String get enterCouponCode => 'Entrez le Code Promo';
+
+  @override
+  String get enterCouponOptional => 'Entrez le code promo (optionnel)';
+
+  @override
+  String get validate => 'Valider';
+
+  @override
+  String get enterCouponDiscount => 'Entrez un code promo pour obtenir une réduction sur votre service';
+
+  @override
+  String get estimatedCost => 'Coût Estimé';
+
+  @override
+  String get originalAmount => 'Montant Original :';
+
+  @override
+  String discount(String code) {
+    return 'Réduction ($code) :';
+  }
+
+  @override
+  String get finalAmount => 'Montant Final :';
+
+  @override
+  String get total => 'Total :';
+
+  @override
+  String forHoursOfService(String duration) {
+    return 'Pour $duration heures de service';
+  }
+
+  @override
+  String basePriceInfo(int price) {
+    return 'Prix de base : $price FCFA (4 heures)';
+  }
+
+  @override
+  String overtimeInfo(int amount, String hours) {
+    return 'Heures supplémentaires : $amount FCFA ($hours heures en plus)';
+  }
+
+  @override
+  String get noOvertimeCharges => 'Pas de frais d\'heures supplémentaires';
+
+  @override
+  String couponAppliedSuccess(String code) {
+    return 'Code promo \"$code\" appliqué avec succès !';
+  }
+
+  @override
+  String get submitRequest => 'Soumettre la Demande';
+
+  @override
+  String get locationPermissionsDenied => 'Les autorisations de localisation sont refusées';
+
+  @override
+  String get locationPermissionsPermanentlyDenied => 'Les autorisations de localisation sont définitivement refusées, nous ne pouvons pas demander d\'autorisations.';
+
+  @override
+  String currentLocationLabel(String lat, String lng) {
+    return 'Emplacement Actuel ($lat, $lng)';
+  }
+
+  @override
+  String currentLocationWithAddress(String address) {
+    return 'Emplacement Actuel : $address';
+  }
+
+  @override
+  String get currentLocationCaptured => 'Emplacement actuel capturé avec succès';
+
+  @override
+  String failedToGetLocation(String error) {
+    return 'Échec de l\'obtention de l\'emplacement actuel : $error';
+  }
+
+  @override
+  String get locationSelectedSuccess => 'Emplacement sélectionné avec succès';
+
+  @override
+  String couponSaveAmount(int amount) {
+    return 'Code promo appliqué ! Vous économisez $amount FCFA';
+  }
+
+  @override
+  String get invalidCouponCode => 'Code promo invalide';
+
+  @override
+  String get failedToValidateCoupon => 'Échec de la validation du code promo';
+
+  @override
+  String errorValidatingCoupon(String error) {
+    return 'Erreur lors de la validation du code promo : $error';
+  }
+
+  @override
+  String get requestSubmittedSuccessfully => 'Demande Soumise avec Succès';
+
+  @override
+  String requestId(String id) {
+    return 'ID de Demande : $id';
+  }
+
+  @override
+  String estimatedCostAmount(int amount) {
+    return 'Coût Estimé : $amount FCFA';
+  }
+
+  @override
+  String get adminWillAssignProvider => 'Un administrateur assignera un prestataire à votre demande.';
+
+  @override
+  String get failedToSubmitRequest => 'Échec de la soumission de la demande';
+
+  @override
+  String errorSubmitting(String error) {
+    return 'Erreur : $error';
+  }
+
+  @override
+  String get myServiceRequests => 'Mes Demandes de Service';
+
+  @override
+  String get rejected => 'Rejeté';
+
+  @override
+  String get noServiceRequestsFound => 'Aucune demande de service trouvée';
+
+  @override
+  String get yourServiceRequestsWillAppear => 'Vos demandes de service apparaîtront ici';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get viewDetails => 'Voir les Détails';
+
+  @override
+  String get trackProvider => 'Suivre le Prestataire';
+
+  @override
+  String createdAt(String date) {
+    return 'Créé $date';
+  }
+
+  @override
+  String requestDetailsTitle(String category) {
+    return 'Détails de la Demande - $category';
+  }
+
+  @override
+  String get hours => 'heures';
+
+  @override
+  String get cost => 'Coût';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get provider => 'Prestataire';
+
+  @override
+  String get created => 'Créé';
+
+  @override
+  String get updated => 'Mis à Jour';
+
+  @override
+  String get close => 'Fermer';
+
+  @override
+  String get cancelRequest => 'Annuler la Demande';
+
+  @override
+  String get cancelServiceRequest => 'Annuler la Demande de Service';
+
+  @override
+  String get cancelConfirmation => 'Êtes-vous sûr de vouloir annuler cette demande de service ?';
+
+  @override
+  String get reasonForCancellation => 'Raison de l\'annulation';
+
+  @override
+  String get keepRequest => 'Conserver la Demande';
+
+  @override
+  String get cancelledByUser => 'Annulé par l\'utilisateur';
+
+  @override
+  String get serviceRequestCancelledSuccess => 'Demande de service annulée avec succès';
+
+  @override
+  String get failedToCancelRequest => 'Échec de l\'annulation de la demande';
+
+  @override
+  String errorCancellingRequest(String error) {
+    return 'Erreur lors de l\'annulation de la demande : $error';
+  }
+
+  @override
+  String get unableToTrack => 'Impossible de suivre : ID de session invalide';
+
+  @override
+  String get failedToLoadServiceRequests => 'Échec du chargement des demandes de service';
+
+  @override
+  String errorLoadingServiceRequests(String error) {
+    return 'Erreur lors du chargement des demandes de service : $error';
+  }
+
+  @override
+  String get todayLabel => 'Aujourd\'hui';
+
+  @override
+  String get tomorrowLabel => 'Demain';
+
+  @override
+  String get yesterdayLabel => 'Hier';
+
+  @override
+  String get todayLowercase => 'aujourd\'hui';
+
+  @override
+  String get yesterdayLowercase => 'hier';
+
+  @override
+  String daysAgoLabel(int days) {
+    return 'il y a $days jours';
+  }
+
+  @override
+  String get invalidDate => 'Date Invalide';
+
+  @override
+  String get dateNotSet => 'Date non définie';
+
+  @override
+  String get na => 'N/A';
+
+  @override
+  String get cleaning => 'Nettoyage';
+
+  @override
+  String get plumbing => 'Plomberie';
+
+  @override
+  String get electrical => 'Électricité';
+
+  @override
+  String get painting => 'Peinture';
+
+  @override
+  String get gardening => 'Jardinage';
+
+  @override
+  String get carpentry => 'Menuiserie';
+
+  @override
+  String get cooking => 'Cuisine';
+
+  @override
+  String get tutoring => 'Tutorat';
+
+  @override
+  String get beauty => 'Beauté';
+
+  @override
+  String get maintenance => 'Maintenance';
+
+  @override
+  String get pullDownToRefresh => 'Tirez vers le bas pour actualiser';
 }

@@ -6,7 +6,7 @@
   "next": "Next",
   "onboardingTitle1": "Find Quality Home Services",
   "onboardingDescription1": "Connect with trusted professionals for all your home maintenance and repair needs",
-  "onboardingTitle2": "Book With Confidence", 
+  "onboardingTitle2": "Book With Confidence",
   "onboardingDescription2": "Verified service providers with ratings and reviews from real customers",
   "onboardingTitle3": "Track Your Service",
   "onboardingDescription3": "Monitor your service progress in real-time and get notifications for updates",
@@ -44,5 +44,59 @@
   "cancel": "Cancel",
   "welcomeTitle": "Welcome!",
   "welcomeSubtitle": "We're here to help!",
-  "welcomeDescription": "Find trusted service providers in your area"
+  "welcomeDescription": "Find trusted service providers in your area",
+  "dashboard": "Dashboard",
+  "myProfile": "My Profile",
+  "logout": "Logout",
+  "resetApp": "Reset App",
+  "welcomeBack": "Welcome Back, {name}",
+  "@welcomeBack": {
+    "description": "Welcome message with user's name",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "reviews": "reviews",
+  "totalEarned": "Total Earned",
+  "thisMonth": "This Month",
+  "bookings": "bookings",
+  "activeServices": "Active Services",
+  "completed": "Completed",
+  "pending": "Pending",
+  "walletBalance": "Wallet Balance",
+  "availableBalance": "Available Balance",
+  "withdraw": "Withdraw",
+  "history": "History",
+  "retry": "Retry",
+  "recentActivity": "Recent Activity",
+  "noRecentActivities": "No recent activities",
+  "activitiesWillAppear": "Your activities will appear here",
+  "nextBooking": "Next Booking",
+  "withText": "with",
+  "withdrawMoney": "Withdraw Money",
+  "amountToWithdraw": "Amount to Withdraw",
+  "enterAmountHint": "Enter amount (min. 5000 FCFA)",
+  "withdrawalMethod": "Withdrawal Method",
+  "bankTransfer": "Bank Transfer",
+  "mobileMoney": "Mobile Money",
+  "minimumWithdrawal": "Minimum withdrawal: 5000 FCFA",
+  "validAmountError": "Please enter a valid amount (minimum 5000 FCFA)",
+  "withdrawalSuccess": "Withdrawal request submitted successfully",
+  "withdrawalFailed": "Withdrawal request failed",
+  "transactionHistory": "Transaction History",
+  "noTransactions": "No transactions yet",
+  "transactionHistoryEmpty": "Your transaction history will appear here",
+  "availableBalanceLabel": "Available Balance: {amount}",
+  "@availableBalanceLabel": {
+    "description": "Shows available balance with amount",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "10,000 FCFA"
+      }
+    }
+  }
 }

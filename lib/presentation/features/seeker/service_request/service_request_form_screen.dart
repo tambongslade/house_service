@@ -33,6 +33,12 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
   final _descriptionController = TextEditingController();
   final _couponController = TextEditingController();
 
+  // Payment details fields
+  final _phoneController = TextEditingController();
+  final _payerNameController = TextEditingController();
+  final _payerEmailController = TextEditingController();
+  String _paymentMedium = 'mobile money';
+
   bool _isSubmitting = false;
   bool _isLoadingLocation = false;
   bool _isValidatingCoupon = false;
@@ -56,6 +62,9 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
     _specialInstructionsController.dispose();
     _descriptionController.dispose();
     _couponController.dispose();
+    _phoneController.dispose();
+    _payerNameController.dispose();
+    _payerEmailController.dispose();
     super.dispose();
   }
 
@@ -113,17 +122,36 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
               _buildSpecialInstructionsField(),
               const SizedBox(height: 24),
               
+              _buildSectionHeader('Payment Details'),
+              const SizedBox(height: 16),
+
+              // Phone number
+              _buildPhoneField(),
+              const SizedBox(height: 16),
+
+              // Payment medium
+              _buildPaymentMediumField(),
+              const SizedBox(height: 16),
+
+              // Payer name (optional)
+              _buildPayerNameField(),
+              const SizedBox(height: 16),
+
+              // Payer email (optional)
+              _buildPayerEmailField(),
+              const SizedBox(height: 24),
+
               _buildSectionHeader('Coupon Code (Optional)'),
               const SizedBox(height: 16),
-              
+
               // Coupon Code
               _buildCouponField(),
               const SizedBox(height: 32),
-              
+
               // Cost estimate
               _buildCostEstimate(),
               const SizedBox(height: 24),
-              
+
               // Submit button
               _buildSubmitButton(),
               const SizedBox(height: 16),
@@ -412,6 +440,99 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
     );
   }
 
+  Widget _buildPhoneField() {
+    return TextFormField(
+      controller: _phoneController,
+      decoration: InputDecoration(
+        labelText: 'Phone Number *',
+        hintText: '237670000000',
+        prefixIcon: const Icon(Icons.phone),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        helperText: 'Format: 237XXXXXXXXX (Cameroon)',
+      ),
+      keyboardType: TextInputType.phone,
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Phone number is required';
+        }
+        if (!RegExp(r'^237\d{9}$').hasMatch(value.trim())) {
+          return 'Invalid format. Use 237XXXXXXXXX';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildPaymentMediumField() {
+    return DropdownButtonFormField<String>(
+      value: _paymentMedium,
+      decoration: InputDecoration(
+        labelText: 'Payment Method *',
+        prefixIcon: const Icon(Icons.payment),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      items: const [
+        DropdownMenuItem(
+          value: 'mobile money',
+          child: Text('Mobile Money (MTN/Orange)'),
+        ),
+        DropdownMenuItem(
+          value: 'orange money',
+          child: Text('Orange Money'),
+        ),
+      ],
+      onChanged: (value) {
+        setState(() {
+          _paymentMedium = value!;
+        });
+      },
+    );
+  }
+
+  Widget _buildPayerNameField() {
+    return TextFormField(
+      controller: _payerNameController,
+      decoration: InputDecoration(
+        labelText: 'Payer Name (Optional)',
+        hintText: 'Enter payer name',
+        prefixIcon: const Icon(Icons.person_outline),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        helperText: 'Name for payment receipt',
+      ),
+      textCapitalization: TextCapitalization.words,
+    );
+  }
+
+  Widget _buildPayerEmailField() {
+    return TextFormField(
+      controller: _payerEmailController,
+      decoration: InputDecoration(
+        labelText: 'Payer Email (Optional)',
+        hintText: 'Enter email for receipt',
+        prefixIcon: const Icon(Icons.email_outlined),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        helperText: 'Email for payment receipt',
+      ),
+      keyboardType: TextInputType.emailAddress,
+      validator: (value) {
+        if (value != null && value.trim().isNotEmpty) {
+          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
+            return 'Invalid email format';
+          }
+        }
+        return null;
+      },
+    );
+  }
+
   Widget _buildCouponField() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -454,11 +575,11 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
                   textCapitalization: TextCapitalization.characters,
                   onChanged: (value) {
                     // Clear applied coupon if user changes the code
-                    if (_couponInfo.isApplied && value != _couponInfo.couponCode) {
-                      setState(() {
+                    setState(() {
+                      if (_couponInfo.isApplied && value != _couponInfo.couponCode) {
                         _couponInfo = CouponInfo.empty();
-                      });
-                    }
+                      }
+                    });
                   },
                 ),
               ),
@@ -924,61 +1045,48 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
     });
 
     try {
-      final requestData = CreateServiceRequestModel(
-        category: widget.category,
-        serviceDate: '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}',
+      // TODO: Replace 'service_id_placeholder' with actual service ID
+      // You need to pass the service ID from the previous screen or get it from the category
+
+      // Create payment details
+      final paymentDetails = PaymentDetails(
+        phone: _phoneController.text.trim(),
+        medium: _paymentMedium,
+        name: _payerNameController.text.trim().isNotEmpty
+            ? _payerNameController.text.trim()
+            : null,
+        email: _payerEmailController.text.trim().isNotEmpty
+            ? _payerEmailController.text.trim()
+            : null,
+      );
+
+      // Create booking request
+      final bookingRequest = InitiateBookingRequest(
+        serviceId: 'service_id_placeholder', // TODO: Get actual service ID
+        sessionDate: '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}',
         startTime: '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}',
         duration: _duration,
-        location: _selectedLocation!,
-        province: _selectedProvince,
-        specialInstructions: _specialInstructionsController.text.trim().isNotEmpty 
-            ? _specialInstructionsController.text.trim() 
-            : null,
-        description: _descriptionController.text.trim().isNotEmpty 
-            ? _descriptionController.text.trim() 
+        paymentDetails: paymentDetails,
+        notes: _specialInstructionsController.text.trim().isNotEmpty
+            ? _specialInstructionsController.text.trim()
             : null,
         couponCode: _couponInfo.isApplied ? _couponInfo.couponCode : null,
       );
 
-      final response = await _apiService.createServiceRequest(requestData.toJson());
+      // Initiate booking
+      final response = await _apiService.initiateBooking(bookingRequest);
 
-      if (response.isSuccess) {
-        final responseData = ServiceRequestResponse.fromJson(response.data!);
-        
+      if (response.isSuccess && response.data != null) {
+        final bookingResponse = response.data!;
+
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(responseData.message),
-              backgroundColor: Colors.green,
-            ),
-          );
-
-          // Show success dialog with details
+          // Show payment pending dialog
           showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: const Text('Request Submitted Successfully'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Request ID: ${responseData.requestId}'),
-                  const SizedBox(height: 8),
-                  Text('Estimated Cost: ${responseData.estimatedCost.round()} FCFA'),
-                  const SizedBox(height: 8),
-                  const Text('An admin will assign a provider to your request.'),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close dialog
-                    Navigator.of(context).pop(); // Go back to previous screen
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
+            builder: (context) => _PaymentPendingDialog(
+              bookingResponse: bookingResponse,
+              apiService: _apiService,
             ),
           );
         }
@@ -986,7 +1094,7 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(response.error ?? 'Failed to submit request'),
+              content: Text(response.error ?? 'Failed to initiate booking'),
               backgroundColor: Colors.red,
             ),
           );
@@ -1008,5 +1116,197 @@ class _ServiceRequestFormScreenState extends State<ServiceRequestFormScreen> {
         });
       }
     }
+  }
+}
+
+// Payment Pending Dialog Widget
+class _PaymentPendingDialog extends StatefulWidget {
+  final InitiateBookingResponse bookingResponse;
+  final ApiService apiService;
+
+  const _PaymentPendingDialog({
+    required this.bookingResponse,
+    required this.apiService,
+  });
+
+  @override
+  State<_PaymentPendingDialog> createState() => _PaymentPendingDialogState();
+}
+
+class _PaymentPendingDialogState extends State<_PaymentPendingDialog> {
+  String _statusMessage = '';
+  bool _isPolling = true;
+  int _remainingSeconds = 180; // 3 minutes
+
+  @override
+  void initState() {
+    super.initState();
+    _statusMessage = widget.bookingResponse.message;
+    _startPolling();
+    _startCountdown();
+  }
+
+  void _startCountdown() {
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted && _isPolling && _remainingSeconds > 0) {
+        setState(() {
+          _remainingSeconds--;
+        });
+        _startCountdown();
+      }
+    });
+  }
+
+  void _startPolling() async {
+    await for (final status in widget.apiService.pollBookingStatus(widget.bookingResponse.bookingId)) {
+      if (!mounted) break;
+
+      setState(() {
+        _statusMessage = status.message;
+      });
+
+      if (status.isCompleted) {
+        setState(() {
+          _isPolling = false;
+        });
+        _showSuccessAndClose(status);
+        break;
+      } else if (status.isFailed) {
+        setState(() {
+          _isPolling = false;
+        });
+        _showErrorAndClose('Payment failed. Please try again.');
+        break;
+      } else if (status.isExpired) {
+        setState(() {
+          _isPolling = false;
+        });
+        _showErrorAndClose('Payment expired. Please try again.');
+        break;
+      }
+    }
+
+    // Check if polling timed out
+    if (mounted && _isPolling) {
+      setState(() {
+        _isPolling = false;
+      });
+      _showErrorAndClose('Payment timeout. Please check your payment status.');
+    }
+  }
+
+  void _showSuccessAndClose(BookingStatusResponse status) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Payment successful! Your session has been created.'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    Navigator.of(context).pop(); // Close payment dialog
+    Navigator.of(context).pop(); // Go back to previous screen
+  }
+
+  void _showErrorAndClose(String message) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+
+    Navigator.of(context).pop(); // Close dialog
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Row(
+        children: [
+          if (_isPolling)
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          const SizedBox(width: 12),
+          const Text('Payment Pending'),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(_statusMessage),
+          const SizedBox(height: 16),
+          const Divider(),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Amount to Pay:', style: TextStyle(fontWeight: FontWeight.w500)),
+              Text(
+                '${widget.bookingResponse.amount.toStringAsFixed(0)} FCFA',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ],
+          ),
+          if (widget.bookingResponse.hasDiscount) ...[
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Original Amount:', style: TextStyle(decoration: TextDecoration.lineThrough)),
+                Text('${widget.bookingResponse.originalAmount.toStringAsFixed(0)} FCFA'),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Discount:', style: TextStyle(color: Colors.green)),
+                Text(
+                  '-${widget.bookingResponse.discountAmount.toStringAsFixed(0)} FCFA',
+                  style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
+          const SizedBox(height: 16),
+          const Divider(),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Time Remaining:'),
+              Text(
+                _formatTime(_remainingSeconds),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: _remainingSeconds < 60 ? Colors.red : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      actions: [
+        if (!_isPolling)
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+      ],
+    );
   }
 }

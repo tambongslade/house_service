@@ -413,11 +413,107 @@ abstract class AppLocalizations {
   /// **'Tomorrow'**
   String get tomorrow;
 
+  /// No description provided for @monday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get monday;
+
+  /// No description provided for @tuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get tuesday;
+
+  /// No description provided for @wednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get wednesday;
+
+  /// No description provided for @thursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get thursday;
+
+  /// No description provided for @friday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get friday;
+
+  /// No description provided for @saturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get saturday;
+
+  /// No description provided for @sunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get sunday;
+
+  /// No description provided for @mon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get mon;
+
+  /// No description provided for @tue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get tue;
+
+  /// No description provided for @wed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get wed;
+
+  /// No description provided for @thu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get thu;
+
+  /// No description provided for @fri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get fri;
+
+  /// No description provided for @sat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get sat;
+
+  /// No description provided for @sun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get sun;
+
   /// No description provided for @earnings.
   ///
   /// In en, this message translates to:
   /// **'Earnings'**
   String get earnings;
+
+  /// No description provided for @locationNotSpecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Location not specified'**
+  String get locationNotSpecified;
+
+  /// No description provided for @twoThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'+2 this month'**
+  String get twoThisMonth;
 
   /// No description provided for @recentActivity.
   ///
@@ -586,6 +682,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Availability'**
   String get availability;
+
+  /// No description provided for @availabilityValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability Validation'**
+  String get availabilityValidation;
 
   /// No description provided for @profile.
   ///
@@ -1172,7 +1274,7 @@ abstract class AppLocalizations {
   /// No description provided for @startTime.
   ///
   /// In en, this message translates to:
-  /// **'Start Time:'**
+  /// **'Start Time *'**
   String get startTime;
 
   /// No description provided for @endTime.
@@ -1202,13 +1304,13 @@ abstract class AppLocalizations {
   /// No description provided for @time.
   ///
   /// In en, this message translates to:
-  /// **'Time:'**
+  /// **'Time'**
   String get time;
 
   /// No description provided for @duration.
   ///
   /// In en, this message translates to:
-  /// **'Duration:'**
+  /// **'Duration'**
   String get duration;
 
   /// No description provided for @sessionPricing.
@@ -1859,6 +1961,108 @@ abstract class AppLocalizations {
   /// **'Please select at least one day'**
   String get pleaseSelectAtLeastOneDay;
 
+  /// No description provided for @sourceDayHasNoAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Source day has no availability to copy'**
+  String get sourceDayHasNoAvailability;
+
+  /// No description provided for @allAvailabilityClearedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'All availability cleared successfully!'**
+  String get allAvailabilityClearedSuccess;
+
+  /// No description provided for @failedToClearAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to clear availability: {error}'**
+  String failedToClearAvailability(String error);
+
+  /// No description provided for @errorNoAvailabilityData.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: No availability data found for this day'**
+  String get errorNoAvailabilityData;
+
+  /// No description provided for @errorCannotFindAvailabilityId.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: Cannot find availability ID'**
+  String get errorCannotFindAvailabilityId;
+
+  /// No description provided for @deleteAllAvailabilityForDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all availability for {day}?\\n\\nThis will remove all time slots for this day.'**
+  String deleteAllAvailabilityForDay(String day);
+
+  /// No description provided for @deleteEntireDayButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Day'**
+  String get deleteEntireDayButton;
+
+  /// No description provided for @timeSlotDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Time slot deleted successfully'**
+  String get timeSlotDeletedSuccess;
+
+  /// No description provided for @failedToDeleteTimeSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete time slot: {error}'**
+  String failedToDeleteTimeSlot(String error);
+
+  /// No description provided for @errorDeletingTimeSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting time slot: {error}'**
+  String errorDeletingTimeSlot(String error);
+
+  /// No description provided for @dayAvailabilityDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Day availability deleted successfully'**
+  String get dayAvailabilityDeletedSuccess;
+
+  /// No description provided for @failedToDeleteDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete day: {error}'**
+  String failedToDeleteDay(String error);
+
+  /// No description provided for @errorDeletingDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting day: {error}'**
+  String errorDeletingDay(String error);
+
+  /// No description provided for @setViaQuickSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Set via Quick Setup'**
+  String get setViaQuickSetup;
+
+  /// No description provided for @quickSetupCompletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick setup completed successfully!'**
+  String get quickSetupCompletedSuccess;
+
+  /// No description provided for @default95.
+  ///
+  /// In en, this message translates to:
+  /// **'Default 9-5'**
+  String get default95;
+
+  /// No description provided for @deleteTimeSlotFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete time slot {start} - {end} for {day}?'**
+  String deleteTimeSlotFor(String start, String end, String day);
+
   /// No description provided for @apply.
   ///
   /// In en, this message translates to:
@@ -2272,6 +2476,654 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hair cutting and styling'**
   String get hairCuttingStyling;
+
+  /// No description provided for @transactionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction History'**
+  String get transactionHistory;
+
+  /// No description provided for @noTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet'**
+  String get noTransactions;
+
+  /// No description provided for @transactionHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your transaction history will appear here'**
+  String get transactionHistoryEmpty;
+
+  /// Shows available balance with amount
+  ///
+  /// In en, this message translates to:
+  /// **'Available Balance: {amount}'**
+  String availableBalanceLabel(String amount);
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// Title for service request form
+  ///
+  /// In en, this message translates to:
+  /// **'Request {service}'**
+  String requestService(String service);
+
+  /// No description provided for @serviceDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Details'**
+  String get serviceDetails;
+
+  /// No description provided for @serviceDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Date *'**
+  String get serviceDate;
+
+  /// No description provided for @selectDateForService.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date for service'**
+  String get selectDateForService;
+
+  /// No description provided for @selectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get selectDate;
+
+  /// No description provided for @selectStartTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select start time'**
+  String get selectStartTime;
+
+  /// No description provided for @selectTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select time'**
+  String get selectTime;
+
+  /// Shows duration in hours
+  ///
+  /// In en, this message translates to:
+  /// **'Duration: {duration} hours'**
+  String durationLabel(String duration);
+
+  /// No description provided for @minimumMaximumHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum 0.5 hours, maximum 12 hours'**
+  String get minimumMaximumHours;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @province.
+  ///
+  /// In en, this message translates to:
+  /// **'Province *'**
+  String get province;
+
+  /// No description provided for @pleaseSelectProvince.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a province'**
+  String get pleaseSelectProvince;
+
+  /// No description provided for @serviceLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Location *'**
+  String get serviceLocation;
+
+  /// No description provided for @locationSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Location selected'**
+  String get locationSelected;
+
+  /// No description provided for @gettingLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting location...'**
+  String get gettingLocation;
+
+  /// No description provided for @useCurrentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use current location'**
+  String get useCurrentLocation;
+
+  /// No description provided for @selectOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Select on map'**
+  String get selectOnMap;
+
+  /// No description provided for @additionalInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Information'**
+  String get additionalInformation;
+
+  /// No description provided for @serviceDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Description'**
+  String get serviceDescription;
+
+  /// No description provided for @brieflyDescribe.
+  ///
+  /// In en, this message translates to:
+  /// **'Briefly describe what needs to be done'**
+  String get brieflyDescribe;
+
+  /// No description provided for @specialInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Instructions'**
+  String get specialInstructions;
+
+  /// No description provided for @anySpecialRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Any special requirements or notes'**
+  String get anySpecialRequirements;
+
+  /// No description provided for @couponCodeOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon Code (Optional)'**
+  String get couponCodeOptional;
+
+  /// No description provided for @enterCouponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Coupon Code'**
+  String get enterCouponCode;
+
+  /// No description provided for @enterCouponOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter coupon code (optional)'**
+  String get enterCouponOptional;
+
+  /// No description provided for @validate.
+  ///
+  /// In en, this message translates to:
+  /// **'Validate'**
+  String get validate;
+
+  /// No description provided for @enterCouponDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a coupon code to get a discount on your service'**
+  String get enterCouponDiscount;
+
+  /// No description provided for @estimatedCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated Cost'**
+  String get estimatedCost;
+
+  /// No description provided for @originalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Original Amount:'**
+  String get originalAmount;
+
+  /// Discount with coupon code
+  ///
+  /// In en, this message translates to:
+  /// **'Discount ({code}):'**
+  String discount(String code);
+
+  /// No description provided for @finalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Final Amount:'**
+  String get finalAmount;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total:'**
+  String get total;
+
+  /// Shows hours of service
+  ///
+  /// In en, this message translates to:
+  /// **'For {duration} hours of service'**
+  String forHoursOfService(String duration);
+
+  /// Base price information
+  ///
+  /// In en, this message translates to:
+  /// **'Base price: {price} FCFA (4 hours)'**
+  String basePriceInfo(int price);
+
+  /// Overtime charges
+  ///
+  /// In en, this message translates to:
+  /// **'Overtime: {amount} FCFA ({hours} extra hours)'**
+  String overtimeInfo(int amount, String hours);
+
+  /// No description provided for @noOvertimeCharges.
+  ///
+  /// In en, this message translates to:
+  /// **'No overtime charges'**
+  String get noOvertimeCharges;
+
+  /// Coupon applied success message
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon \"{code}\" applied successfully!'**
+  String couponAppliedSuccess(String code);
+
+  /// No description provided for @submitRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Request'**
+  String get submitRequest;
+
+  /// No description provided for @locationPermissionsDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permissions are denied'**
+  String get locationPermissionsDenied;
+
+  /// No description provided for @locationPermissionsPermanentlyDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permissions are permanently denied, we cannot request permissions.'**
+  String get locationPermissionsPermanentlyDenied;
+
+  /// Current location with coordinates
+  ///
+  /// In en, this message translates to:
+  /// **'Current Location ({lat}, {lng})'**
+  String currentLocationLabel(String lat, String lng);
+
+  /// Current location with address
+  ///
+  /// In en, this message translates to:
+  /// **'Current Location: {address}'**
+  String currentLocationWithAddress(String address);
+
+  /// No description provided for @currentLocationCaptured.
+  ///
+  /// In en, this message translates to:
+  /// **'Current location captured successfully'**
+  String get currentLocationCaptured;
+
+  /// Error getting location
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get current location: {error}'**
+  String failedToGetLocation(String error);
+
+  /// No description provided for @locationSelectedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Location selected successfully'**
+  String get locationSelectedSuccess;
+
+  /// Coupon savings message
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon applied! You save {amount} FCFA'**
+  String couponSaveAmount(int amount);
+
+  /// No description provided for @invalidCouponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid coupon code'**
+  String get invalidCouponCode;
+
+  /// No description provided for @failedToValidateCoupon.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to validate coupon'**
+  String get failedToValidateCoupon;
+
+  /// Coupon validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Error validating coupon: {error}'**
+  String errorValidatingCoupon(String error);
+
+  /// No description provided for @requestSubmittedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Submitted Successfully'**
+  String get requestSubmittedSuccessfully;
+
+  /// Request ID label
+  ///
+  /// In en, this message translates to:
+  /// **'Request ID: {id}'**
+  String requestId(String id);
+
+  /// Estimated cost with amount
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated Cost: {amount} FCFA'**
+  String estimatedCostAmount(int amount);
+
+  /// No description provided for @adminWillAssignProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'An admin will assign a provider to your request.'**
+  String get adminWillAssignProvider;
+
+  /// No description provided for @failedToSubmitRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to submit request'**
+  String get failedToSubmitRequest;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String errorSubmitting(String error);
+
+  /// No description provided for @myServiceRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'My Service Requests'**
+  String get myServiceRequests;
+
+  /// No description provided for @rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get rejected;
+
+  /// No description provided for @noServiceRequestsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No service requests found'**
+  String get noServiceRequestsFound;
+
+  /// No description provided for @yourServiceRequestsWillAppear.
+  ///
+  /// In en, this message translates to:
+  /// **'Your service requests will appear here'**
+  String get yourServiceRequestsWillAppear;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// No description provided for @trackProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Provider'**
+  String get trackProvider;
+
+  /// Created date label
+  ///
+  /// In en, this message translates to:
+  /// **'Created {date}'**
+  String createdAt(String date);
+
+  /// Request details dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Request Details - {category}'**
+  String requestDetailsTitle(String category);
+
+  /// No description provided for @hours.
+  ///
+  /// In en, this message translates to:
+  /// **'hours'**
+  String get hours;
+
+  /// No description provided for @cost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get cost;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @provider.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get provider;
+
+  /// No description provided for @created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get created;
+
+  /// No description provided for @updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get updated;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @cancelRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Request'**
+  String get cancelRequest;
+
+  /// No description provided for @cancelServiceRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Service Request'**
+  String get cancelServiceRequest;
+
+  /// No description provided for @cancelConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel this service request?'**
+  String get cancelConfirmation;
+
+  /// No description provided for @reasonForCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for cancellation'**
+  String get reasonForCancellation;
+
+  /// No description provided for @keepRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Request'**
+  String get keepRequest;
+
+  /// No description provided for @cancelledByUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by user'**
+  String get cancelledByUser;
+
+  /// No description provided for @serviceRequestCancelledSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Service request cancelled successfully'**
+  String get serviceRequestCancelledSuccess;
+
+  /// No description provided for @failedToCancelRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to cancel request'**
+  String get failedToCancelRequest;
+
+  /// Error cancelling request
+  ///
+  /// In en, this message translates to:
+  /// **'Error cancelling request: {error}'**
+  String errorCancellingRequest(String error);
+
+  /// No description provided for @unableToTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to track: Invalid session ID'**
+  String get unableToTrack;
+
+  /// No description provided for @failedToLoadServiceRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load service requests'**
+  String get failedToLoadServiceRequests;
+
+  /// Error loading requests
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading service requests: {error}'**
+  String errorLoadingServiceRequests(String error);
+
+  /// No description provided for @todayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get todayLabel;
+
+  /// No description provided for @tomorrowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrowLabel;
+
+  /// No description provided for @yesterdayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterdayLabel;
+
+  /// No description provided for @todayLowercase.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get todayLowercase;
+
+  /// No description provided for @yesterdayLowercase.
+  ///
+  /// In en, this message translates to:
+  /// **'yesterday'**
+  String get yesterdayLowercase;
+
+  /// Days ago label
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days ago'**
+  String daysAgoLabel(int days);
+
+  /// No description provided for @invalidDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Date'**
+  String get invalidDate;
+
+  /// No description provided for @dateNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Date not set'**
+  String get dateNotSet;
+
+  /// No description provided for @na.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get na;
+
+  /// No description provided for @cleaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleaning'**
+  String get cleaning;
+
+  /// No description provided for @plumbing.
+  ///
+  /// In en, this message translates to:
+  /// **'Plumbing'**
+  String get plumbing;
+
+  /// No description provided for @electrical.
+  ///
+  /// In en, this message translates to:
+  /// **'Electrical'**
+  String get electrical;
+
+  /// No description provided for @painting.
+  ///
+  /// In en, this message translates to:
+  /// **'Painting'**
+  String get painting;
+
+  /// No description provided for @gardening.
+  ///
+  /// In en, this message translates to:
+  /// **'Gardening'**
+  String get gardening;
+
+  /// No description provided for @carpentry.
+  ///
+  /// In en, this message translates to:
+  /// **'Carpentry'**
+  String get carpentry;
+
+  /// No description provided for @cooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Cooking'**
+  String get cooking;
+
+  /// No description provided for @tutoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutoring'**
+  String get tutoring;
+
+  /// No description provided for @beauty.
+  ///
+  /// In en, this message translates to:
+  /// **'Beauty'**
+  String get beauty;
+
+  /// No description provided for @maintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance'**
+  String get maintenance;
+
+  /// No description provided for @pullDownToRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull down to refresh'**
+  String get pullDownToRefresh;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

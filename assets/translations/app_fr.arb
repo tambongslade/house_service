@@ -27,5 +27,76 @@
   "details": "Détails",
   "welcomeTitle": "Bienvenue !",
   "welcomeSubtitle": "Nous sommes là pour vous aider !",
-  "welcomeDescription": "Trouvez des prestataires de services de confiance dans votre région"
+  "welcomeDescription": "Trouvez des prestataires de services de confiance dans votre région",
+  "availabilityValidation": "Validation de Disponibilité",
+  "providerDashboard": "Tableau de Bord Prestataire",
+  "manageAvailabilityAndBookings": "Gérez votre disponibilité et vos réservations",
+  "assignedSessions": "Sessions Assignées",
+  "upcomingBookings": "Réservations à Venir",
+  "analytics": "Analyses",
+  "noAssignedSessions": "Aucune Session Assignée",
+  "noSessionsToConfirm": "Vous n'avez aucune session en attente de confirmation",
+  "noUpcomingBookings": "Aucune Réservation à Venir",
+  "noBookingsScheduled": "Vous n'avez aucune réservation planifiée",
+  "sessionConfirmed": "Session confirmée avec succès",
+  "sessionRejected": "Session rejetée",
+  "rejectSession": "Rejeter la Session",
+  "rejectSessionConfirm": "Êtes-vous sûr de vouloir rejeter cette session ? Cette action ne peut pas être annulée.",
+  "confirm": "Confirmer",
+  "reject": "Rejeter",
+  "cancel": "Annuler",
+  "dashboard": "Tableau de Bord",
+  "myProfile": "Mon Profil",
+  "logout": "Déconnexion",
+  "resetApp": "Réinitialiser l'Application",
+  "welcomeBack": "Bon Retour, {name}",
+  "@welcomeBack": {
+    "description": "Message de bienvenue avec le nom de l'utilisateur",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Jean"
+      }
+    }
+  },
+  "reviews": "avis",
+  "totalEarned": "Total Gagné",
+  "thisMonth": "Ce Mois-ci",
+  "bookings": "réservations",
+  "activeServices": "Services Actifs",
+  "completed": "Terminé",
+  "pending": "En Attente",
+  "walletBalance": "Solde du Portefeuille",
+  "availableBalance": "Solde Disponible",
+  "withdraw": "Retirer",
+  "history": "Historique",
+  "retry": "Réessayer",
+  "recentActivity": "Activité Récente",
+  "noRecentActivities": "Aucune activité récente",
+  "activitiesWillAppear": "Vos activités apparaîtront ici",
+  "nextBooking": "Prochaine Réservation",
+  "withText": "avec",
+  "withdrawMoney": "Retirer de l'Argent",
+  "amountToWithdraw": "Montant à Retirer",
+  "enterAmountHint": "Entrez le montant (min. 5000 FCFA)",
+  "withdrawalMethod": "Méthode de Retrait",
+  "bankTransfer": "Virement Bancaire",
+  "mobileMoney": "Mobile Money",
+  "minimumWithdrawal": "Retrait minimum : 5000 FCFA",
+  "validAmountError": "Veuillez entrer un montant valide (minimum 5000 FCFA)",
+  "withdrawalSuccess": "Demande de retrait soumise avec succès",
+  "withdrawalFailed": "Échec de la demande de retrait",
+  "transactionHistory": "Historique des Transactions",
+  "noTransactions": "Aucune transaction pour le moment",
+  "transactionHistoryEmpty": "Votre historique de transactions apparaîtra ici",
+  "availableBalanceLabel": "Solde Disponible : {amount}",
+  "@availableBalanceLabel": {
+    "description": "Affiche le solde disponible avec le montant",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "10 000 FCFA"
+      }
+    }
+  }
 }

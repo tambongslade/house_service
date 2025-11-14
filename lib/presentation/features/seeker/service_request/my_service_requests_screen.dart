@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/service_request_models.dart';
 import '../../../../core/services/api_service.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../tracking/seeker_tracking_screen.dart';
 
 class MyServiceRequestsScreen extends StatefulWidget {
@@ -20,15 +21,18 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
   bool _hasMoreData = true;
   final _scrollController = ScrollController();
 
-  final List<String> _statusFilters = [
-    'All',
-    'Pending',
-    'Confirmed',
-    'In Progress',
-    'Completed',
-    'Cancelled',
-    'Rejected',
-  ];
+  List<String> _getStatusFilters(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      l10n.all,
+      l10n.pending,
+      l10n.confirmed,
+      l10n.inProgress,
+      l10n.completed,
+      l10n.cancelled,
+      l10n.rejected,
+    ];
+  }
 
   @override
   void initState() {
@@ -94,7 +98,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
           });
         }
         if (mounted) {
-          _showError(response.error ?? 'Failed to load service requests');
+          _showError(response.error ?? AppLocalizations.of(context)!.failedToLoadServiceRequests);
         }
       }
     } catch (e) {
@@ -102,7 +106,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
         setState(() {
           _isLoading = false;
         });
-        _showError('Error loading service requests: $e');
+        _showError(AppLocalizations.of(context)!.errorLoadingServiceRequests(e.toString()));
       }
     }
   }
@@ -204,27 +208,28 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
   }
 
   String _getCategoryDisplayName(String category) {
+    final l10n = AppLocalizations.of(context)!;
     switch (category.toLowerCase()) {
       case 'cleaning':
-        return 'Cleaning';
+        return l10n.cleaning;
       case 'plumbing':
-        return 'Plumbing';
+        return l10n.plumbing;
       case 'electrical':
-        return 'Electrical';
+        return l10n.electrical;
       case 'painting':
-        return 'Painting';
+        return l10n.painting;
       case 'gardening':
-        return 'Gardening';
+        return l10n.gardening;
       case 'carpentry':
-        return 'Carpentry';
+        return l10n.carpentry;
       case 'cooking':
-        return 'Cooking';
+        return l10n.cooking;
       case 'tutoring':
-        return 'Tutoring';
+        return l10n.tutoring;
       case 'beauty':
-        return 'Beauty';
+        return l10n.beauty;
       case 'maintenance':
-        return 'Maintenance';
+        return l10n.maintenance;
       default:
         return category;
     }
@@ -236,11 +241,12 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'My Service Requests',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          l10n.myServiceRequests,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
@@ -260,9 +266,10 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
             margin: const EdgeInsets.all(16),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: _statusFilters.length,
+              itemCount: _getStatusFilters(context).length,
               itemBuilder: (context, index) {
-                final status = _statusFilters[index];
+                final statusFilters = _getStatusFilters(context);
+                final status = statusFilters[index];
                 final isSelected = _selectedStatusFilter == status;
 
                 return Padding(
@@ -307,19 +314,19 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'No service requests found',
+                                l10n.noServiceRequestsFound,
                                 style: Theme.of(context).textTheme.titleLarge
                                     ?.copyWith(color: Colors.grey.shade600),
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Your service requests will appear here',
+                                l10n.yourServiceRequestsWillAppear,
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(color: Colors.grey.shade500),
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'Pull down to refresh',
+                                l10n.pullDownToRefresh,
                                 style: Theme.of(context).textTheme.bodySmall
                                     ?.copyWith(color: Colors.grey.shade400),
                               ),
@@ -346,7 +353,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                           }
 
                           final request = _requests[index];
-                          return _buildRequestCard(request);
+                          return _buildRequestCard(request, l10n);
                         },
                       ),
                     ),
@@ -356,7 +363,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
     );
   }
 
-  Widget _buildRequestCard(ServiceRequestModel request) {
+  Widget _buildRequestCard(ServiceRequestModel request, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final statusColor = _getStatusColor(request.status);
 
@@ -502,7 +509,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                     Expanded(
                       child: _buildInfoItem(
                         Icons.calendar_today,
-                        'Date',
+                        l10n.date,
                         _formatDisplayDate(request.serviceDate.toIso8601String().split('T')[0]),
                         Colors.blue.shade600,
                       ),
@@ -517,10 +524,10 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                     Expanded(
                       child: _buildInfoItem(
                         Icons.access_time,
-                        'Time',
+                        l10n.time,
                         request.startTime.isNotEmpty
                             ? request.startTime
-                            : 'N/A',
+                            : l10n.na,
                         Colors.orange.shade600,
                       ),
                     ),
@@ -534,10 +541,10 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                     Expanded(
                       child: _buildInfoItem(
                         Icons.timelapse,
-                        'Duration',
+                        l10n.duration,
                         request.duration > 0
                             ? '${request.duration.toStringAsFixed(request.duration == request.duration.roundToDouble() ? 0 : 1)}h'
-                            : 'N/A',
+                            : l10n.na,
                         Colors.purple.shade600,
                       ),
                     ),
@@ -568,7 +575,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                   ),
                   const Spacer(),
                   Text(
-                    'Created ${_formatDate(request.createdAt)}',
+                    l10n.createdAt(_formatDate(request.createdAt)),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: Colors.grey.shade500,
                     ),
@@ -594,7 +601,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                           ),
                         ),
                         child: Text(
-                          'View Details',
+                          l10n.viewDetails,
                           style: TextStyle(color: Colors.blue.shade600),
                         ),
                       ),
@@ -611,7 +618,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                           ),
                         ),
                         icon: const Icon(Icons.location_on, size: 18),
-                        label: const Text('Track Provider'),
+                        label: Text(l10n.trackProvider),
                       ),
                     ),
                   ],
@@ -684,7 +691,8 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
   }
 
   String _formatDisplayDate(String dateString) {
-    if (dateString.isEmpty) return 'N/A';
+    final l10n = AppLocalizations.of(context)!;
+    if (dateString.isEmpty) return l10n.na;
 
     try {
       // Handle different date formats
@@ -704,80 +712,82 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
       if (date.year == now.year &&
           date.month == now.month &&
           date.day == now.day) {
-        return 'Today';
+        return l10n.todayLabel;
       } else if (date.year == tomorrow.year &&
           date.month == tomorrow.month &&
           date.day == tomorrow.day) {
-        return 'Tomorrow';
+        return l10n.tomorrowLabel;
       } else if (date.year == yesterday.year &&
           date.month == yesterday.month &&
           date.day == yesterday.day) {
-        return 'Yesterday';
+        return l10n.yesterdayLabel;
       } else {
         return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
       }
     } catch (e) {
       // If parsing fails, return the original string or a fallback
-      return dateString.isNotEmpty ? dateString : 'Invalid Date';
+      return dateString.isNotEmpty ? dateString : l10n.invalidDate;
     }
   }
 
   String _formatDate(DateTime date) {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final difference = now.difference(date);
 
     if (difference.inDays == 0) {
-      return 'today';
+      return l10n.todayLowercase;
     } else if (difference.inDays == 1) {
-      return 'yesterday';
+      return l10n.yesterdayLowercase;
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
+      return l10n.daysAgoLabel(difference.inDays);
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
   }
 
   void _showRequestDetails(ServiceRequestModel request) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
             title: Text(
-              'Request Details - ${_getCategoryDisplayName(request.category)}',
+              l10n.requestDetailsTitle(_getCategoryDisplayName(request.category)),
             ),
             content: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildDetailRow('Status', request.statusDisplayName),
-                  _buildDetailRow('Date', request.serviceDate.toIso8601String().split('T')[0]),
-                  _buildDetailRow('Time', request.startTime),
-                  _buildDetailRow('Duration', '${request.duration} hours'),
-                  _buildDetailRow('Province', request.province),
+                  _buildDetailRow(l10n.status, request.statusDisplayName),
+                  _buildDetailRow(l10n.date, request.serviceDate.toIso8601String().split('T')[0]),
+                  _buildDetailRow(l10n.time, request.startTime),
+                  _buildDetailRow(l10n.duration, '${request.duration} ${l10n.hours}'),
+                  _buildDetailRow(l10n.province, request.province),
                   _buildDetailRow(
-                    'Cost',
+                    l10n.cost,
                     '${request.estimatedCost.round()} FCFA',
                   ),
                   if (request.description != null)
-                    _buildDetailRow('Description', request.description!),
+                    _buildDetailRow(l10n.description, request.description!),
                   if (request.specialInstructions != null)
                     _buildDetailRow(
-                      'Special Instructions',
+                      l10n.specialInstructions,
                       request.specialInstructions!,
                     ),
                   if (request.providerName != null)
-                    _buildDetailRow('Provider', request.providerName!),
-                  _buildDetailRow('Created', request.createdAt.toString()),
+                    _buildDetailRow(l10n.provider, request.providerName!),
+                  _buildDetailRow(l10n.created, request.createdAt.toString()),
                   if (request.updatedAt != null)
-                    _buildDetailRow('Updated', request.updatedAt.toString()),
+                    _buildDetailRow(l10n.updated, request.updatedAt.toString()),
                 ],
               ),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
+                child: Text(l10n.close),
               ),
               if (request.status == ServiceRequestStatus.pending)
                 TextButton(
@@ -785,9 +795,9 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                     Navigator.pop(context);
                     _showCancelDialog(request);
                   },
-                  child: const Text(
-                    'Cancel Request',
-                    style: TextStyle(color: Colors.red),
+                  child: Text(
+                    l10n.cancelRequest,
+                    style: const TextStyle(color: Colors.red),
                   ),
                 ),
             ],
@@ -810,25 +820,26 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
   }
 
   void _showCancelDialog(ServiceRequestModel request) {
+    final l10n = AppLocalizations.of(context)!;
     final reasonController = TextEditingController();
 
     showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Cancel Service Request'),
+            title: Text(l10n.cancelServiceRequest),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Are you sure you want to cancel this service request?',
+                Text(
+                  l10n.cancelConfirmation,
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: reasonController,
-                  decoration: const InputDecoration(
-                    labelText: 'Reason for cancellation',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.reasonForCancellation,
+                    border: const OutlineInputBorder(),
                   ),
                   maxLines: 3,
                 ),
@@ -837,7 +848,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Keep Request'),
+                child: Text(l10n.keepRequest),
               ),
               TextButton(
                 onPressed: () {
@@ -845,13 +856,13 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
                   _cancelRequest(
                     request.id,
                     reasonController.text.trim().isEmpty
-                        ? 'Cancelled by user'
+                        ? l10n.cancelledByUser
                         : reasonController.text.trim(),
                   );
                 },
-                child: const Text(
-                  'Cancel Request',
-                  style: TextStyle(color: Colors.red),
+                child: Text(
+                  l10n.cancelRequest,
+                  style: const TextStyle(color: Colors.red),
                 ),
               ),
             ],
@@ -860,6 +871,7 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
   }
 
   Future<void> _cancelRequest(String requestId, String reason) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final response = await _apiService.cancelServiceRequest(
         requestId,
@@ -869,18 +881,18 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
       if (response.isSuccess) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Service request cancelled successfully'),
+            SnackBar(
+              content: Text(l10n.serviceRequestCancelledSuccess),
               backgroundColor: Colors.green,
             ),
           );
           _refreshRequests();
         }
       } else {
-        _showError(response.error ?? 'Failed to cancel request');
+        _showError(response.error ?? l10n.failedToCancelRequest);
       }
     } catch (e) {
-      _showError('Error cancelling request: $e');
+      _showError(l10n.errorCancellingRequest(e.toString()));
     }
   }
 
@@ -893,8 +905,8 @@ class _MyServiceRequestsScreenState extends State<MyServiceRequestsScreen> {
 
     if (sessionId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to track: Invalid session ID'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.unableToTrack),
           backgroundColor: Colors.red,
         ),
       );
